@@ -64,9 +64,9 @@ vm_name              = "ubuntu-2404-ecrViewer.raw"
 ]
   # boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   http_directory       = "http"
-  shutdown_command     = "echo 'packer' | sudo -S shutdown -P now"
-  ssh_username         = "packer"
-  ssh_password         = "packer"
+  shutdown_command     = "echo 'ubuntu' | sudo -S shutdown -P now"
+  ssh_username         = "ubuntu"
+  ssh_password         = "ubuntu"
   ssh_timeout          = "60m"
   machine_type         = "q35"
   cpus                 = 2
