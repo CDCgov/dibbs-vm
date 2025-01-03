@@ -83,4 +83,13 @@ build {
   sources = [
     "source.qemu.iso"
   ]
+  
+  provisioner "shell" {
+    only = ["qemu.iso"]
+    scripts = [
+        "scripts/provision.sh"
+    ]
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+
 }
