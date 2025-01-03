@@ -53,4 +53,6 @@ jobs:
               ## TODO: Add matrixed provisioner build here
             - name: Build Packer Image
               working-directory: ./packer
-              run: packer build -var-file=variables.json -var "provisioners=${{ matrix.provisioners }}" packer.json
+              run: packer build ./ubuntu.pkr.hcl
+
+              ## TODO: Decide how to export artifact.
