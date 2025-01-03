@@ -20,6 +20,7 @@ newgrp docker
 # Set Docker as system service and enable container autostart
 systemctl enable docker.service
 systemctl enable containerd.service
+systemctl start docker.service
 
 # Clone Compose files
 cd ~
