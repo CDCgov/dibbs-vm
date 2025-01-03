@@ -2,6 +2,14 @@
 autoinstall:
   version: 1
 
+#  apt:
+#    preserve_sources_list: false
+#    primary:
+#    - arches:
+#      - amd64
+#      - i386
+#      uri: http://mirror.local.net/ubuntu
+
   apt:
     geoip: true
     preserve_sources_list: false
@@ -44,37 +52,12 @@ autoinstall:
   # The system being installed will need some sort of apt access.
   # proxy: http://192.168.0.1:3142
 
-  late-commands:
-    - "echo 'Defaults:ubuntu !requiretty' > /target/etc/sudoers.d/ubuntu"
-    - "echo 'ubuntu ALL=(ALL) NOPASSWD: ALL' >> /target/etc/sudoers.d/ubuntu"
-    - "chmod 440 /target/etc/sudoers.d/ubuntu"
-    - "truncate -s 0 /etc/machine-id /var/lib/dbus/machine-id"
-
-    # Install Docker
-    - curtin in-target -- apt-get update
-    - curtin in-target -- install -m 0755 -d /etc/apt/keyrings
-    - curtin in-target -- curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-    - curtin in-target -- chmod a+r /etc/apt/keyrings/docker.asc
-    - curtin in-target -- echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-  tee /etc/apt/sources.list.d/docker.list > /dev/null
-    - curtin in-target -- apt-get update
-    - curtin in-target -- apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
-
-    # Clone Compose Files
-
-
-    # Set Compose to Autostart
-
-
-    
-
+  late-commands:  
     # A postinstall script may optionally be used for further install
     # customization. Deploy this postinstall.sh script on the webserver.
-    # - wget -O /target/postinstall.sh http://192.168.0.2/postinstall.sh
-    # - curtin in-target -- bash /postinstall.sh
-    # - rm /target/postinstall.sh
+    - wget -O /target/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/main/packer/ubuntu-server/scripts/post-install.sh
+    - curtin in-target -- bash /postinstall.sh
+    - rm /target/postinstall.sh
 
   # Additional cloud-init configuration affecting the target
   # system can be supplied underneath a user-data section inside of

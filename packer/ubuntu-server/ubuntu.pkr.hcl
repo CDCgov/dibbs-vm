@@ -62,6 +62,7 @@ vm_name              = "ubuntu-2404-ecrViewer.raw"
   "initrd /casper/initrd<enter><wait><wait>",
   "boot<enter><wait>"
 ]
+  # boot_command    = ["<wait>e<wait5>", "<down><wait><down><wait><down><wait2><end><wait5>", "<bs><bs><bs><bs><wait>autoinstall ---<wait><f10>"]
   http_directory       = "http"
   shutdown_command     = "echo 'packer' | sudo -S shutdown -P now"
   ssh_username         = "packer"
