@@ -6,7 +6,7 @@ collaborative environment.
 
 Before contributing, we encourage you to also read our [LICENSE](LICENSE),
 [README](README.md), and
-[code-of-conduct](code-of-conduct.md)
+[code-of-conduct](CODE_OF_CONDUCT.md)
 files, also found in this repository. If you have any inquiries or questions not
 answered by the content of this repository, feel free to [contact us](mailto:dibbs@cdc.gov).
 
