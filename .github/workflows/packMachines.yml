@@ -30,13 +30,13 @@ jobs:
       - uses: actions/checkout@v4
             
       - name: Set up Packer
-        uses: hashicorp/setup-packer@v3
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
           version: 1.11.2
 
       # Needed for ISO builder
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a
 
       - name: Run `packer init`
         working-directory: ./packer
