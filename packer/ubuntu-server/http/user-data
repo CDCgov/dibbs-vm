@@ -42,6 +42,20 @@ autoinstall:
   keyboard: 
     layout: us
 
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+      all-en:
+        match:
+          name: "en*"
+        dhcp4: true
+        dhcp-identifier: mac  
+
+  ssh:
+    allow-pw: yes
+    install-server: true
+
   # Subiquity will, by default, configure a partition layout using LVM.
   storage:
     layout:
