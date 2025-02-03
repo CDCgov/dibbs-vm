@@ -11,7 +11,7 @@
   - [License](#license)
 
 ## Overview
-DIBBS (Data Ingestion Building Blocks) VM (Virtual Machine) is a project that aims to provide a VM that can be used to run the DIBBS software stacks.
+dibbs-vm (Data Ingestion Building Blocks - Virtual Machine) is a project that aims to provide a VM that can be used to run the DIBBS software stacks.
 
 ## Searchable Documentation
 _Coming soon!_
