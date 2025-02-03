@@ -1,0 +1,35 @@
+name: Build dibbs-vm
+run-name: Build dibbs-vm triggered by @${{ github.actor }}
+
+on:
+  repository_dispatch:
+    types: [trigger-workflow]
+    
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract service and version
+        id: extract
+        run: |
+          service="${{ github.event.client_payload.service }}"
+          version="${{ github.event.client_payload.version }}"
+          echo "::set-output name=service::$service"
+          echo "::set-output name=version::$version"
+
+      - name: Build dibbs-vm for dibbs-ecr-viewer
+        if: ${{ steps.extract.outputs.service == 'dibbs-ecr-viewer' }}
+        run: |
+          echo "Building dibbs-vm version ${{ steps.extract.outputs.version }} for ${{ steps.extract.outputs.service }}"
+          
+      - name: Build dibbs-vm for dibbs-query-connector
+        if: ${{ steps.extract.outputs.service == 'dibbs-query-connector' }}
+        run: |
+          echo "Building dibbs-vm version ${{ steps.extract.outputs.version }} for ${{ steps.extract.outputs.service }}"
