@@ -1,58 +1,56 @@
 name: Pack Virtual Machine Images
 
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
 
 jobs:
-    workflow_changes:
-        with:
-            what_to_check: ./.github
-        uses: ./.github/workflows/checkForChanges.yml
+  workflow_changes:
+    with:
+      what_to_check: ./.github
+    uses: ./.github/workflows/checkForChanges.yml
     
-    packer_changes:
-        with:
-            what_to_check: ./packer
-        uses: ./.github/workflows/checkForChanges.yml
+  packer_changes:
+    with:
+      what_to_check: ./packer
+    uses: ./.github/workflows/checkForChanges.yml
 
-    terraform_changes:
-        with:
-            what_to_check: ./terraform
-        uses: ./.github/workflows/checkForChanges.yml
-
-    packer_build:
-        if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true'
-        runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                include:
-                    - provisioners: ${{ inputs.provisioners }}
-        steps:
-            - uses: actions/checkout@v4
+  packer_build:
+    if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - provisioners: ${{ inputs.provisioners }}
+    steps:
+      - uses: actions/checkout@v4
             
-            - name: Set up Packer
-              uses: hashicorp/setup-packer@v3
-              with:
-                  version: 1.11.2
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        with:
+          version: 1.11.2
 
-            # Needed for ISO builder
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v3
+      # Needed for ISO builder
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@53851d14592bedcffcf25ea515637cff71ef929a
 
-            - name: Run `packer init`
-              working-directory: ./packer
-              id: init
-              run: "packer init ./ubuntu.pkr.hcl"
-          
-            - name: Run `packer validate`
-              working-directory: ./packer
-              id: validate
-              run: "packer validate ./ubuntu.pkr.hcl"
-            
-              ## TODO: Add matrixed provisioner build here
-            - name: Build Packer Image
-              working-directory: ./packer
-              run: packer build ./ubuntu.pkr.hcl
+      - name: Run `packer init`
+        working-directory: ./packer
+        id: init
+        run: "packer init ./ubuntu.pkr.hcl"
+    
+      - name: Run `packer validate`
+        working-directory: ./packer
+        id: validate
+        run: "packer validate ./ubuntu.pkr.hcl"
+      
+        ## TODO: Add matrixed provisioner build here
+      - name: Build Packer Image
+        working-directory: ./packer
+        run: packer build ./ubuntu.pkr.hcl
 
-              ## TODO: Decide how to export artifact.
+        ## TODO: Decide how to export artifact.

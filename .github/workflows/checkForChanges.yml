@@ -11,6 +11,8 @@ on:
       has_changes:
         description: true or false string
         value: ${{ jobs.check_for_changes.outputs.has_changes }}
+permissions:
+  contents: read
 jobs:
   check_for_changes:
     runs-on: ubuntu-latest
