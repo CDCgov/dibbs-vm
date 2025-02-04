@@ -34,13 +34,27 @@ autoinstall:
     password: '$6$BY7tlmmh0KhsyCdF$mqL6Ud5FS645ylyOUT.qoim/ZcHrfLdE6vgDqAabDGyoj7LCV4Kpskj8POMmf7MmIcpVho0xc12rdstjjjW100'
     hostname: ubuntu-server
 
-  ssh:
-    allow-pw: yes
-    install-server: true
+  # Uncomment the block below to force interactive configuration on first run.  
+  # interactive-sections:
+  #    - network  
 
   locale: en_US
   keyboard: 
     layout: us
+
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+      all-en:
+        match:
+          name: "en*"
+        dhcp4: true
+        dhcp-identifier: mac  
+
+  ssh:
+    allow-pw: yes
+    install-server: true
 
   # Subiquity will, by default, configure a partition layout using LVM.
   storage:
