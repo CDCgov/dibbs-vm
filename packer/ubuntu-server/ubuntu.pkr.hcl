@@ -73,7 +73,7 @@ vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.
   headless             = true
 }
 
-/*source "virtualbox-iso" "ecr-viewer" {
+/*source "virtualbox-iso" "query-connector" {
 
 }*/
 

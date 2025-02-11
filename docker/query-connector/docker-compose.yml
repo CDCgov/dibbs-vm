@@ -27,21 +27,13 @@ services:
     environment:
       - NODE_ENV=production
       - NODE_TLS_REJECT_UNAUTHORIZED=0
-      - AUTH_DISABLED=false
-      - AUTH_SECRET="fakeauthsecretvalue9493829"
-      - AUTH_KEYCLOAK_ISSUER=http://localhost:8080/realms/master
-      - LOCAL_KEYCLOAK=http://localhost:8080
-      - NAMED_KEYCLOAK=http://keycloak:8080
-      - AUTH_KEYCLOAK_ID=query-connector
-      - AUTH_KEYCLOAK_SECRET="fakeauthkeycloakvalue14452"
       - DATABASE_URL=postgres://postgres:pw@db:5432/tefca_db
       # Note: you must have a local .env file with the ERSD_API_KEY set to a key
       # obtained from the ERSD API at https://ersd.aimsplatform.org/#/api-keys
     depends_on:
       db:
         condition: service_healthy
-      keycloak:
-        condition: service_started
+
 
   #Portainer
   portainer:
