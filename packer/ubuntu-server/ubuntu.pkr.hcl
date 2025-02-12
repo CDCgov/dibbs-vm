@@ -32,7 +32,7 @@ packer {
 }
 
 source "qemu" "iso" {
-vm_name              = "ubuntu-2404-ecrViewer.raw"
+vm_name              = "ubuntu-2404-query-connector.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
   # iso_checksum         = "sha256:b63f266fa4bdf146dea5b0938fceac694cb3393688fb12a048ba2fc72e7bfe1b"
@@ -73,7 +73,7 @@ vm_name              = "ubuntu-2404-ecrViewer.raw"
   headless             = true
 }
 
-/*source "virtualbox-iso" "ecr-viewer" {
+/*source "virtualbox-iso" "query-connector" {
 
 }*/
 

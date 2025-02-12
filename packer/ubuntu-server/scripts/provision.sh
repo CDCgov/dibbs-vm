@@ -13,7 +13,9 @@ cd ~
 mkdir dev
 cd dev
 git clone https://github.com/CDCgov/dibbs-vm.git
-cd dibbs-vm/docker/ecr-viewer
+cd dibbs-vm
+git switch shanice/query-connector
+cd docker/query-connector
 
 # Trigger initial docker compose to pull image data
 docker compose up -d
