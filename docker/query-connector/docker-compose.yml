@@ -2,6 +2,7 @@ services:
   # PostgreSQL DB for custom query and value set storage
   db:
     image: "postgres:alpine"
+    restart: always
     ports:
       - "5432:5432"
     environment:
@@ -17,6 +18,7 @@ services:
   # Next.js app with Flyway
   query-connector:
     image: ghcr.io/cdcgov/dibbs-query-connector/query-connector:latest
+    restart: always
     platform: linux/amd64
     build:
       context: .
