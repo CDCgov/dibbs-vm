@@ -5,10 +5,7 @@ services:
     restart: always
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=pw
-      - POSTGRES_DB=tefca_db
+    env_file: "db.env"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
@@ -26,12 +23,10 @@ services:
     tty: true
     ports:
       - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - NODE_TLS_REJECT_UNAUTHORIZED=0
-      - DATABASE_URL=postgres://postgres:pw@db:5432/tefca_db
+    env_file: "query-connector.env"
+
       # Note: you must have a local .env file with the ERSD_API_KEY set to a key
-      # obtained from the ERSD API at https://ersd.aimsplatform.org/#/api-keys
+      # obtained from the ERSD API at https://ersd.aimsplatform.org/#/api-keys and 
     depends_on:
       db:
         condition: service_healthy
