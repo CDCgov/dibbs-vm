@@ -35,7 +35,7 @@ source "qemu" "iso" {
 vm_name              = "ubuntu-2404-ecrViewer.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
-  # iso_checksum         = "sha256:b63f266fa4bdf146dea5b0938fceac694cb3393688fb12a048ba2fc72e7bfe1b"
+  # iso_checksum         = "sha256:28d2f9df3ac0d24440eaf6998507df3405142cf94a55e1f90802c78e43d2d9df"
   # disk_image           = true
 
   # Uncomment this block to configure Ubuntu 24.04 server from scratch
