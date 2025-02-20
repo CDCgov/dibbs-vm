@@ -14,10 +14,10 @@ services:
       timeout: 5s
       retries: 20
 
-  # Next.js app with Flyway
+  # Next.js app
   query-connector:
     image: ghcr.io/cdcgov/dibbs-query-connector/query-connector:latest
-    command: -configFiles=/flyway/conf/flyway.conf -schemas=public -connectRetries=60 migrate
+    command: node server.js
     restart: always
     platform: linux/amd64
     build:
