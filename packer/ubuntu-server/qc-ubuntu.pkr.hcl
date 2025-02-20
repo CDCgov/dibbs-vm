@@ -32,19 +32,19 @@ packer {
 }
 
 source "qemu" "iso" {
-vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.raw"
+vm_name              = "ubuntu-2404-query-connector.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
-  # iso_checksum         = "sha256:28d2f9df3ac0d24440eaf6998507df3405142cf94a55e1f90802c78e43d2d9df"
+  # iso_checksum         = "sha256:b63f266fa4bdf146dea5b0938fceac694cb3393688fb12a048ba2fc72e7bfe1b"
   # disk_image           = true
 
   # Uncomment this block to configure Ubuntu 24.04 server from scratch
-  iso_url              = "http://releases.ubuntu.com/24.04.2/ubuntu-24.04.2-live-server-amd64.iso"
-  iso_checksum         = "sha256:d6dab0c3a657988501b4bd76f1297c053df710e06e0c3aece60dead24f270b4d"
+  iso_url              = "http://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso"
+  iso_checksum         = "sha256:e240e4b801f7bb68c20d1356b60968ad0c33a41d00d828e74ceb3364a0317be9"
   disk_image           = false
 
   memory               = 4096
-  output_directory     = "build/${ var.dibbs_service }-${var.dibbs_version}"
+  output_directory     = "build/os-base"
   //accelerator          = "hvf"
   disk_size            = "8000M"
   disk_interface       = "virtio"
@@ -73,7 +73,7 @@ vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.
   headless             = true
 }
 
-/*source "virtualbox-iso" "ecr-viewer" {
+/*source "virtualbox-iso" "query-connector" {
 
 }*/
 
@@ -83,14 +83,11 @@ build {
   sources = [
     "source.qemu.iso"
   ]
+  
   provisioner "shell" {
     only = ["qemu.iso"]
     scripts = [
         "scripts/provision.sh"
-    ]
-    environment_vars = [
-      "DIBBS_SERVICE=${ var.dibbs_service }",
-      "DIBBS_VERSION=${ var.dibbs_version }"
     ]
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
