@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - main
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -51,6 +59,6 @@ jobs:
         ## TODO: Add matrixed provisioner build here
       - name: Build Packer Image
         working-directory: ./packer
-        run: packer build ./ubuntu.pkr.hcl
+        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} ./ubuntu.pkr.hcl
 
         ## TODO: Decide how to export artifact.

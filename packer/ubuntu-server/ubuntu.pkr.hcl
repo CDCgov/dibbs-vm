@@ -31,8 +31,18 @@ packer {
   }
 }
 
+variable "dibbs_service" {
+  description = "The name of the service to be built"
+  type        = string
+}
+
+variable "dibbs_version" {
+  description = "The version of the service to be built"
+  type        = string
+}
+
 source "qemu" "iso" {
-vm_name              = "ubuntu-2404-ecrViewer.raw"
+vm_name              = "ubuntu-2404-${ var.dibbs_service }.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
   # iso_checksum         = "sha256:28d2f9df3ac0d24440eaf6998507df3405142cf94a55e1f90802c78e43d2d9df"
@@ -83,11 +93,14 @@ build {
   sources = [
     "source.qemu.iso"
   ]
-  
   provisioner "shell" {
     only = ["qemu.iso"]
     scripts = [
         "scripts/provision.sh"
+    ]
+    environment_vars = [
+      "DIBBS_SERVICE=${ var.dibbs_service }",
+      "DIBBS_VERSION=${ var.dibbs_version }"
     ]
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
