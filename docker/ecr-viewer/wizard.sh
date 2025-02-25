@@ -1,52 +1,169 @@
 #!/bin/bash
 
-# AWS_REGION=${AWS_REGION}
-# ECR_BUCKET_NAME=${ECR_BUCKET_NAME}
-# APP_ENV=${APP_ENV}
-# NBS_PUB_KEY=${NBS_PUB_KEY}
-# NEXT_PUBLIC_BASEPATH=/ecr-viewer
-# CONFIG_NAME=${CONFIG_NAME}
-# DATABASE_URL=${DATABASE_URL}
-# SQL_SERVER_USER=${SQL_SERVER_USER}
-# SQL_SERVER_PASSWORD=${SQL_SERVER_PASSWORD}
-# SQL_SERVER_HOST=${SQL_SERVER_HOST}
+# | "AWS_INTEGRATED"
+# | "AWS_PG_NON_INTEGRATED"
+# | "AWS_SQLSERVER_NON_INTEGRATED"
+# | "AZURE_INTEGRATED"
+# | "AZURE_PG_NON_INTEGRATED"
+# | "AZURE_SQLSERVER_NON_INTEGRATED";
 
-read -p "AWS_REGION: " choice
-echo "AWS_REGION: $choice"
+clear_dot_env() {
+  echo "" > .env
+}
 
-read -p "ECR_BUCKET_NAME: " choice
-echo "ECR_BUCKET_NAME: $choice"
+display_intro() {
+  echo ""
+  echo -e "\e[1;32m**********************************************\e[0m"
+  echo -e "\e[1;32m*                                            *\e[0m"
+  echo -e "\e[1;32m*\e[0m   \e[1;37mWelcome to the eCR Viewer setup wizard\e[0m   \e[1;32m*\e[0m"
+  echo -e "\e[1;32m*                                            *\e[0m"
+  echo -e "\e[1;32m**********************************************\e[0m"
+  echo ""
+  echo -e "\e[1;32mDocumentation can be found at: \e[4;36mhttps://github.com/CDCgov/dibbs-vm\e[0m"
+  echo ""
+  echo -e "\e[1;33mPlease provide the following information:\e[0m"
+  echo ""
+}
 
-read -p "APP_ENV: " choice
-echo "APP_ENV: $choice"
+config_name() {
+  PS3='
+  Please select your CONFIG_NAME: '
+  options=("AWS_PG_NON_INTEGRATED" "AWS_SQLSERVER_NON_INTEGRATED" "AWS_INTEGRATED" "AZURE_INTEGRATED" "AZURE_PG_NON_INTEGRATED" "AZURE_SQLSERVER_NON_INTEGRATED" "Quit")
+  select opt in "${options[@]}"
+  do
+    echo ""
+    echo -e "\e[1;32mYou chose $opt\e[0m"
+    echo ""
+    case $opt in
+      "AWS_PG_NON_INTEGRATED")
+        CONFIG_NAME="AWS_PG_NON_INTEGRATED"
+        break
+        ;;
+      "AWS_SQLSERVER_NON_INTEGRATED")
+        CONFIG_NAME="AWS_SQLSERVER_NON_INTEGRATED"
+        break
+        ;;
+      "AWS_INTEGRATED")
+        CONFIG_NAME="AWS_INTEGRATED"
+        break
+        ;;
+      "AZURE_INTEGRATED")
+        CONFIG_NAME="AZURE_INTEGRATED"
+        break
+        ;;
+      "AZURE_PG_NON_INTEGRATED")
+        CONFIG_NAME="AZURE_PG_NON_INTEGRATED"
+        break
+        ;;
+      "AZURE_SQLSERVER_NON_INTEGRATED")
+        CONFIG_NAME="AZURE_SQLSERVER_NON_INTEGRATED"
+        break
+        ;;
+      "Quit")
+        break
+        ;;
+      *) echo "invalid option $REPLY";;
+    esac
+  done
+}
 
-read -p "NBS_PUB_KEY: " choice
-echo "NBS_PUB_KEY: $choice"
+set_dot_env_var() {
+  value=$1
+  default=$2
+  read -rp $'  \e[3m'"$value (default: $default):"$'\e[0m' choice
+  if [ -z "$choice" ]; then
+    choice=$default
+  fi
+  echo ""
+  echo -e "  \e[1;36mSetting: $value=$choice\e[0m"
+  echo ""
+  add_env "$value" "$choice"
+}
 
-read -p "CONFIG_NAME: " choice
-echo "CONFIG_NAME: $choice"
+set_dot_vars() {
+  add_env "CONFIG_NAME" $CONFIG_NAME
+  if [ "$CONFIG_NAME" == "AWS_PG_NON_INTEGRATED" ]; then
+    aws
+    nbs
+    pg
+  elif [ "$CONFIG_NAME" == "AWS_SQLSERVER_NON_INTEGRATED" ]; then
+    aws
+    nbs
+    sqlserver
+  elif [ "$CONFIG_NAME" == "AWS_INTEGRATED" ]; then
+    aws
+    nbs
+    pg
+  elif [ "$CONFIG_NAME" == "AZURE_INTEGRATED" ]; then
+    azure
+    nbs
+    pg
+  elif [ "$CONFIG_NAME" == "AZURE_PG_NON_INTEGRATED" ]; then
+    azure
+    nbs
+    pg
+  elif [ "$CONFIG_NAME" == "AZURE_SQLSERVER_NON_INTEGRATED" ]; then
+    azure
+    nbs
+    sqlserver
+  else
+    echo "Invalid configuration name. Please choose a valid configuration name."
+    exit 1
+  fi
+}
 
-read -p "Database type (PostgreSQL, SQLServer): " choice
-echo "Database type: $choice"
+confirm_vars() {
+  echo -e "\e[1;33mPlease confirm the following settings:\e[0m"
+  vars=$(cat .env)
+  echo -e "\e[1;36m$vars\e[0m"
+  echo ""
+  read -p "Is this information correct? (y/n): " choice
+  if [ "$choice" != "y" ]; then
+    echo "Please run the script again and provide the correct information."
+    exit 1
+  fi
+}
 
-if [ "$choice" == "PostgreSQL" ]; then
-  echo "PostgreSQL"
-  read -p "DATABASE_URL: " choice
-  echo "DATABASE_URL: $choice"
-elif [ "$choice" == "SQLServer" ]; then
-  echo "SQLServer"
-  read -p "SQL_SERVER_USER: " choice
-  echo "SQL_SERVER_USER: $choice"
+restart_docker_compose() {
+  export $(cat .env | xargs)
+  # export $(cat .env | xargs)
+  docker compose down
+  docker compose up -d
+}
 
-  read -p "SQL_SERVER_PASSWORD: " choice
-  echo "SQL_SERVER_PASSWORD: $choice"
+add_env() {
+  echo "$1=$2" >> .env
+}
 
-  read -p "SQL_SERVER_HOST: " choice
-  echo "SQL_SERVER_HOST: $choice"
-else
-  echo "Invalid database type. Please choose either PostgreSQL or SQLServer."
-  exit 1
-fi
+pg() {
+  set_dot_env_var "DATABASE_URL" "postgresql://postgres:password@localhost:5432/postgres"
+}
 
+sqlserver() {
+  set_dot_env_var "SQL_SERVER_USER" "sa"
+  set_dot_env_var "SQL_SERVER_PASSWORD" "password"
+  set_dot_env_var "SQL_SERVER_HOST" "localhost"
+  set_dot_env_var "DB_CIPHER" ""
+}
 
-docker compose up -d
+nbs() {
+  set_dot_env_var "NBS_AUTH" true
+  set_dot_env_var "NBS_PUB_KEY" ""
+}
+
+aws() {
+  set_dot_env_var "AWS_REGION" "us-east-1"
+  set_dot_env_var "ECR_BUCKET_NAME" ""
+}
+
+azure() {
+  set_dot_env_var "AZURE_STORAGE_CONNECTION_STRING" ""
+  set_dot_env_var "AZURE_CONTAINER_NAME" ""
+}
+
+clear_dot_env
+display_intro
+config_name
+set_dot_vars
+confirm_vars
+restart_docker_compose

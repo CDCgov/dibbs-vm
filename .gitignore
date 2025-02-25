@@ -1,1 +1,2 @@
 packer/ubuntu-server/build/*
+docker/ecr-viewer/.env
