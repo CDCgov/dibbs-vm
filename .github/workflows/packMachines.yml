@@ -12,6 +12,14 @@ on:
       version:
         required: true
         type: string
+  workflow_dispatch:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -68,7 +76,7 @@ jobs:
         run: packer build --var-file=dibbs-query-connector.pkr.hcl ./ubuntu.pkr.hcl
 
       - name: Build Workflow Call Packer Image
-        if: github.event_name == 'workflow_call' 
+        if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
         working-directory: ./packer/ubuntu-server
         run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} ./ubuntu.pkr.hcl
 
