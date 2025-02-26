@@ -54,7 +54,7 @@ vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.
   disk_image           = false
 
   memory               = 4096
-  output_directory     = "build/os-base"
+  output_directory     = "build/os-base/${ var.dibbs_service }-${var.dibbs_version}"
   //accelerator          = "hvf"
   disk_size            = "8000M"
   disk_interface       = "virtio"
