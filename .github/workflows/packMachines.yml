@@ -27,7 +27,7 @@ jobs:
       what_to_check: ./packer
     uses: ./.github/workflows/checkForChanges.yml
 
-  packer_build_main:
+  packer_build:
     if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     strategy:
