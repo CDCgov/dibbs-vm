@@ -9,7 +9,6 @@
   - [Code of Conduct](#code-of-conduct)
   - [Contributing](#contributing)
   - [License](#license)
-- [user scripts for proxmox](#user-scripts-for-proxmox)
 
 ## Overview
 dibbs-vm (Data Ingestion Building Blocks - Virtual Machine) is a project that aims to provide a VM that can be used to run the DIBBS software stacks.
@@ -28,11 +27,3 @@ To contribute, refer to our [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 [License](LICENSE)
-
-
-
-
-proxmox-vm[]: # Path: proxmox-vm/README.md
-
-# user scripts for proxmox
-https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_hookscripts

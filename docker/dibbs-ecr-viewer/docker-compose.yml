@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   ecr-viewer:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/ecr-viewer:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/ecr-viewer:$DIBBS_VERSION
     restart: always
     env_file: "ecr-viewer.env"
     ports:
@@ -11,7 +11,7 @@ services:
       - dibbs
 
   ingestion:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/ingestion:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/ingestion:$DIBBS_VERSION
     restart: always
     ports:
       - "8080:8080"
@@ -19,7 +19,7 @@ services:
       - dibbs
 
   validation:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/validation:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/validation:$DIBBS_VERSION
     restart: always
     ports:
       - "8081:8080"
@@ -27,7 +27,7 @@ services:
       - dibbs
 
   fhir-converter:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/fhir-converter:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/fhir-converter:$DIBBS_VERSION
     restart: always
     ports:
       - "8082:8080"
@@ -35,7 +35,7 @@ services:
       - dibbs
 
   message-parser:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/message-parser:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/message-parser:$DIBBS_VERSION
     restart: always
     ports:
       - "8083:8080"
@@ -43,7 +43,7 @@ services:
       - dibbs
 
   trigger-code-reference:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/trigger-code-reference:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/trigger-code-reference:$DIBBS_VERSION
     restart: always
     ports:
       - "8084:8080"
@@ -51,7 +51,7 @@ services:
       - dibbs
 
   orchestration:
-    image: ghcr.io/cdcgov/dibbs-ecr-viewer/orchestration:v2.0.0-beta
+    image: ghcr.io/cdcgov/dibbs-ecr-viewer/orchestration:$DIBBS_VERSION
     env_file: "orchestration.env"
     restart: always    
     ports:

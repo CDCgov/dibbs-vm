@@ -26,8 +26,9 @@ else
 fi
 
 # Clone the dibbs-vm repository
-git clone --branch $DIBBS_VERSION https://github.com/CDCgov/dibbs-vm.git
-cd "dibbs-vm/docker/$(echo "$DIBBS_SERVICE" | sed -E 's/.*?dibbs-//')" || exit
+git clone https://github.com/CDCgov/dibbs-vm.git
+# cd "dibbs-vm/docker/$(echo "$DIBBS_SERVICE" | sed -E 's/.*?dibbs-//')" || exit
+cd "dibbs-vm/docker/$DIBBS_SERVICE"
 
 # Trigger initial docker compose to pull image data
 docker compose up -d

@@ -1,2 +1,2 @@
 packer/ubuntu-server/build/*
-docker/ecr-viewer/.env
+docker/dibbs-ecr-viewer/.env
