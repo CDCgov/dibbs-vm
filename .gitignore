@@ -1,2 +1,3 @@
 packer/ubuntu-server/build/*
 docker/dibbs-ecr-viewer/.env
+docker/dibbs-query-connectory/.env

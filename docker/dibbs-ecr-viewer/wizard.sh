@@ -1,11 +1,30 @@
 #!/bin/bash
 
-# | "AWS_INTEGRATED"
-# | "AWS_PG_NON_INTEGRATED"
-# | "AWS_SQLSERVER_NON_INTEGRATED"
-# | "AZURE_INTEGRATED"
-# | "AZURE_PG_NON_INTEGRATED"
-# | "AZURE_SQLSERVER_NON_INTEGRATED";
+# This script is a setup wizard for the eCR Viewer application. It guides the user through the process of configuring
+# environment variables and setting up the necessary configurations for running the application using Docker Compose.
+#
+# Functions:
+# - clear_dot_env: Clears the .env file.
+# - display_intro: Displays an introductory message and documentation link.
+# - config_name: Prompts the user to select a configuration name from a list of options.
+# - set_dot_env_var: Prompts the user to input a value for a given environment variable, with an optional default value.
+# - set_dot_vars: Sets environment variables based on the selected configuration name and calls relevant functions to set additional variables.
+# - confirm_vars: Displays the current environment variables and prompts the user to confirm them.
+# - restart_docker_compose: Restarts Docker Compose with the updated environment variables.
+# - add_env: Adds a key-value pair to the .env file.
+# - pg: Sets environment variables for PostgreSQL configuration.
+# - sqlserver: Sets environment variables for SQL Server configuration.
+# - nbs: Sets environment variables for NBS (National Electronic Disease Surveillance System Base System) configuration.
+# - aws: Sets environment variables for AWS configuration.
+# - azure: Sets environment variables for Azure configuration.
+#
+# The script follows these steps:
+# 1. Clears the .env file.
+# 2. Displays an introductory message.
+# 3. Prompts the user to select a configuration name.
+# 4. Sets environment variables based on the selected configuration.
+# 5. Prompts the user to confirm the environment variables.
+# 6. Restarts Docker Compose with the updated environment variables.
 
 clear_dot_env() {
   echo "" > .env
