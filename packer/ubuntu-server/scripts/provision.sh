@@ -33,5 +33,8 @@ echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "ecr-viewer.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >> "ecr-viewer.env"
 echo "" >> "ecr-viewer.env"
 
+echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/ecr-viewer.env' | xargs)' >> ~/.bashrc
+echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/orchestration.env' | xargs)' >> ~/.bashrc
+
 # Trigger initial docker compose to pull image data
 docker compose up -d

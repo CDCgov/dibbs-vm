@@ -147,6 +147,7 @@ confirm_vars() {
   echo -e "\e[1;32mSettings confirmed. Updating your configuration.\e[0m"
   cp "$ecr_viewer_env_file" "$ecr_viewer_env_file_bak"
   cat "$wizard_env_file" > "$ecr_viewer_env_file"
+  export $(cat $ecr_viewer_env_file | xargs)
 }
 
 restart_docker_compose() {
