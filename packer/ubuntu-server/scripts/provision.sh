@@ -29,5 +29,9 @@ git clone --branch alis/21_2 https://github.com/CDCgov/dibbs-vm.git
 # cd "dibbs-vm/docker/$(echo "$DIBBS_SERVICE" | sed -E 's/.*?dibbs-//')" || exit
 cd "dibbs-vm/docker/$DIBBS_SERVICE"
 
+echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "ecr-viewer.env"
+echo "DIBBS_VERSION=$DIBBS_VERSION" >> "ecr-viewer.env"
+echo "" >> "ecr-viewer.env"
+
 # Trigger initial docker compose to pull image data
 docker compose up -d

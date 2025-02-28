@@ -45,8 +45,6 @@ display_intro() {
   echo ""
   echo -e "\e[1;32mDocumentation can be found at: \e[4;36mhttps://github.com/CDCgov/dibbs-vm\e[0m"
   echo ""
-  echo -e "\e[1;33mPlease provide the following information:\e[0m"
-  echo ""
 }
 
 config_name() {
@@ -186,8 +184,27 @@ azure() {
   set_dot_env_var "AZURE_CONTAINER_NAME" ""
 }
 
+docker_compose_vars() {
+  # parse ecr-viewer.env file for environment variables
+  echo -e "\e[1;33mParsing eCR Viewer for default environment variables...\e[0m"
+  echo ""
+  while IFS= read -r line; do
+    case $line in
+      DIBBS_SERVICE=*)
+        dibbs_service=$(echo "$line" | cut -d'=' -f2)
+        ;;
+      DIBBS_VERSION=*)
+        dibbs_version=$(echo "$line" | cut -d'=' -f2)
+        ;;
+    esac
+  done < "$ecr_viewer_env_file"
+  add_env "DIBBS_SERVICE" "$dibbs_service"
+  set_dot_env_var "DIBBS_VERSION" "$dibbs_version"
+}
+
 clear_dot_env
 display_intro
+docker_compose_vars
 config_name
 set_dot_vars
 confirm_vars
