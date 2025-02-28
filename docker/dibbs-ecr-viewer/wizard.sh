@@ -4,14 +4,14 @@
 # environment variables and setting up the necessary configurations for running the application using Docker Compose.
 #
 # Functions:
-# - clear_dot_env: Clears the .env file.
+# - clear_dot_env: Clears the  file.
 # - display_intro: Displays an introductory message and documentation link.
 # - config_name: Prompts the user to select a configuration name from a list of options.
 # - set_dot_env_var: Prompts the user to input a value for a given environment variable, with an optional default value.
 # - set_dot_vars: Sets environment variables based on the selected configuration name and calls relevant functions to set additional variables.
 # - confirm_vars: Displays the current environment variables and prompts the user to confirm them.
 # - restart_docker_compose: Restarts Docker Compose with the updated environment variables.
-# - add_env: Adds a key-value pair to the .env file.
+# - add_env: Adds a key-value pair to the wizard_env_file file.
 # - pg: Sets environment variables for PostgreSQL configuration.
 # - sqlserver: Sets environment variables for SQL Server configuration.
 # - nbs: Sets environment variables for NBS (National Electronic Disease Surveillance System Base System) configuration.
@@ -19,15 +19,20 @@
 # - azure: Sets environment variables for Azure configuration.
 #
 # The script follows these steps:
-# 1. Clears the .env file.
+# 1. Clears the wizard_env_file file.
 # 2. Displays an introductory message.
 # 3. Prompts the user to select a configuration name.
 # 4. Sets environment variables based on the selected configuration.
 # 5. Prompts the user to confirm the environment variables.
-# 6. Restarts Docker Compose with the updated environment variables.
+# 6. Replaces the contents of the ecr_viewer_env_file file with the contents of the wizard_env_file file.
+# 7. Restarts Docker Compose with the updated environment variables.
+
+ecr_viewer_env_file="ecr-viewer.env"
+ecr_viewer_env_file_bak="ecr-viewer.env.bak"
+wizard_env_file="ecr-viewer.wizard.env"
 
 clear_dot_env() {
-  echo "" > .env
+  echo "" > "$wizard_env_file"
 }
 
 display_intro() {
@@ -51,7 +56,7 @@ config_name() {
   select opt in "${options[@]}"
   do
     echo ""
-    echo -e "\e[1;32mYou chose $opt\e[0m"
+    echo -e "\e[1;36m  Setting: CONFIG_NAME=$opt\e[0m"
     echo ""
     case $opt in
       "AWS_PG_NON_INTEGRATED")
@@ -133,7 +138,7 @@ set_dot_vars() {
 
 confirm_vars() {
   echo -e "\e[1;33mPlease confirm the following settings:\e[0m"
-  vars=$(cat .env)
+  vars=$(cat "$wizard_env_file")
   echo -e "\e[1;36m$vars\e[0m"
   echo ""
   read -p "Is this information correct? (y/n): " choice
@@ -141,17 +146,18 @@ confirm_vars() {
     echo "Please run the script again and provide the correct information."
     exit 1
   fi
+  echo -e "\e[1;32mSettings confirmed. Updating your configuration.\e[0m"
+  cp "$ecr_viewer_env_file" "$ecr_viewer_env_file_bak"
+  cat "$wizard_env_file" > "$ecr_viewer_env_file"
 }
 
 restart_docker_compose() {
-  export $(cat .env | xargs)
-  # export $(cat .env | xargs)
   docker compose down
   docker compose up -d
 }
 
 add_env() {
-  echo "$1=$2" >> .env
+  echo "$1=$2" >> "$wizard_env_file"
 }
 
 pg() {
