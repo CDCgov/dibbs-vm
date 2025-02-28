@@ -39,8 +39,8 @@ vm_name              = "ubuntu-2404-ecrViewer.raw"
   # disk_image           = true
 
   # Uncomment this block to configure Ubuntu 24.04 server from scratch
-  iso_url              = "http://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso"
-  iso_checksum         = "sha256:e240e4b801f7bb68c20d1356b60968ad0c33a41d00d828e74ceb3364a0317be9"
+  iso_url              = "http://releases.ubuntu.com/24.04.2/ubuntu-24.04.2-live-server-amd64.iso"
+  iso_checksum         = "sha256:d6dab0c3a657988501b4bd76f1297c053df710e06e0c3aece60dead24f270b4d"
   disk_image           = false
 
   memory               = 4096
