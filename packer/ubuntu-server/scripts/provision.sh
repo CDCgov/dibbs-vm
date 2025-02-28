@@ -26,13 +26,14 @@ fi
 
 # Clone the dibbs-vm repository
 git clone --branch alis/21_2 https://github.com/CDCgov/dibbs-vm.git
-# cd "dibbs-vm/docker/$(echo "$DIBBS_SERVICE" | sed -E 's/.*?dibbs-//')" || exit
 cd "dibbs-vm/docker/$DIBBS_SERVICE"
 
+# ensures the DIBBS variables are set and accessible to the wizard
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "ecr-viewer.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >> "ecr-viewer.env"
 echo "" >> "ecr-viewer.env"
 
+# enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
 echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/ecr-viewer.env' | xargs)' >> ~/.bashrc
 echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/orchestration.env' | xargs)' >> ~/.bashrc
 

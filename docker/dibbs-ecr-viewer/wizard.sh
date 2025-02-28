@@ -147,6 +147,8 @@ confirm_vars() {
   echo -e "\e[1;32mSettings confirmed. Updating your configuration.\e[0m"
   cp "$ecr_viewer_env_file" "$ecr_viewer_env_file_bak"
   cat "$wizard_env_file" > "$ecr_viewer_env_file"
+  # export the environment variables for the current session
+  # needed for the docker compose file DIBBS_SERVICE and DIBBS_VERSION
   export $(cat $ecr_viewer_env_file | xargs)
 }
 
