@@ -19,3 +19,17 @@ variable "dibbs_version" {
   description = "The version of the service to be built"
   type        = string
 }
+
+variable "aws_region" {
+  description = "AWS region to build the AMI"
+  type        = string
+  default     = "us-east-1"
+
+}
+
+variable "aws_instance_type" {
+  description = "AWS instance type for the build"
+  type        = string
+  default     = "t3.medium"
+
+}
