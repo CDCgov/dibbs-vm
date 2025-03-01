@@ -4,10 +4,10 @@
 
 packer {
   required_plugins {
-    # amazon = {
-    #   source  = "github.com/hashicorp/amazon"
-    #   version = "~> 1.3.4"
-    # }
+     amazon = {
+     source  = "github.com/hashicorp/amazon"
+     version = "~> 1.3.4"
+     }
     # azure = {
     #   source  = "github.com/hashicorp/azure"
     #   version = "~> 2.2.0"
@@ -64,14 +64,78 @@ source "qemu" "iso" {
   headless         = true
 }
 
+/*source "virtualbox-iso" "ecr-viewer" {
+
+}*/
+
+
+
+source "amazon-ebs" "aws-ami" {
+  ami_name      = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+  instance_type = var.aws_instance_type
+  region        = var.aws_region
+
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    owners      = ["099720109477"] # Canonical's official AWS account ID
+    most_recent = true
+  }
+
+  ssh_username = "ubuntu"
+
+  launch_block_device_mappings {
+    device_name           = "/dev/sda1"
+    volume_size           = 10
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
+  tags = {
+    Name        = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+    Environment = "Dev"
+  }
+}
+
 build {
-  name = "iso"
+  name = "multi-build"
 
   sources = [
-    "source.qemu.iso"
+    "source.qemu.iso",
+    "source.amazon-ebs.aws-ami"
   ]
+
+  # AWS-Specific Post-Install Provisioner
   provisioner "shell" {
-    only = ["qemu.iso"]
+    only   = ["amazon-ebs.aws-ami"]
+    script = "scripts/post-install.sh"
+    environment_vars = [
+      "DIBBS_SERVICE=${var.dibbs_service}",
+      "DIBBS_VERSION=${var.dibbs_version}",
+      "USE_SUDO=sudo",
+      "BUILD_TYPE=aws"
+    ]
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+
+  # QEMU/Hypervisor-Specific Post-Install Provisioner
+  provisioner "shell" {
+    only   = ["qemu.iso"]
+    script = "scripts/post-install.sh"
+    environment_vars = [
+      "DIBBS_SERVICE=${var.dibbs_service}",
+      "DIBBS_VERSION=${var.dibbs_version}",
+      "USE_SUDO=",
+      "BUILD_TYPE=qemu"
+    ]
+    execute_command = "echo 'ubuntu' | {{.Vars}} bash '{{.Path}}'"
+  }
+
+  # Common Provisioner for Both QEMU and AWS
+  provisioner "shell" {
     scripts = [
       "scripts/provision.sh"
     ]
@@ -82,6 +146,7 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
+  
   provisioner "file" {
     source      = "../../${var.dibbs_service}/${var.dibbs_service}-wizard.sh.home"
     destination = "~/${var.dibbs_service}-wizard.sh"
@@ -96,5 +161,4 @@ build {
     source      = "./scripts/apt-updates.sh.home"
     destination = "~/apt-updates.sh"
   }
-
 }
