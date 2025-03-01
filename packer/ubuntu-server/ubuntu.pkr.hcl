@@ -31,6 +31,31 @@ packer {
   }
 }
 
+variable "dibbs_service" {
+  description = "The name of the service to be built"
+  type        = string
+  default     = "ecr-viewer"
+}
+
+variable "dibbs_version" {
+  description = "The version of the service to be built"
+  type        = string
+  default     = "v2" 
+}
+
+variable "aws_region" {
+  description = "AWS region to build the AMI"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "aws_instance_type" {
+  description = "AWS instance type for the build"
+  type        = string
+  default     = "t3.medium"
+}
+
+
 source "qemu" "iso" {
   vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
@@ -77,11 +102,44 @@ source "qemu" "iso" {
 
 }*/
 
+
+
+source "amazon-ebs" "aws-ami" {
+  ami_name      = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+  instance_type = var.aws_instance_type
+  region        = var.aws_region
+
+  source_ami_filter {
+    filters = {
+      name                = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
+      root-device-type    = "ebs"
+      virtualization-type = "hvm"
+    }
+    owners      = ["099720109477"] # Canonical's official AWS account ID
+    most_recent = true
+  }
+
+  ssh_username = "ubuntu"
+
+  launch_block_device_mappings {
+    device_name           = "/dev/sda1"
+    volume_size           = 10
+    volume_type           = "gp3"
+    delete_on_termination = true
+  }
+
+  tags = {
+    Name        = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+    Environment = "Dev"
+  }
+}
+
 build {
-  name = "iso"
+  name = "multi-build"
 
   sources = [
-    "source.qemu.iso"
+    "source.qemu.iso",
+    "source.amazon-ebs.aws-ami"
   ]
   provisioner "shell" {
     only = ["qemu.iso"]
@@ -95,4 +153,20 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
+  provisioner "shell" {
+    only = ["amazon-ebs.aws-ami"]
+    script = "scripts/aws-post-install.sh"
+  }
+
+  provisioner "shell" {
+    only = ["amazon-ebs.aws-ami"]
+    scripts = [
+      "scripts/provision.sh"
+    ]
+    environment_vars = [
+      "DIBBS_SERVICE=${var.dibbs_service}",
+      "DIBBS_VERSION=${var.dibbs_version}"
+    ]
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
 }
