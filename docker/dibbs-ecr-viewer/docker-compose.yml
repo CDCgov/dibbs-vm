@@ -4,7 +4,7 @@ services:
   ecr-viewer:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/ecr-viewer:$DIBBS_VERSION
     restart: always
-    env_file: "ecr-viewer.env"
+    env_file: "dibbs-ecr-viewer.env"
     ports:
       - "3000:3000"
     networks:
@@ -52,7 +52,7 @@ services:
 
   orchestration:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/orchestration:$DIBBS_VERSION
-    env_file: "orchestration.env"
+    env_file: "dibbs-orchestration.env"
     restart: always
     ports:
       - "8085:8080"
