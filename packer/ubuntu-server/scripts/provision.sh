@@ -29,13 +29,12 @@ git clone --branch alis/21_2 https://github.com/CDCgov/dibbs-vm.git
 cd "dibbs-vm/docker/$DIBBS_SERVICE"
 
 # ensures the DIBBS variables are set and accessible to the wizard
-echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "ecr-viewer.env"
-echo "DIBBS_VERSION=$DIBBS_VERSION" >> "ecr-viewer.env"
-echo "" >> "ecr-viewer.env"
+echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "$DIBBS_SERVICE.env"
+echo "DIBBS_VERSION=$DIBBS_VERSION" >> "$DIBBS_SERVICE.env"
+echo "" >> "$DIBBS_SERVICE.env"
 
 # enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
-echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/ecr-viewer.env' | xargs)' >> ~/.bashrc
-echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/orchestration.env' | xargs)' >> ~/.bashrc
+echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/*.env' | xargs)' >> ~/.bashrc
 
 # Trigger initial docker compose to pull image data
 docker compose up -d
