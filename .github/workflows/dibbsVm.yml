@@ -1,5 +1,5 @@
 name: Build dibbs-vm
-run-name: Build dibbs-vm triggered by @${{ github.actor }}
+run-name: Build dibbs-vm triggered by @${{ github.actor }} for ${{ github.event.client_payload.service }}:${{ github.event.client_payload.version }}
 
 on:
   repository_dispatch:
@@ -10,23 +10,8 @@ permissions:
 
 jobs:
 
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Extract service and version
-        id: extract
-        run: |
-          service="${{ github.event.client_payload.service }}"
-          version="${{ github.event.client_payload.version }}"
-          echo "::set-output name=service::$service"
-          echo "::set-output name=version::$version"
-
-      - name: Build dibbs-vm for dibbs-ecr-viewer
-        uses: ./.github/workflows/packMachines.yml
-        with:
-          service: ${{ steps.extract.outputs.service }}
-          version: ${{ steps.extract.outputs.version }}
+  build_dibbs_service:
+    uses: ./.github/workflows/packMachines.yml
+    with:
+      service: ${{ github.event.client_payload.service }}
+      version: ${{ github.event.client_payload.version }}

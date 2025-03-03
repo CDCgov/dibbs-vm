@@ -82,7 +82,7 @@ jobs:
         run: packer build --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
 
   packer_build_workflows:
-    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch')
+    if: (github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     strategy:
       matrix:
