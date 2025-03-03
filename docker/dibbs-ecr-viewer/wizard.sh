@@ -4,7 +4,7 @@
 # environment variables and setting up the necessary configurations for running the application using Docker Compose.
 #
 # Functions:
-# - clear_dot_env: Clears the  file.
+# - clear_dot_env: Clears the file.
 # - display_intro: Displays an introductory message and documentation link.
 # - config_name: Prompts the user to select a configuration name from a list of options.
 # - set_dot_env_var: Prompts the user to input a value for a given environment variable, with an optional default value.
