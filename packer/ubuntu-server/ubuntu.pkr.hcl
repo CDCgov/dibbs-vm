@@ -31,16 +31,6 @@ packer {
   }
 }
 
-variable "dibbs_service" {
-  description = "The name of the service to be built"
-  type        = string
-}
-
-variable "dibbs_version" {
-  description = "The version of the service to be built"
-  type        = string
-}
-
 source "qemu" "iso" {
 vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image

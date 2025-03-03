@@ -35,8 +35,54 @@ jobs:
       what_to_check: ./packer
     uses: ./.github/workflows/checkForChanges.yml
 
-  packer_build:
-    if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true'
+  packer_build_main:
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'push')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - provisioners: ${{ inputs.provisioners }}
+          - services: ['dibbs-ecr-viewer', 'dibbs-query-connector']
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        with:
+          version: 1.11.2
+
+      # Needed for ISO builder
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25
+
+      # dibbs-ecr-viewer
+      - name: Run `packer init dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer init .
+    
+      - name: Run `packer validate dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer validate --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
+
+      - name: Run `packer build dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer build --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
+
+      # dibbs-query-connector
+      - name: Run `packer init dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer init .
+
+      - name: Run `packer validate dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer validate --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+
+      - name: Run `packer build dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer build --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+
+  packer_build_workflows:
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -54,30 +100,17 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25
 
-      - name: Run `packer init`
+      - name: Run `packer init ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        id: init
-        run: "packer init ./ubuntu.pkr.hcl"
+        run: packer init .
     
-      - name: Run `packer validate`
+      - name: Run `packer validate ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        id: validate
-        run: "packer validate ./ubuntu.pkr.hcl"
+        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
-      - name: Build dibbs-ecr-viewer Packer Image
-        if: github.event_name == 'push'
+      # workflow_call and workflow_dispatch for either service
+      - name: Run `packer build ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var-file=dibbs-ecr-viewer.pkr.hcl ./ubuntu.pkr.hcl
-      
-      - name: Build dibbs-query-connector Packer Image
-        # if the event is a push to main
-        if: github.event_name == 'push'
-        working-directory: ./packer/ubuntu-server
-        run: packer build --var-file=dibbs-query-connector.pkr.hcl ./ubuntu.pkr.hcl
+        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
-      - name: Build Workflow Call Packer Image
-        if: github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch'
-        working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} ./ubuntu.pkr.hcl
-
-        ## TODO: Decide how to export artifact.
+  ## TODO: Decide how to export artifact.

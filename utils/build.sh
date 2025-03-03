@@ -21,7 +21,13 @@ if [ -z "$1" ] || [ -z "$2" ]; then
     exit 1
 fi
 
+# init
+packer init .
+
+# validate
+packer validate --var dibbs_service=$1 --var dibbs_version=$2 .
+
 # Build the base image
-packer build --var dibbs_service=$1 --var dibbs_version=$2 ./ubuntu.pkr.hcl
+packer build --var dibbs_service=$1 --var dibbs_version=$2 .
 
 cd ../../utils/ || exit
