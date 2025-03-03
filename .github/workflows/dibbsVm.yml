@@ -9,6 +9,7 @@ permissions:
   contents: read
 
 jobs:
+
   build:
     runs-on: ubuntu-latest
 
@@ -25,11 +26,7 @@ jobs:
           echo "::set-output name=version::$version"
 
       - name: Build dibbs-vm for dibbs-ecr-viewer
-        if: ${{ steps.extract.outputs.service == 'dibbs-ecr-viewer' }}
-        run: |
-          echo "Building dibbs-vm version ${{ steps.extract.outputs.version }} for ${{ steps.extract.outputs.service }}"
-          
-      - name: Build dibbs-vm for dibbs-query-connector
-        if: ${{ steps.extract.outputs.service == 'dibbs-query-connector' }}
-        run: |
-          echo "Building dibbs-vm version ${{ steps.extract.outputs.version }} for ${{ steps.extract.outputs.service }}"
+        uses: ./.github/workflows/packMachines.yml
+        with:
+          service: ${{ steps.extract.outputs.service }}
+          version: ${{ steps.extract.outputs.version }}

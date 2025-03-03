@@ -4,6 +4,22 @@ on:
   push:
     branches:
       - main
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -19,16 +35,17 @@ jobs:
       what_to_check: ./packer
     uses: ./.github/workflows/checkForChanges.yml
 
-  packer_build:
-    if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true'
+  packer_build_main:
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'push')
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
           - provisioners: ${{ inputs.provisioners }}
+          - services: ['dibbs-ecr-viewer', 'dibbs-query-connector']
     steps:
       - uses: actions/checkout@v4
-            
+      
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
@@ -38,19 +55,62 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
 
-      - name: Run `packer init`
-        working-directory: ./packer
-        id: init
-        run: "packer init ./ubuntu.pkr.hcl"
+      # dibbs-ecr-viewer
+      - name: Run `packer init dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer init .
     
-      - name: Run `packer validate`
-        working-directory: ./packer
-        id: validate
-        run: "packer validate ./ubuntu.pkr.hcl"
-      
-        ## TODO: Add matrixed provisioner build here
-      - name: Build Packer Image
-        working-directory: ./packer
-        run: packer build ./ubuntu.pkr.hcl
+      - name: Run `packer validate dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer validate --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
 
-        ## TODO: Decide how to export artifact.
+      - name: Run `packer build dibbs-ecr-viewer`
+        working-directory: ./packer/ubuntu-server
+        run: packer build --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
+
+      # dibbs-query-connector
+      - name: Run `packer init dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer init .
+
+      - name: Run `packer validate dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer validate --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+
+      - name: Run `packer build dibbs-query-connector`
+        working-directory: ./packer/ubuntu-server
+        run: packer build --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+
+  packer_build_workflows:
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - provisioners: ${{ inputs.provisioners }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        with:
+          version: 1.11.2
+
+      # Needed for ISO builder
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25
+
+      - name: Run `packer init ${{ inputs.service }}`
+        working-directory: ./packer/ubuntu-server
+        run: packer init .
+    
+      - name: Run `packer validate ${{ inputs.service }}`
+        working-directory: ./packer/ubuntu-server
+        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
+
+      # workflow_call and workflow_dispatch for either service
+      - name: Run `packer build ${{ inputs.service }}`
+        working-directory: ./packer/ubuntu-server
+        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
+
+  ## TODO: Decide how to export artifact.

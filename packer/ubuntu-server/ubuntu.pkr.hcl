@@ -32,7 +32,7 @@ packer {
 }
 
 source "qemu" "iso" {
-vm_name              = "ubuntu-2404-ecrViewer.raw"
+vm_name              = "ubuntu-2404-${ var.dibbs_service }-${var.dibbs_version}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
   # iso_checksum         = "sha256:28d2f9df3ac0d24440eaf6998507df3405142cf94a55e1f90802c78e43d2d9df"
@@ -44,7 +44,7 @@ vm_name              = "ubuntu-2404-ecrViewer.raw"
   disk_image           = false
 
   memory               = 4096
-  output_directory     = "build/os-base"
+  output_directory     = "build/${ var.dibbs_service }-${var.dibbs_version}"
   //accelerator          = "hvf"
   disk_size            = "8000M"
   disk_interface       = "virtio"
@@ -83,11 +83,14 @@ build {
   sources = [
     "source.qemu.iso"
   ]
-  
   provisioner "shell" {
     only = ["qemu.iso"]
     scripts = [
         "scripts/provision.sh"
+    ]
+    environment_vars = [
+      "DIBBS_SERVICE=${ var.dibbs_service }",
+      "DIBBS_VERSION=${ var.dibbs_version }"
     ]
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
