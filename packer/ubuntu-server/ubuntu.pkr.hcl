@@ -31,17 +31,6 @@ packer {
   }
 }
 
-variable "dibbs_service" {
-  description = "The name of the service to be built"
-  type        = string
-  default     = "ecr-viewer"
-}
-
-variable "dibbs_version" {
-  description = "The version of the service to be built"
-  type        = string
-  default     = "v2" 
-}
 
 variable "aws_region" {
   description = "AWS region to build the AMI"
@@ -141,31 +130,21 @@ build {
     "source.qemu.iso",
     "source.amazon-ebs.aws-ami"
   ]
-  provisioner "shell" {
-    only = ["qemu.iso"]
-    scripts = [
-        "scripts/provision.sh"
-    ]
-    environment_vars = [
-      "DIBBS_SERVICE=${ var.dibbs_service }",
-      "DIBBS_VERSION=${ var.dibbs_version }"
-    ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-  }
 
+  # AWS-Specific Post-Install Provisioner (Runs Only on AWS)
   provisioner "shell" {
-    only = ["amazon-ebs.aws-ami"]
+    only   = ["amazon-ebs.aws-ami"]
     script = "scripts/aws-post-install.sh"
   }
 
+  # Common Provisioner for Both QEMU and AWS
   provisioner "shell" {
-    only = ["amazon-ebs.aws-ami"]
     scripts = [
       "scripts/provision.sh"
     ]
     environment_vars = [
-      "DIBBS_SERVICE=${var.dibbs_service}",
-      "DIBBS_VERSION=${var.dibbs_version}"
+      "DIBBS_SERVICE=${ var.dibbs_service }",
+      "DIBBS_VERSION=${ var.dibbs_version }"
     ]
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
