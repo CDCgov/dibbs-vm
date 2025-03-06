@@ -22,7 +22,7 @@ on:
         default: 'main'
 
 concurrency:
-  group: packerMachines
+  group: packerMachines-${{ github.event.client_payload.service || inputs.service || 'dibbs-vm' }}:${{ github.event.client_payload.version || inputs.version || 'main' }}
   cancel-in-progress: false
 
 permissions:
@@ -33,7 +33,7 @@ jobs:
     with:
       what_to_check: ./.github
     uses: ./.github/workflows/checkForChanges.yml
-    
+
   packer_changes:
     with:
       what_to_check: ./packer
