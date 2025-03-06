@@ -21,6 +21,10 @@ on:
         description: 'The version of the service to build'
         default: 'main'
 
+concurrency:
+  group: packerMachines
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -36,14 +40,12 @@ jobs:
     uses: ./.github/workflows/checkForChanges.yml
 
   packer_build_changes:
-    # or push on main
-    if: needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true' || github.ref == 'refs/heads/main'
+    # has changes, or push on main and not a workflow_dispatch or repository_dispatch
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true' || github.ref == 'refs/heads/main') && (github.event_name != 'workflow_dispatch' || github.event_name != 'repository_dispatch')
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - provisioners: ${{ inputs.provisioners }}
-          - services: ['dibbs-ecr-viewer', 'dibbs-query-connector']
+        service: ['dibbs-ecr-viewer', 'dibbs-query-connector']
     steps:
       - uses: actions/checkout@v4
       
@@ -61,11 +63,11 @@ jobs:
     
       - name: Run `packer validate`
         working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=${{ matrix.services }} --var dibbs_version=main .
+        run: packer validate --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
 
       - name: Run `packer build`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=${{ matrix.services }} --var dibbs_version=main .
+        run: packer build --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
 
   packer_build_repository_dispatch:
     if: github.event_name == 'repository_dispatch'
