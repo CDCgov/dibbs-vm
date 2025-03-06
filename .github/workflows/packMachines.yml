@@ -52,9 +52,8 @@ jobs:
         with:
           version: 1.11.2
 
-      # Needed for ISO builder
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init`
         working-directory: ./packer/ubuntu-server
@@ -79,9 +78,8 @@ jobs:
         with:
           version: 1.11.2
 
-      # Needed for ISO builder
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
@@ -91,7 +89,6 @@ jobs:
         working-directory: ./packer/ubuntu-server
         run: packer validate --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
 
-      # workflow_call and workflow_dispatch for either service
       - name: Run `packer build ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer build --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
@@ -111,9 +108,8 @@ jobs:
         with:
           version: 1.11.2
 
-      # Needed for ISO builder
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
@@ -123,7 +119,6 @@ jobs:
         working-directory: ./packer/ubuntu-server
         run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
-      # workflow_call and workflow_dispatch for either service
       - name: Run `packer build ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
