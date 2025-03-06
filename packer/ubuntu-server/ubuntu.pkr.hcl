@@ -35,6 +35,23 @@ packer {
   }
 }
 
+<<<<<<< HEAD
+=======
+
+variable "aws_region" {
+  description = "AWS region to build the AMI"
+  type        = string
+  default     = "us-east-1"
+}
+
+variable "aws_instance_type" {
+  description = "AWS instance type for the build"
+  type        = string
+  default     = "t3.medium"
+}
+
+
+>>>>>>> 4f9b5dd (updated AWS to use a unified provison.sh script)
 source "qemu" "iso" {
   vm_name = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
@@ -108,10 +125,24 @@ build {
     "source.amazon-ebs.aws-ami"
   ]
 
+<<<<<<< HEAD
   # AWS-Specific Post-Install Provisioner
   provisioner "shell" {
     only   = ["amazon-ebs.aws-ami"]
     script = "scripts/post-install.sh"
+=======
+  # AWS-Specific Post-Install Provisioner (Runs Only on AWS)
+  provisioner "shell" {
+    only   = ["amazon-ebs.aws-ami"]
+    script = "scripts/aws-post-install.sh"
+  }
+
+  # Common Provisioner for Both QEMU and AWS
+  provisioner "shell" {
+    scripts = [
+      "scripts/provision.sh"
+    ]
+>>>>>>> 4f9b5dd (updated AWS to use a unified provison.sh script)
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}",
@@ -120,6 +151,7 @@ build {
     ]
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
+<<<<<<< HEAD
 
   # QEMU/Hypervisor-Specific Post-Install Provisioner
   provisioner "shell" {
@@ -161,4 +193,6 @@ build {
     source      = "./scripts/apt-updates.sh.home"
     destination = "~/apt-updates.sh"
   }
+=======
+>>>>>>> 4f9b5dd (updated AWS to use a unified provison.sh script)
 }
