@@ -18,7 +18,7 @@ systemctl start docker.service
 # Check if DIBBS_SERVICE is valid
 # dibbs-ecr-viewer
 # dibbs-query-connect
-if [ "$DIBBS_SERVICE" == "dibbs-ecr-viewer" ] || [ "$DIBBS_SERVICE" == "dibbs-query-connect" ]; then
+if [ "$DIBBS_SERVICE" == "dibbs-ecr-viewer" ] || [ "$DIBBS_SERVICE" == "dibbs-query-connector" ]; then
   echo "DIBBS Service is valid. DIBBS_SERVICE=$DIBBS_SERVICE"
 else
   echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
