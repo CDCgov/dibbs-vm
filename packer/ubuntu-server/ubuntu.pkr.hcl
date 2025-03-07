@@ -73,7 +73,7 @@ source "qemu" "iso" {
   headless             = true
 }
 
-/*source "virtualbox-iso" "ecr-viewer" {
+/*source "virtualbox-iso" "${ var.dibbs_service }" {
 
 }*/
 
