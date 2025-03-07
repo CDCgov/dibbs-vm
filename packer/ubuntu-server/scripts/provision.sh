@@ -25,7 +25,7 @@ else
 fi
 
 # Clone the dibbs-vm repository
-git clone --branch alis/21_2 https://github.com/CDCgov/dibbs-vm.git
+git clone --branch alis/24 https://github.com/CDCgov/dibbs-vm.git
 cd "dibbs-vm/docker/$DIBBS_SERVICE"
 
 # ensures the DIBBS variables are set and accessible to the wizard
@@ -35,6 +35,8 @@ echo "" >> "$DIBBS_SERVICE.env"
 
 # enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
 echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/*.env' | xargs)' >> ~/.bashrc
+
+chown -R ubuntu:ubuntu ~/dibbs-vm
 
 # Trigger initial docker compose to pull image data
 docker compose up -d

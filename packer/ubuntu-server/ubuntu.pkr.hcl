@@ -95,4 +95,14 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
+  provisioner "file" {
+    source      = "./scripts/${ var.dibbs_service }-wizard.sh"
+    destination = "~/${ var.dibbs_service }-wizard.sh"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/dibbs-hot-upgrade.sh"
+    destination = "~/hot_upgrade.sh"
+  }
+
 }

@@ -4,12 +4,12 @@
 # environment variables and setting up the necessary configurations for running the application using Docker Compose.
 #
 # Functions:
-# - clear_dot_env: Clears the file.
+# - clear_dot_env: Clears the .wizard file.
 # - display_intro: Displays an introductory message and documentation link.
 # - config_name: Prompts the user to select a configuration name from a list of options.
-# - set_dot_env_var: Prompts the user to input a value for a given environment variable, with an optional default value.
+# - confirm_dot_env_var: Prompts the user to input a value for a given environment variable, displays the current value from .env.
 # - set_dot_vars: Sets environment variables based on the selected configuration name and calls relevant functions to set additional variables.
-# - confirm_vars: Displays the current environment variables and prompts the user to confirm them.
+# - confirm_update: Displays the current environment variables and prompts the user to confirm them.
 # - restart_docker_compose: Restarts Docker Compose with the updated environment variables.
 # - add_env: Adds a key-value pair to the dibbs_ecr_viewer_wizard file.
 # - pg: Sets environment variables for PostgreSQL configuration.
@@ -27,9 +27,10 @@
 # 6. Replaces the contents of the dibbs_ecr_viewer_env file with the contents of the dibbs_ecr_viewer_wizard file.
 # 7. Restarts Docker Compose with the updated environment variables.
 
-dibbs_ecr_viewer_env="dibbs-ecr-viewer.env"
-dibbs_ecr_viewer_bak="dibbs-ecr-viewer.bak"
-dibbs_ecr_viewer_wizard="dibbs-ecr-viewer.wizard"
+docker_directory=~/dibbs-vm/docker/dibbs-ecr-viewer
+dibbs_ecr_viewer_env=$docker_directory/dibbs-ecr-viewer.env
+dibbs_ecr_viewer_bak=$docker_directory/dibbs-ecr-viewer.bak
+dibbs_ecr_viewer_wizard=$docker_directory/dibbs-ecr-viewer.wizard
 
 clear_dot_env() {
   echo "" > "$dibbs_ecr_viewer_wizard"
@@ -48,6 +49,18 @@ display_intro() {
 }
 
 config_name() {
+  while IFS= read -r line; do
+    case $line in
+      CONFIG_NAME=*)
+        config_name=$(echo "$line" | cut -d'=' -f2)
+        ;;
+    esac
+  done < "$dibbs_ecr_viewer_env"
+  if [ -z "$config_name" ]; then
+    config_name="\e[1;33mNONE SELECTED\e[0m"
+  fi
+  echo -e "Current configuration: $config_name"
+  echo ""
   PS3='
   Please select your CONFIG_NAME: '
   options=("AWS_PG_NON_INTEGRATED" "AWS_SQLSERVER_NON_INTEGRATED" "AWS_INTEGRATED" "AZURE_INTEGRATED" "AZURE_PG_NON_INTEGRATED" "AZURE_SQLSERVER_NON_INTEGRATED" "Quit")
@@ -89,10 +102,10 @@ config_name() {
   done
 }
 
-set_dot_env_var() {
+confirm_dot_env_var() {
   value=$1
   default=$2
-  read -rp $'  \e[3m'"$value (default: $default):"$'\e[0m' choice
+  read -rp $'  \e[3m'"$value (Current Value: $default): "$'\e[0m' choice
   if [ -z "$choice" ]; then
     choice=$default
   fi
@@ -104,37 +117,45 @@ set_dot_env_var() {
 
 set_dot_vars() {
   add_env "CONFIG_NAME" $CONFIG_NAME
-  if [ "$CONFIG_NAME" == "AWS_PG_NON_INTEGRATED" ]; then
-    aws
-    nbs
-    pg
-  elif [ "$CONFIG_NAME" == "AWS_SQLSERVER_NON_INTEGRATED" ]; then
-    aws
-    nbs
-    sqlserver
-  elif [ "$CONFIG_NAME" == "AWS_INTEGRATED" ]; then
-    aws
-    nbs
-    pg
-  elif [ "$CONFIG_NAME" == "AZURE_INTEGRATED" ]; then
-    azure
-    nbs
-    pg
-  elif [ "$CONFIG_NAME" == "AZURE_PG_NON_INTEGRATED" ]; then
-    azure
-    nbs
-    pg
-  elif [ "$CONFIG_NAME" == "AZURE_SQLSERVER_NON_INTEGRATED" ]; then
-    azure
-    nbs
-    sqlserver
-  else
-    echo "Invalid configuration name. Please choose a valid configuration name."
-    exit 1
-  fi
+  case "$CONFIG_NAME" in
+    "AWS_PG_NON_INTEGRATED")
+      aws
+      nbs
+      pg
+      ;;
+    "AWS_SQLSERVER_NON_INTEGRATED")
+      aws
+      nbs
+      sqlserver
+      ;;
+    "AWS_INTEGRATED")
+      aws
+      nbs
+      pg
+      ;;
+    "AZURE_INTEGRATED")
+      azure
+      nbs
+      pg
+      ;;
+    "AZURE_PG_NON_INTEGRATED")
+      azure
+      nbs
+      pg
+      ;;
+    "AZURE_SQLSERVER_NON_INTEGRATED")
+      azure
+      nbs
+      sqlserver
+      ;;
+    *)
+      echo "Invalid configuration name. Please choose a valid configuration name."
+      exit 1
+      ;;
+  esac
 }
 
-confirm_vars() {
+confirm_update() {
   echo -e "\e[1;33mPlease confirm the following settings:\e[0m"
   vars=$(cat "$dibbs_ecr_viewer_wizard")
   echo -e "\e[1;36m$vars\e[0m"
@@ -153,8 +174,10 @@ confirm_vars() {
 }
 
 restart_docker_compose() {
+  cd $docker_directory
   docker compose down
   docker compose up -d
+  cd
 }
 
 add_env() {
@@ -162,47 +185,57 @@ add_env() {
 }
 
 pg() {
-  set_dot_env_var "DATABASE_URL" "postgresql://postgres:password@localhost:5432/postgres"
+  check_var DATABASE_URL
 }
 
 sqlserver() {
-  set_dot_env_var "SQL_SERVER_USER" "sa"
-  set_dot_env_var "SQL_SERVER_PASSWORD" "password"
-  set_dot_env_var "SQL_SERVER_HOST" "localhost"
-  set_dot_env_var "DB_CIPHER" ""
+  check_var SQL_SERVER_USER
+  check_var SQL_SERVER_PASSWORD
+  check_var SQL_SERVER_HOST
+  check_var DB_CIPHER
 }
 
 nbs() {
-  set_dot_env_var "NBS_AUTH" true
-  set_dot_env_var "NBS_PUB_KEY" ""
+  check_var NBS_PUB_KEY
 }
 
 aws() {
-  set_dot_env_var "AWS_REGION" "us-east-1"
-  set_dot_env_var "ECR_BUCKET_NAME" ""
+  check_var AWS_REGION
+  check_var ECR_BUCKET_NAME
 }
 
 azure() {
-  set_dot_env_var "AZURE_STORAGE_CONNECTION_STRING" ""
-  set_dot_env_var "AZURE_CONTAINER_NAME" ""
+  check_var AZURE_STORAGE_CONNECTION_STRING
+  check_var AZURE_CONTAINER_NAME
+}
+
+check_var() {
+  if [ "$1" == "DIBBS_SERVICE" ]; then
+    echo -e "  \e[1;36mSetting: DIBBS_SERVICE=dibbs-ecr-viewer\e[0m"
+    echo ""
+    add_env "$1" "dibbs-ecr-viewer"
+  else
+    while IFS= read -r line; do
+      case $line in
+        $1=*)
+          var=$(echo "$line" | cut -d'=' -f2)
+          ;;
+      esac
+    done < "$dibbs_ecr_viewer_env"
+    if [[ $var == "" ]]; then
+      echo -e "\e[1;33m$1 is not set.\e[0m"
+      echo ""
+    fi
+    confirm_dot_env_var "$1" "$var"
+  fi
 }
 
 docker_compose_vars() {
   # parse ecr-viewer.env file for environment variables
   echo -e "\e[1;33mParsing eCR Viewer for default environment variables...\e[0m"
   echo ""
-  while IFS= read -r line; do
-    case $line in
-      DIBBS_SERVICE=*)
-        dibbs_service=$(echo "$line" | cut -d'=' -f2)
-        ;;
-      DIBBS_VERSION=*)
-        dibbs_version=$(echo "$line" | cut -d'=' -f2)
-        ;;
-    esac
-  done < "$dibbs_ecr_viewer_env"
-  add_env "DIBBS_SERVICE" "$dibbs_service"
-  set_dot_env_var "DIBBS_VERSION" "$dibbs_version"
+  check_var DIBBS_SERVICE
+  check_var DIBBS_VERSION
 }
 
 clear_dot_env
@@ -210,5 +243,5 @@ display_intro
 docker_compose_vars
 config_name
 set_dot_vars
-confirm_vars
+confirm_update
 restart_docker_compose
