@@ -13,6 +13,9 @@
 # Set default sudo behavior (empty means no sudo)
 USE_SUDO="${USE_SUDO:-}"
 
+# Set default sudo behavior (empty means no sudo)
+USE_SUDO="${USE_SUDO:-}"
+
 # Install Docker
 echo "Starting post-install configuration..."
 
@@ -55,5 +58,8 @@ $USE_SUDO apt-get update -y
 $USE_SUDO apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 echo "Docker installation complete!"
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> e63d5be (Refactor post-install script to use sudo as a configurable variable)
