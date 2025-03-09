@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ../packer/ubuntu-server/ || exit
+cd packer/ubuntu-server/ || exit
 
 # check if the build directory exists
 if [ -d "build/$1-$2" ]; then
@@ -30,4 +30,4 @@ packer validate --var dibbs_service=$1 --var dibbs_version=$2 .
 # Build the base image
 packer build --var dibbs_service=$1 --var dibbs_version=$2 .
 
-cd ../../utils/ || exit
+cd ../../ || exit

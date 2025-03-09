@@ -1,4 +1,14 @@
 #!/bin/bash
+# This script provisions an Ubuntu server for the DIBBS project by performing the following steps:
+# 1. Exports environment variables from all .env files in the current directory and its subdirectories.
+# 2. Adjusts Docker group permissions by adding the 'docker' group and adding the 'ubuntu' user to it.
+# 3. Sets Docker as a system service and enables container autostart.
+# 4. Validates the DIBBS_SERVICE environment variable to ensure it is either 'dibbs-ecr-viewer' or 'dibbs-query-connect'.
+# 5. Clones the 'dibbs-vm' repository from GitHub and navigates to the appropriate service directory.
+# 6. Ensures the DIBBS_SERVICE and DIBBS_VERSION variables are set and accessible to the wizard by appending them to the service's .env file.
+# 7. Enables Docker Compose variables to stay set on reboot by appending the export command to the .bashrc file.
+# 8. Changes ownership of the 'dibbs-vm' directory to the 'ubuntu' user.
+# 9. Triggers an initial Docker Compose to pull image data and start the containers.
 
 # loop through all .env files and export the variables
 for file in $(find . -name "*.env"); do
@@ -34,8 +44,9 @@ echo "DIBBS_VERSION=$DIBBS_VERSION" >> "$DIBBS_SERVICE.env"
 echo "" >> "$DIBBS_SERVICE.env"
 
 # enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
-echo 'export $(cat '~/dibbs-vm/docker/$DIBBS_SERVICE/*.env' | xargs)' >> ~/.bashrc
+echo 'export $(cat '~/dibbs-vm/docker/"$DIBBS_SERVICE"/*.env' | xargs)' >> ~/.bashrc
 
+# Gives ubuntu user ownership of the dibbs-vm directory
 chown -R ubuntu:ubuntu ~/dibbs-vm
 
 # Trigger initial docker compose to pull image data
