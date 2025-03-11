@@ -27,10 +27,10 @@
 # 6. Replaces the contents of the dibbs_ecr_viewer_env file with the contents of the dibbs_ecr_viewer_wizard file.
 # 7. Restarts Docker Compose with the updated environment variables.
 
-docker_directory=~/dibbs-vm/docker/dibbs-ecr-viewer
-dibbs_ecr_viewer_env=$docker_directory/dibbs-ecr-viewer.env
-dibbs_ecr_viewer_bak=$docker_directory/dibbs-ecr-viewer.bak
-dibbs_ecr_viewer_wizard=$docker_directory/dibbs-ecr-viewer.wizard
+project_dir=$HOME/dibbs-vm/dibbs-ecr-viewer
+dibbs_ecr_viewer_env=$project_dir/dibbs-ecr-viewer.env
+dibbs_ecr_viewer_bak=$project_dir/dibbs-ecr-viewer.bak
+dibbs_ecr_viewer_wizard=$project_dir/dibbs-ecr-viewer.wizard
 
 clear_dot_env() {
   echo "" > "$dibbs_ecr_viewer_wizard"
@@ -116,7 +116,7 @@ confirm_dot_env_var() {
 }
 
 set_dot_vars() {
-  add_env "CONFIG_NAME" $CONFIG_NAME
+  add_env "CONFIG_NAME" "$CONFIG_NAME"
   case "$CONFIG_NAME" in
     "AWS_PG_NON_INTEGRATED")
       aws
@@ -174,10 +174,10 @@ confirm_update() {
 }
 
 restart_docker_compose() {
-  cd $docker_directory
+  cd "$project_dir" || exit
   docker compose down
   docker compose up -d
-  cd
+  cd -
 }
 
 add_env() {

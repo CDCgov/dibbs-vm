@@ -5,9 +5,9 @@ This guide will help you launch a virtual machine (VM) in AWS using an AMI with 
 ## Steps to Launch a VM with User-Data Scripts
 
 1. **Create a VM**:
-   - Go to the ec2 web interface.
+   - Go to the EC2 web interface.
    - Click on "Launch Instance" and follow the wizard to configure your VM.
-   - In the "Configure Instance Details" step, add your user-data scripts under the "Advanced Details" section.
+   - In the "Configure Instance Details" step, enter your user-data scripts in the "Advanced Details" section.
    - The user-data scripts will execute during the VM's initialization.
 
 2. **Start the VM**:
@@ -52,4 +52,3 @@ NBS_PUB_KEY=
 
 EOF
 ```
-

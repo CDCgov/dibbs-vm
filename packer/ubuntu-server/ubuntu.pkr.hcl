@@ -83,13 +83,13 @@ build {
   }
 
   provisioner "file" {
-    source      = "./scripts/${var.dibbs_service}-wizard.sh"
+    source      = "../../${var.dibbs_service}/${var.dibbs_service}-wizard.sh.home"
     destination = "~/${var.dibbs_service}-wizard.sh"
   }
 
   provisioner "file" {
-    source      = "./scripts/dibbs-hot-upgrade.sh"
-    destination = "~/hot_upgrade.sh"
+    source      = "./scripts/hot-upgrade.sh.home"
+    destination = "~/hot-upgrade.sh"
   }
 
 }
