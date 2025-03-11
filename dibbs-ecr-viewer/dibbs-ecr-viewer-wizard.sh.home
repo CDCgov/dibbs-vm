@@ -120,32 +120,26 @@ set_dot_vars() {
   case "$CONFIG_NAME" in
     "AWS_PG_NON_INTEGRATED")
       aws
-      nbs
       pg
       ;;
     "AWS_SQLSERVER_NON_INTEGRATED")
       aws
-      nbs
       sqlserver
       ;;
     "AWS_INTEGRATED")
       aws
       nbs
-      pg
       ;;
     "AZURE_INTEGRATED")
       azure
       nbs
-      pg
       ;;
     "AZURE_PG_NON_INTEGRATED")
       azure
-      nbs
       pg
       ;;
     "AZURE_SQLSERVER_NON_INTEGRATED")
       azure
-      nbs
       sqlserver
       ;;
     *)
