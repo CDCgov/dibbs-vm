@@ -10,11 +10,6 @@
 # 8. Changes ownership of the 'dibbs-vm' directory to the 'ubuntu' user.
 # 9. Triggers an initial Docker Compose to pull image data and start the containers.
 
-# loop through all .env files and export the variables
-for file in $(find . -name "*.env"); do
-  export $(cat $file | xargs)
-done
-
 # Adjust Docker group permissions.
 groupadd docker
 usermod -aG docker ubuntu
@@ -42,6 +37,11 @@ cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "$DIBBS_SERVICE.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >> "$DIBBS_SERVICE.env"
 echo "" >> "$DIBBS_SERVICE.env"
+
+# loop through all .env files and export the variables
+# for file in $(find . -name "*.env"); do
+#   export $(cat $file | xargs)
+# done
 
 # enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
 echo 'export $(cat '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' | xargs)' >> "$HOME"/.bashrc
