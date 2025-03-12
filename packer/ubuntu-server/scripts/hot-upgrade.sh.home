@@ -28,7 +28,7 @@ else
 fi
 
 # Clone the dibbs-vm repository
-git clone --branch alis/24 https://github.com/CDCgov/dibbs-vm.git
+git clone https://github.com/CDCgov/dibbs-vm.git
 
 find "$dibbs_vm_bak_dir/$DIBBS_SERVICE" -name "*.env" | while read file; do
   cat "$file" > "$dibbs_vm_dir/$DIBBS_SERVICE/$(basename "$file")"
