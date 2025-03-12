@@ -11,7 +11,6 @@
 
 set -e
 
-# This script updates the ubuntu server packages, security updates, system upgrades, removes unnecessary packages, and cleans up the cache.
 set_defaults() {
   apt_update=false
   apt_upgrade=false
@@ -23,7 +22,6 @@ msg() {
   echo -e "\e[1;32m$1\e[0m"
 }
 
-# if no arguments are passed, run the help message
 help() {
   echo "Usage: ./updates.sh [-u] [-d] [-a] [-c] [-h] OR [-udac]"
   echo "Run all options: ./updates.sh -udac"
@@ -37,28 +35,24 @@ help() {
 }
 
 check_options() {
+  # if no arguments are passed, run the help message
   if [ $# -eq 0 ]; then
     help
   fi
   while getopts "udach" opt; do
     case ${opt} in
       u )
-        # set apt_update to true
         apt_update=true
         ;;
       d )
-        # set apt_upgrade to true
         apt_upgrade=true
         ;;
       a )
-        # set apt_autoremove to true
         apt_autoremove=true
         ;;
       c )
-        # set apt_clean to true
         apt_clean=true
         ;;
-      # update this to run if no arguments are passed
       h )
         help
         ;;
@@ -70,8 +64,7 @@ check_options() {
   shift $((OPTIND -1))
 }
 
-# run the update, upgrade, autoremove, and clean commands
-run_update() {
+run_commands() {
   if [ "$apt_update" = true ]; then
     msg "Updating package list..."
     sudo apt update -y
@@ -96,4 +89,4 @@ run_update() {
 
 set_defaults
 check_options "$@"
-run_update
+run_commands
