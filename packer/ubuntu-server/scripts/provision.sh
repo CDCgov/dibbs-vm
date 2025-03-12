@@ -32,7 +32,6 @@ fi
 # Clone the dibbs-vm repository
 git clone https://github.com/CDCgov/dibbs-vm.git
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit
-git switch origin/rin/docs
 
 # ensures the DIBBS variables are set and accessible to the wizard
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "$DIBBS_SERVICE.env"
