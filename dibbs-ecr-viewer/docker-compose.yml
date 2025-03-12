@@ -70,7 +70,7 @@ services:
 
   docs:
     build:
-      context: ./../docs/vm-docs
+      context: ./../docs
       dockerfile: Dockerfile
     ports:
       - "80:80"
