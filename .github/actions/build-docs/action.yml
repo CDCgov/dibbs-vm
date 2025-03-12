@@ -21,5 +21,4 @@ runs:
       uses: docker/build-push-action@v5
       with:
         context: ./docs
-        file: ./docs/dockerfile
-        tags: ghcr.io/cdcgov/dibbs-cloud/docs:${{ env.COMMIT_SHORT_SHA }}
+        file: ./docs/Dockerfile
