@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ecr-viewer:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/ecr-viewer:$DIBBS_VERSION
