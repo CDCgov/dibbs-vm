@@ -19,6 +19,10 @@ set_defaults() {
   apt_clean=false
 }
 
+msg() {
+  echo -e "\e[1;32m$1\e[0m"
+}
+
 # if no arguments are passed, run the help message
 help() {
   echo "Usage: ./updates.sh [-u] [-d] [-a] [-c] [-h] OR [-udac]"
@@ -69,25 +73,24 @@ check_options() {
 # run the update, upgrade, autoremove, and clean commands
 run_update() {
   if [ "$apt_update" = true ]; then
-    echo -e "\e[1;32mUpdating package list...\e[0m"
+    msg "Updating package list..."
     sudo apt update -y
-    echo -e "\e[1;32mPackage list updated\e[0m"
+    msg "Package list updated"
   fi
   if [ "$apt_upgrade" = true ]; then
-    echo -e "\e[1;32mUpgrading installed packages...\e[0m"
+    msg "Upgrading installed packages..."
     sudo apt upgrade -y
-    echo -e "\e[1;32mInstalled packages upgraded\e[0m"
+    msg "Installed packages upgraded"
   fi
   if [ "$apt_autoremove" = true ]; then
-    echo -e "\e[1;32mRemoving unnecessary packages...\e[0m"
+    msg "Removing unnecessary packages..."
     sudo apt autoremove -y
-    echo -e "\e[1;32mUnnecessary packages removed\e[0m"
+    msg "Unnecessary packages removed"
   fi
   if [ "$apt_clean" = true ]; then
-    # retry the clean command if it can't get a lock
-    echo -e "\e[1;32mCleaning up the cache...\e[0m"
+    msg "Cleaning up the cache..."
     sudo apt clean
-    echo -e "\e[1;32mCache cleaned\e[0m"
+    msg "Cache cleaned up"
   fi
 }
 
