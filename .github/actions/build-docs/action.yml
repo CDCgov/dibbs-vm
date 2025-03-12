@@ -1,0 +1,25 @@
+name: Build Docs Container
+run-name: Build Docs Container by @{{github.actor}}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v4
+    - name: Set short git commit SHA
+      shell: bash
+      id: vars
+      run: |
+        calculatedSha=$(git rev-parse --short ${{ github.sha }})
+        echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+ 
+    - name: Confirm git commit SHA output
+      shell: bash
+      run: |
+        echo ${{ env.COMMIT_SHORT_SHA }}   
+
+    - name: Build Docker Image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./docs
+        file: ./docs/dockerfile
+        tags: ghcr.io/cdcgov/dibbs-cloud/docs:${{ env.COMMIT_SHORT_SHA }}
