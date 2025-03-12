@@ -68,6 +68,13 @@ services:
     networks:
       - dibbs
 
+  docs:
+    build:
+      context: ./../docs/vm-docs
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+
 volumes:
   portainer_data:
 
