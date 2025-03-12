@@ -32,4 +32,4 @@ packer validate --var dibbs_service="$service" --var dibbs_version="$version" .
 # Build the base image
 packer build --var dibbs_service="$service" --var dibbs_version="$version" .
 
-cd ../../ || exit
+cd - || exit
