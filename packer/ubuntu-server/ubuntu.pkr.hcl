@@ -92,4 +92,9 @@ build {
     destination = "~/hot-upgrade.sh"
   }
 
+  provisioner "file" {
+    source      = "./scripts/apt-updates.sh.home"
+    destination = "~/apt-updates.sh"
+  }
+
 }
