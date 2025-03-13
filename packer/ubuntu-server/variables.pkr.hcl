@@ -20,10 +20,6 @@ variable "dibbs_version" {
   type        = string
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bd5052a (Updated variables.pkr.hcl for improved parameterization with aws region and instance)
 variable "aws_region" {
   description = "AWS region to build the AMI"
   type        = string
@@ -31,10 +27,6 @@ variable "aws_region" {
 
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> bd5052a (Updated variables.pkr.hcl for improved parameterization with aws region and instance)
 variable "aws_instance_type" {
   description = "AWS instance type for the build"
   type        = string
