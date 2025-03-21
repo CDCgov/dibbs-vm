@@ -33,3 +33,27 @@ variable "aws_instance_type" {
   default     = "t3.medium"
 
 }
+
+variable "subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+  default     = env("ARM_SUBSCRIPTION_ID") # Automatically pulls from env
+}
+
+variable "client_id" {
+  description = "Azure Client ID"
+  type        = string
+  default     = env("ARM_CLIENT_ID")
+}
+
+variable "client_secret" {
+  description = "Azure Client Secret"
+  type        = string
+  default     = env("ARM_CLIENT_SECRET")
+}
+
+variable "tenant_id" {
+  description = "Azure Tenant ID"
+  type        = string
+  default     = env("ARM_TENANT_ID")
+}
