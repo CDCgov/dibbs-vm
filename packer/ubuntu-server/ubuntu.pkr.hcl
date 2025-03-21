@@ -4,14 +4,14 @@
 
 packer {
   required_plugins {
-     amazon = {
-     source  = "github.com/hashicorp/amazon"
-     version = "~> 1.3.4"
-     }
-    # azure = {
-    #   source  = "github.com/hashicorp/azure"
-    #   version = "~> 2.2.0"
-    # }
+    amazon = {
+      source  = "github.com/hashicorp/amazon"
+      version = "~> 1.3.4"
+    }
+    azure = {
+      source  = "github.com/hashicorp/azure"
+      version = "~> 2.2.0"
+    }
     # hyperv = {
     #   source  = "github.com/hashicorp/hyperv"
     #   version = "~> 1.1.4"
@@ -101,15 +101,48 @@ source "amazon-ebs" "aws-ami" {
   }
 }
 
-build {
-  name = "multi-build"
+source "azure-arm" "azure-image" {
+  azure_tags = {
+    dept = "Dev"
+    task = "Image deployment"
+  }
 
+  subscription_id                   = var.subscription_id
+  client_id                         = var.client_id
+  client_secret                     = var.client_secret
+  tenant_id                         = var.tenant_id
+  location                          = "eastus"
+  vm_size                           = "Standard_D2s_v3"
+  image_publisher                   = "Canonical"
+  image_offer                       = "ubuntu-24_04-lts"
+  image_sku                         = "server"
+  managed_image_name                = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+  managed_image_resource_group_name = "skylight-dibbs-vm1"
+  os_type                           = "Linux"
+  ssh_username                      = "ubuntu"
+}
+
+
+build {
+  name = "multi-cloud-build"
   sources = [
     "source.qemu.iso",
-    "source.amazon-ebs.aws-ami"
+    "source.amazon-ebs.aws-ami",
+    "source.azure-arm.azure-image"
   ]
 
-  # AWS-Specific Post-Install Provisioner
+  provisioner "shell" {
+    only   = ["azure-arm.azure-image"]
+    script = "scripts/post-install.sh"
+    environment_vars = [
+      "DIBBS_SERVICE=${var.dibbs_service}",
+      "DIBBS_VERSION=${var.dibbs_version}",
+      "USE_SUDO=sudo",
+      "BUILD_TYPE=azure"
+    ]
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+  }
+
   provisioner "shell" {
     only   = ["amazon-ebs.aws-ami"]
     script = "scripts/post-install.sh"
@@ -122,7 +155,6 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
-  # QEMU/Hypervisor-Specific Post-Install Provisioner
   provisioner "shell" {
     only   = ["qemu.iso"]
     script = "scripts/post-install.sh"
@@ -135,7 +167,6 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} bash '{{.Path}}'"
   }
 
-  # Common Provisioner for Both QEMU and AWS
   provisioner "shell" {
     scripts = [
       "scripts/provision.sh"
@@ -147,7 +178,6 @@ build {
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
-  # File Transfer Provisioners
   provisioner "file" {
     source      = "../../${var.dibbs_service}/${var.dibbs_service}-wizard.sh.home"
     destination = "~/${var.dibbs_service}-wizard.sh"
