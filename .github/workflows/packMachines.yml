@@ -55,6 +55,11 @@ jobs:
         service: ['dibbs-ecr-viewer', 'dibbs-query-connector']
     steps:
       - uses: actions/checkout@v4
+
+      - name: login into Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
       
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
@@ -75,6 +80,7 @@ jobs:
       - name: Run `packer build`
         working-directory: ./packer/ubuntu-server
         run: packer build --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
+
 
   packer_build_repository_dispatch:
     if: github.event_name == 'repository_dispatch'
