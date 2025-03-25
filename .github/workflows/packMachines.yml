@@ -61,7 +61,13 @@ jobs:
         with:
             creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
-      
+      - name: Set AWS & Azure Credentials
+        run: |
+              export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+              export ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}
+              export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+              export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+              echo "Azure credentials set"
       
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
@@ -97,6 +103,14 @@ jobs:
         with:
            creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
       
+      - name: Set Azure Credentials
+        run: |
+                 export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                 export ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}
+                 export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+                 export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                 echo "Azure credentials set"
+
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
@@ -133,6 +147,14 @@ jobs:
         with:
           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
 
+      - name: Set AWS & Azure Credentials
+        run: |
+                export ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}
+                export ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}
+                export ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}
+                export ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}
+                echo "Azure credentials set"
+                
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
