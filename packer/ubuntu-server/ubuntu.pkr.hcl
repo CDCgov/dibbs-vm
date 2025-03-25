@@ -120,6 +120,9 @@ source "azure-arm" "azure-image" {
   managed_image_resource_group_name = "skylight-dibbs-vm1"
   os_type                           = "Linux"
   ssh_username                      = "ubuntu"
+
+   # Disable Managed Identity
+  use_managed_identity = false
 }
 
 
