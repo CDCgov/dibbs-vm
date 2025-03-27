@@ -122,7 +122,7 @@ source "azure-arm" "azure-image" {
   ssh_username                      = "ubuntu"
 
    # disable Managed Identity
-  use_managed_identity              = false
+  #use_managed_identity              = false
 
 }
 
