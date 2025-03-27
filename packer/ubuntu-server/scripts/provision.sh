@@ -44,5 +44,6 @@ echo 'export $(cat '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' | xargs)' >> "$HOME"/
 # Gives ubuntu user ownership of the dibbs-vm directory
 chown -R ubuntu:ubuntu "$HOME/dibbs-vm"
 
-# Trigger initial docker compose to pull image data
+# Trigger initial docker compose commands to construct container stack
+docker compose build
 docker compose up -d
