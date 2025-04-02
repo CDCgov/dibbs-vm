@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# This script is a setup wizard for the eCR Viewer application. It guides the user through the process of configuring
+# environment variables and setting up the necessary configurations for running the application using Docker Compose.
+#
+# Functions:
+# - clear_dot_env: Clears the .wizard file.
+# - display_intro: Displays an introductory message and documentation link.
+# - config_name: Prompts the user to select a configuration name from a list of options.
+# - confirm_dot_env_var: Prompts the user to input a value for a given environment variable, displays the current value from .env.
+# - set_dot_vars: Sets environment variables based on the selected configuration name and calls relevant functions to set additional variables.
+# - confirm_update: Displays the current environment variables and prompts the user to confirm them.
+# - restart_docker_compose: Restarts Docker Compose with the updated environment variables.
+# - add_env: Adds a key-value pair to the dibbs_ecr_viewer_wizard file.
+# - pg: Sets environment variables for PostgreSQL configuration.
+# - sqlserver: Sets environment variables for SQL Server configuration.
+# - nbs: Sets environment variables for NBS (National Electronic Disease Surveillance System Base System) configuration.
+# - aws: Sets environment variables for AWS configuration.
+# - azure: Sets environment variables for Azure configuration.
+#
+# The script follows these steps:
+# 1. Clears the dibbs_ecr_viewer_wizard file.
+# 2. Displays an introductory message.
+# 3. Prompts the user to select a configuration name.
+# 4. Sets environment variables based on the selected configuration.
+# 5. Prompts the user to confirm the environment variables.
+# 6. Replaces the contents of the dibbs_ecr_viewer_env file with the contents of the dibbs_ecr_viewer_wizard file.
+# 7. Restarts Docker Compose with the updated environment variables.
+
+project_dir=$HOME/dibbs-vm/dibbs-query-connector
+dibbs_query_connector_env=$project_dir/dibbs-query-connector.env
+# dibbs_ecr_viewer_bak=$project_dir/dibbs-ecr-viewer.bak
+dibbs_query_connector_wizard=$project_dir/dibbs-query-connector.wizard
+
+clear_dot_env() {
+  echo "" > "$dibbs_query_connector_wizard"
+}
+
+display_intro() {
+  echo ""
+  echo -e "\e[1;32m**********************************************\e[0m"
+  echo -e "\e[1;32m*                                            *\e[0m"
+  echo -e "\e[1;32m*\e[0m   \e[1;37mWARNING: This virtual machine includes a database for DEVELOPMENT USE ONLY.
+It is NOT configured for production and should NOT be used for live data.
+Security, performance, and reliability settings are not production-ready.\e[0m   \e[1;32m*\e[0m"
+  echo -e "\e[1;32m*                                            *\e[0m"
+  echo -e "\e[1;32m**********************************************\e[0m"
+  echo ""
+  echo -e "\e[1;32mDocumentation can be found at: \e[4;36mhttps://github.com/CDCgov/dibbs-vm\e[0m"
+  echo ""
+}
+
+
+
+display_intro
+
