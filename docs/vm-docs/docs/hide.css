@@ -1,0 +1,10 @@
+/*
+ * Hide theme advertisement while retaining it in source code for license compliance
+ */
+footer > div, footer > hr {
+    visibility: visible;
+}
+
+footer {
+    visibility: hidden;
+}

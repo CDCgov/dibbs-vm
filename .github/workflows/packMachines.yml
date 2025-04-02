@@ -4,22 +4,26 @@ on:
   push:
     branches:
       - main
-  workflow_call:
-    inputs:
-      service:
-        required: true
-        type: string
-      version:
-        required: true
-        type: string
+  repository_dispatch:
+    types: [trigger-workflow]
   workflow_dispatch:
     inputs:
       service:
         required: true
-        type: string
+        description: 'The service to build'
+        type: choice
+        options:
+          - dibbs-ecr-viewer
+          - dibbs-query-connector
       version:
         required: true
         type: string
+        description: 'The version of the service to build'
+        default: 'main'
+
+concurrency:
+  group: packerMachines
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -35,14 +39,19 @@ jobs:
       what_to_check: ./packer
     uses: ./.github/workflows/checkForChanges.yml
 
-  packer_build_main:
-    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true') && (github.event_name == 'push')
+  docs_build:
     runs-on: ubuntu-latest
+    steps: 
+      - uses: ./.github/actions/build-docs
+  
+  packer_build_changes:
+    # has changes, or push on main and not a workflow_dispatch or repository_dispatch
+    if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true' || github.ref == 'refs/heads/main') && (github.event_name != 'workflow_dispatch' || github.event_name != 'repository_dispatch')
+    runs-on: ubuntu-latest
+    needs: [ docs_build ]
     strategy:
       matrix:
-        include:
-          - provisioners: ${{ inputs.provisioners }}
-          - services: ['dibbs-ecr-viewer', 'dibbs-query-connector']
+        service: ['dibbs-ecr-viewer', 'dibbs-query-connector']
     steps:
       - uses: actions/checkout@v4
       
@@ -51,38 +60,51 @@ jobs:
         with:
           version: 1.11.2
 
-      # Needed for ISO builder
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
-      # dibbs-ecr-viewer
-      - name: Run `packer init dibbs-ecr-viewer`
+      - name: Run `packer init`
         working-directory: ./packer/ubuntu-server
         run: packer init .
     
-      - name: Run `packer validate dibbs-ecr-viewer`
+      - name: Run `packer validate`
         working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
+        run: packer validate --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
 
-      - name: Run `packer build dibbs-ecr-viewer`
+      - name: Run `packer build`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=dibbs-ecr-viewer --var dibbs_version=main .
+        run: packer build --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
 
-      # dibbs-query-connector
-      - name: Run `packer init dibbs-query-connector`
+  packer_build_repository_dispatch:
+    if: github.event_name == 'repository_dispatch'
+    runs-on: ubuntu-latest
+    needs: [ docs_build ]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        with:
+          version: 1.11.2
+
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+
+      - name: Run `packer init ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer init .
-
-      - name: Run `packer validate dibbs-query-connector`
+    
+      - name: Run `packer validate ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+        run: packer validate --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
 
-      - name: Run `packer build dibbs-query-connector`
+      - name: Run `packer build ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=dibbs-query-connector --var dibbs_version=main .
+        run: packer build --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
 
-  packer_build_workflows:
-    if: (github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch')
+  packer_build_workflow_dispatch:
+    if: github.event_name == 'workflow_dispatch'
+    needs: [ docs_build ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -96,9 +118,8 @@ jobs:
         with:
           version: 1.11.2
 
-      # Needed for ISO builder
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@4574d27a4764455b42196d70a065bc6853246a25
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
@@ -108,7 +129,6 @@ jobs:
         working-directory: ./packer/ubuntu-server
         run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
-      # workflow_call and workflow_dispatch for either service
       - name: Run `packer build ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
