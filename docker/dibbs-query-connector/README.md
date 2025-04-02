@@ -1,3 +1,12 @@
+### Development Database Disclaimer
+
+This virtual machine image includes a database intended **for development purposes only**.  
+It is **not configured for production use** and should not be used to store sensitive or live data.  
+Performance, security, and reliability settings may differ from production environments.  
+
+**Use this database only for testing and development.**
+
+
 ### Query Connector Data for Query Building
 
 When initializing the backend database for the first time, the Query Connector makes the value sets associated with 200+ reportable conditions available to users tasked with building queries for their jurisdiction. To run this seeding script, you'll need to obtain the UMLS and eRSD API key's using the instructions below.
