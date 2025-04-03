@@ -29,11 +29,9 @@ else
   echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
 fi
 
+
 # Clone the dibbs-vm repository
-git clone https://github.com/CDCgov/dibbs-vm.git
-cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
-#adding for testing purposes, remove once verify image changes
-git switch shanice/query-connector
+git clone --branch shanice/query-connector https://github.com/CDCgov/dibbs-vm.git
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
 pwd || exit
 

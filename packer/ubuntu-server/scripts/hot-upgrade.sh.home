@@ -27,12 +27,9 @@ else
   echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
 fi
 
-# Clone the dibbs-vm repository
-git clone https://github.com/CDCgov/dibbs-vm.git
+# Clone the dibbs-vm repository #adding for testing purposes,remove once verify image changes
+git clone --branch shanice/query-connector https://github.com/CDCgov/dibbs-vm.git
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
-#adding for testing purposes, remove once verify image changes
-git switch shanice/query-connector
-
 
 find "$dibbs_vm_bak_dir/$DIBBS_SERVICE" -name "*.env" | while read file; do
   cat "$file" > "$dibbs_vm_dir/$DIBBS_SERVICE/$(basename "$file")"
