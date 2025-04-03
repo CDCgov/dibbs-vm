@@ -29,7 +29,7 @@
 
 project_dir=$HOME/dibbs-vm/dibbs-query-connector
 dibbs_query_connector_env=$project_dir/dibbs-query-connector.env
-# dibbs_ecr_viewer_bak=$project_dir/dibbs-ecr-viewer.bak
+dibbs_query_connecotr_bak=$project_dir/dibbs-query-connector.bak
 dibbs_query_connector_wizard=$project_dir/dibbs-query-connector.wizard
 
 clear_dot_env() {
