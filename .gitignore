@@ -6,6 +6,6 @@ docker/dibbs-ecr-viewer/.env
 docker/dibbs-ecr-viewer/ecr-viewer.wizard
 docker/dibbs-ecr-viewer/ecr-viewer.bak
 
-docker/dibbs-query-connectory/.env
-docker/dibbs-query-connectory/query-connectory.wizard.env
-docker/dibbs-query-connectory/query-connectory.env.bak
+docker/dibbs-query-connector/.env
+docker/dibbs-query-connector/query-connector.wizard.env
+docker/dibbs-query-connector/query-connector.env.bak

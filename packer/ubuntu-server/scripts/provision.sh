@@ -31,7 +31,9 @@ fi
 
 # Clone the dibbs-vm repository
 git clone https://github.com/CDCgov/dibbs-vm.git
-cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit
+cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
+#adding for testing purposes, remove once verify image changes
+git switch shanice/query-connector || exit
 
 # ensures the DIBBS variables are set and accessible to the wizard
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "$DIBBS_SERVICE.env"
