@@ -17,9 +17,7 @@ services:
   # Next.js app
   query-connector:
     image: ghcr.io/cdcgov/dibbs-query-connector/query-connector:latest
-    command: node server.js
     restart: always
-    platform: linux/amd64
     build:
       context: .
       dockerfile: Dockerfile
