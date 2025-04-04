@@ -29,9 +29,6 @@ services:
   query-connector:
     image: ghcr.io/cdcgov/dibbs-query-connector/query-connector:latest
     restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile
     tty: true
     ports:
       - "3000:3000"
