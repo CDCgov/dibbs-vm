@@ -54,5 +54,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
 
+  docs:
+    build:
+      context: ./../docs
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+
 volumes:
   portainer_data:
