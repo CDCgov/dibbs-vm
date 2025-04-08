@@ -2,10 +2,10 @@
 
 packer/ubuntu-server/build/*
 
-docker/dibbs-ecr-viewer/.env
-docker/dibbs-ecr-viewer/ecr-viewer.wizard
-docker/dibbs-ecr-viewer/ecr-viewer.bak
+dibbs-ecr-viewer/.env
+dibbs-ecr-viewer/ecr-viewer.wizard
+dibbs-ecr-viewer/ecr-viewer.bak
 
-docker/dibbs-query-connector/.env
-docker/dibbs-query-connector/query-connector.wizard.env
-docker/dibbs-query-connector/query-connector.env.bak
+dibbs-query-connector/.env
+dibbs-query-connector/query-connector.wizard.env
+dibbs-query-connector/query-connector.env.bak
