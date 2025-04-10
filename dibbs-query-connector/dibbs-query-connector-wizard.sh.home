@@ -1,90 +1,49 @@
 #!/bin/bash
 
-# This script is a setup wizard for the eCR Viewer application. It guides the user through the process of configuring
-# environment variables and setting up the necessary configurations for running the application using Docker Compose.
-#
-# Functions:
-# - clear_dot_env: Clears the .wizard file.
-# - display_intro: Displays an introductory message and documentation link.
-# - config_name: Prompts the user to select a configuration name from a list of options.
-# - confirm_dot_env_var: Prompts the user to input a value for a given environment variable, displays the current value from .env.
-# - set_dot_vars: Sets environment variables based on the selected configuration name and calls relevant functions to set additional variables.
-# - confirm_update: Displays the current environment variables and prompts the user to confirm them.
-# - restart_docker_compose: Restarts Docker Compose with the updated environment variables.
-# - add_env: Adds a key-value pair to the dibbs_ecr_viewer_wizard file.
-# - pg: Sets environment variables for PostgreSQL configuration.
-# - sqlserver: Sets environment variables for SQL Server configuration.
-# - nbs: Sets environment variables for NBS (National Electronic Disease Surveillance System Base System) configuration.
-# - aws: Sets environment variables for AWS configuration.
-# - azure: Sets environment variables for Azure configuration.
-#
-# The script follows these steps:
-# 1. Clears the dibbs_ecr_viewer_wizard file.
-# 2. Displays an introductory message.
-# 3. $1 - Name of the environment variable
-# 4. $2 - Instruction or description for the variable
-# 5. $3 - Default value for the variable
-# --------------------------------------------
-
 project_dir=$HOME/dibbs-vm/dibbs-query-connector
 dibbs_query_connector_env=$project_dir/dibbs-query-connector.env
 dibbs_query_connector_bak=$project_dir/dibbs-query-connector.bak
 dibbs_query_connector_wizard=$project_dir/dibbs-query-connector.wizard
 
+echo ""
+echo -e "m******************************************************"
+echo -e "WARNING: This virtual machine image includes a database 
+intended for development purposes only. It is not configured for 
+production use and should not be used to store sensitive or live data.  
+Performance, security, and reliability settings may differ 
+from production environments."
+echo -e "m******************************************************"
 
-
-# Output file, is currently set to env file need to see if VM has write permissions to write to it
-output_file=$dibbs_query_connector_env
-# Ensure the directory exists
-clear_dot_env() {
-  echo "" > "$output_file"
-}
-
-display_intro() {
-  echo ""
-  echo -e "\e[1;32m**********************************************\e[0m"
-  echo -e "\e[1;32m*                                            *\e[0m"
-  echo -e "\e[1;32m*\e[0m   \e[1;37mWARNING: This virtual machine includes a database for DEVELOPMENT USE ONLY.
-It is NOT configured for production and should NOT be used for live data.
-Security, performance, and reliability settings are not production-ready.e[0m   \e[1;32m*\e[0m"
-  echo -e "\e[1;32m*                                            *\e[0m"
-  echo -e "\e[1;32m**********************************************\e[0m"
-  echo ""
-  echo -e "\e[1;32mDocumentation can be found at: \e[4;36mhttps://github.com/CDCgov/dibbs-vm\e[0m"
-  echo ""
-}
-
-# Function to prompt with instructions
+# Prompt function
 prompt() {
-  var_name=$1
-  instruction=$2
-  default_value=$3
+  local key="$1"
+  local description="$2"
+  local default="$3"
+  local input
 
-
-  echo "$instruction"
-
-   # Show the prompt with the default in brackets
-  printf "%s [%s]: " "$var_name" "$default_value"
-  read value
-
-  # Use default if input is empty
-  if [ -z "$value" ]; then
-    value=$default_value
+  echo
+  echo "$description"
+  
+  # If the key looks like a secret, use silent prompt
+  if [[ "$key" == *"PASSWORD"* || "$key" == *"SECRET"* || "$key" == *"KEY"* ]]; then
+    read -s -p "$key [$default]: " input
+    echo
+  else
+    read -p "$key [$default]: " input
   fi
 
- # Write to the .env file
- echo "$var_name=$value" >> "$output_file"
- echo ""
- 
+  # Fallback to default if input is empty
+  input="${input:-$default}"
 
+  # Remove existing entry
+  sed -i "/^$key=/d" "qc.env" 2>/dev/null
+  # Append new value
+  echo "$key=$input" >> "qc.env"
+  cat qc.env > dibbs-query-connector.env
+  cp dibbs-query-connector.env  "$dibbs_query_connector_env"
 
-  # printf "%s: " "$var_name"
-  # read value
-  # echo "$var_name=$value" >> "$output_file"
-  # echo ""
 }
 
-# Prompt for each variable with instructions
 prompt "DIBBS_SERVICE" "Name of DIBBS service that is being deployed (e.g. dibbs-query-connector). Default: dibbs-query-connector" "dibbs-query-connector" 
 prompt "DIBBS_VERSION" "Name of DIBBS version that is being deployed (e.g. 0.1.0). Default: 0.1.0" "0.1.0"
 prompt "NODE_ENV" "Specify the environment (e.g., development, production, test). Default: production" "production"
@@ -98,28 +57,3 @@ prompt "UMLS_API_KEY" "Enter your UMLS (Unified Medical Language System) API key
 prompt "AIDBOX_LICENSE" "Paste the Aidbox license string provided by the vendor. See README for detailed instructions" "Replace with Aidbox license string"
 prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (keep it secure). See README for detailed instructions" "Replace with Aidbox admin user's password"
 
-echo "Environment variables saved to $output_file"
-
-
-# confirm_update() {
-#   echo -e "\e[1;33mPlease confirm the following settings:\e[0m"
-#   vars=$(cat "$dibbs_ecr_viewer_wizard")
-#   echo -e "\e[1;36m$vars\e[0m"
-#   echo ""
-#   read -p "Is this information correct? (y/n): " choice
-#   if [ "$choice" != "y" ]; then
-#     echo "Please run the script again and provide the correct information."
-#     exit 1
-#   fi
-#   echo -e "\e[1;32mSettings confirmed. Updating your configuration.\e[0m"
-#   cp "$dibbs_query_connector_env" "$dibbs_query_connector_bak"
-#   cat "$dibbs_query_connector_wizard" > "$dibbs_query_connector_env"
-#   export the environment variables for the current session
-#   needed for the docker compose file DIBBS_SERVICE and DIBBS_VERSION
-#   export $(cat $dibbs_query_connector_env | xargs)
-# }
-
-clear_dot_env
-display_intro
-prompt
-# confirm_update
