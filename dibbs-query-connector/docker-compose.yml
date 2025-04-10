@@ -27,7 +27,7 @@ services:
 
   # Next.js app
   query-connector:
-    image: ghcr.io/cdcgov/dibbs-query-connector/query-connector:latest
+    image: ghcr.io/cdcgov/$DIBBS_SERVICE/query-connector:$DIBBS_VERSION
     restart: always
     tty: true
     ports:
