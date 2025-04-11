@@ -41,7 +41,8 @@ prompt() {
   echo "$key=$input" >> "qc.env"
   cat qc.env > dibbs-query-connector.env
   cp dibbs-query-connector.env  "$dibbs_query_connector_env"
-
+  export $(cat dibbs-query-connector.env | xargs)
+  
 }
 
 prompt "DIBBS_SERVICE" "Name of DIBBS service that is being deployed (e.g. dibbs-query-connector). Default: dibbs-query-connector" "dibbs-query-connector" 
@@ -57,3 +58,11 @@ prompt "UMLS_API_KEY" "Enter your UMLS (Unified Medical Language System) API key
 prompt "AIDBOX_LICENSE" "Paste the Aidbox license string provided by the vendor. See README for detailed instructions" "Replace with Aidbox license string"
 prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (keep it secure). See README for detailed instructions" "Replace with Aidbox admin user's password"
 
+
+start_docker_containers() {
+  echo "Starting Docker containers..."
+  cd $project_dir
+  docker compose up 
+}
+
+start_docker_containers
