@@ -30,9 +30,34 @@ To obtain the free API keys, please visit the following URLs and follow the sign
 
 - [https://ersd.aimsplatform.org/#/api-keys](https://ersd.aimsplatform.org/#/api-keys)
 - [https://uts.nlm.nih.gov/uts/login](https://uts.nlm.nih.gov/uts/login)
+- [https://aidbox.app/](https://aidbox.app/)
 
 Next, set up your `.env` file with the following command: `cp .env.sample .env`
 
 Adjust your `DATABASE_URL` as needed.
 
-Add your API keys as an environment variables called `ERSD_API_KEY` and `UMLS_API_KEY` in the `.env` file so that they can be accessed when running the Query Connector app.
+Add your API keys as an environment variables called `ERSD_API_KEY`, `UMLS_API_KEY`, and `AIDBOX_LICENSE` in the `.env` file so that they can be accessed when running the Query Connector app.
+
+#### How to Build Image
+1. Clone the dibbs-vm  repository. 
+2. Perform a `git pull` to ensure you have the latest code.
+3. Run the build scripts to generate the image for Query Connector, by executing the following command:
+    
+    ```bash
+    ./build.sh dibbs-query-connector <version> 
+    ```
+    
+4. Once the build is complete, the script will display a message like the one below. Please note that the duration may vary depending on the build location and available resources
+![Test Image](qc_image_built.png)
+
+
+### Setup wizard script for Query Connector
+1. Logon to the virtual machine
+2. Run the wizard script to setup the Query Connector application:
+    ```bash
+    ./dibbs-query-connector-wizard.sh
+    ```
+3. Navigate to following urls:
+    - Query Connector at <IP.ADDRESS>:3000
+    - Portainer at <IP.ADDRESS>:9000
+    - Aidbox server at <IP.ADDRESS>:8080

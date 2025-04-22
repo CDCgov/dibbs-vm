@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# This script is a setup wizard for the Query Connector application. It guides the user through the process of configuring
+# environment variables and setting up the necessary configurations for running the application using Docker Compose.
+
+
 project_dir=$HOME/dibbs-vm/dibbs-query-connector
 dibbs_query_connector_env=$project_dir/dibbs-query-connector.env
 dibbs_query_connector_bak=$project_dir/dibbs-query-connector.bak
@@ -7,10 +11,8 @@ dibbs_query_connector_wizard=$project_dir/dibbs-query-connector.wizard
 
 echo ""
 echo -e "m******************************************************"
-echo -e "WARNING: This virtual machine image includes a database 
-intended for development purposes only. It is not configured for 
-production use and should not be used to store sensitive or live data.  
-Performance, security, and reliability settings may differ 
+echo -e "WARNING: This virtual machine image includes a database intended for development purposes only. It is not configured for 
+production use and should not be used to store sensitive or live data.  Performance, security, and reliability settings may differ 
 from production environments."
 echo -e "m******************************************************"
 
@@ -39,6 +41,7 @@ prompt() {
   sed -i "/^$key=/d" "qc.env" 2>/dev/null
   # Append new value
   echo "$key=$input" >> "qc.env"
+  echo -e "Updating your configuration."
   cat qc.env > dibbs-query-connector.env
   cp dibbs-query-connector.env  "$dibbs_query_connector_env"
   export $(cat dibbs-query-connector.env | xargs)
@@ -46,7 +49,7 @@ prompt() {
 }
 
 prompt "DIBBS_SERVICE" "Name of DIBBS service that is being deployed (e.g. dibbs-query-connector). Default: dibbs-query-connector" "dibbs-query-connector" 
-prompt "DIBBS_VERSION" "Name of DIBBS version that is being deployed (e.g. 0.1.0). Default: 0.1.0" "0.1.0"
+prompt "DIBBS_VERSION" "Name of DIBBS version that is being deployed (e.g. 0.1.0). Default: 0.9.1" "0.9.1"
 prompt "NODE_ENV" "Specify the environment (e.g., development, production, test). Default: production" "production"
 prompt "DATABASE_URL" "Enter the full database connection string (e.g., postgres://user:pass@host:port/db) Default: postgres://postgres:pw@db:5432/tefca_db." "postgres://postgres:pw@db:5432/tefca_db"
 prompt "AUTH_DISABLED" "Enter 'true' to disable authentication, or 'false' to enable it. Default: true" "true"
@@ -61,8 +64,10 @@ prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (ke
 
 start_docker_containers() {
   echo "Starting Docker containers..."
-  cd $project_dir
-  docker compose up 
+  cd "$project_dir" || exit
+  docker compose down
+  docker compose up -d
+  cd - 
 }
 
 start_docker_containers
