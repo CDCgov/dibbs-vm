@@ -59,7 +59,7 @@ Adjust your `DATABASE_URL` as needed.
 
 
 
-### Common Troubelshooting steps
+### Common Troubleshooting steps
 
 1. If the Select a patient page is stalling on populating a patient as shown in the image below:
 
