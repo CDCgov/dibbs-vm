@@ -64,10 +64,8 @@ prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (ke
 
 start_docker_containers() {
   echo "Starting Docker containers..."
-  cd "$project_dir" || exit
-  docker compose down
+  cd "$project_dir"
   docker compose up -d
-  cd - 
 }
 
 start_docker_containers
