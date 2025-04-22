@@ -42,7 +42,7 @@ Adjust your `DATABASE_URL` as needed.
     ```
     
 4. Once the build is complete, the script will display a message like the one below. Please note that the duration may vary depending on the build location and available resources
-![Test Image](qc_image_built.png)
+![Image Built](qc_image_built.png)
 
 
 ### Setup wizard script for Query Connector Application
@@ -55,3 +55,20 @@ Adjust your `DATABASE_URL` as needed.
     - Query Connector at <IP.ADDRESS>:3000
     - Portainer at <IP.ADDRESS>:9000
     - Aidbox server at <IP.ADDRESS>:8080
+
+
+
+
+### Common Troubelshooting steps
+
+1. If the Select a patient page is stalling on populating a patient as shown in the image below:
+
+<img src="common_error_1.png" alt="Description" height="800" width ="1200"/>
+
+a. Navigate to FHIR servers
+
+<img src="common_error_1a.png" alt="Description" height="800" width ="1200"/>
+
+b.Ensure at the bottom of the screen that Aidbox server is present and connected
+
+<img src="common_error_1b.png" alt="Description" />
