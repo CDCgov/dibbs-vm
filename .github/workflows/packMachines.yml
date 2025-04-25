@@ -41,7 +41,8 @@ jobs:
 
   docs_build:
     runs-on: ubuntu-latest
-    steps: 
+    steps:
+      - uses: actions/checkout@v4 
       - uses: ./.github/actions/build-docs
   
   packer_build_changes:
