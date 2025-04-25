@@ -28,7 +28,7 @@ else
 fi
 
 # Clone the dibbs-vm repository #adding for testing purposes,remove once verify image changes
-git clone --branch shanice/query-connector https://github.com/CDCgov/dibbs-vm.git
+git clone https://github.com/CDCgov/dibbs-vm.git
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
 
 find "$dibbs_vm_bak_dir/$DIBBS_SERVICE" -name "*.env" | while read file; do

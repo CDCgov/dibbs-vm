@@ -31,7 +31,7 @@ fi
 
 
 # Clone the dibbs-vm repository
-git clone --branch shanice/query-connector https://github.com/CDCgov/dibbs-vm.git
+git clone https://github.com/CDCgov/dibbs-vm.git || exit
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
 
 # ensures the DIBBS variables are set and accessible to the wizard
