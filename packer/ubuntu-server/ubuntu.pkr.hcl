@@ -44,7 +44,7 @@ source "qemu" "iso" {
   disk_image       = false
   memory           = 4096
   output_directory = "build/${var.dibbs_service}-${var.dibbs_version}"
-  disk_size        = "24000MM"
+  disk_size        = "24000M"
   disk_interface   = "virtio"
   format           = "raw"
   net_device       = "virtio-net"
