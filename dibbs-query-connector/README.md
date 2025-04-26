@@ -32,19 +32,6 @@ Save your API keys and license to input during the wizard script , the environme
 
 Adjust your `DATABASE_URL` as needed.
 
-#### How to Build Image
-1. Clone the dibbs-vm  repository. 
-2. Perform a `git pull` to ensure you have the latest code.
-3. Run the build scripts to generate the image for Query Connector, by executing the following command:
-    
-    ```bash
-    ./build.sh dibbs-query-connector <version> 
-    ```
-    
-4. Once the build is complete, the script will display a message like the one below. Please note that the duration may vary depending on the build location and available resources
-![Image Built](qc_image_built.png)
-
-
 ### Setup wizard script for Query Connector Application
 1. Logon to the virtual machine
 2. Run the wizard script to setup the Query Connector application:
