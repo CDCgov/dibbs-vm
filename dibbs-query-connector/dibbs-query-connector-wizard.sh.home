@@ -58,8 +58,7 @@ prompt "AUTH_SECRET" "Enter the secret key used to sign auth tokens for NEXTJS (
 prompt "AUTH_URL" "Enter the full URL of your authentication provider or auth endpoint. Default: http://query-connector:3000" "http://query-connector:3000"
 prompt "ERSD_API_KEY" "Enter the API key used to access the ERSD (Electronic Resources Service Directory). See README for detailed instructions" "Replace with ERSD API key"
 prompt "UMLS_API_KEY" "Enter your UMLS (Unified Medical Language System) API key. See README for detailed instructions" "Replace with UMLS API key"
-prompt "AIDBOX_LICENSE" "Paste the Aidbox license string provided by the vendor. See README for detailed instructions" "Replace with Aidbox license string"
-prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (keep it secure). See README for detailed instructions" "Replace with Aidbox admin user password"
+
 
 
 start_docker_containers() {
