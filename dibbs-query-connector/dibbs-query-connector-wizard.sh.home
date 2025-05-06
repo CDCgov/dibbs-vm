@@ -51,7 +51,8 @@ prompt() {
 prompt "DIBBS_SERVICE" "Name of DIBBS service that is being deployed (e.g. dibbs-query-connector). Default: dibbs-query-connector" "dibbs-query-connector" 
 prompt "DIBBS_VERSION" "Name of DIBBS version that is being deployed (e.g. 0.1.0). Default: 0.9.1" "0.9.1"
 prompt "NODE_ENV" "Specify the environment (e.g., development, production, test). Default: production" "production"
-prompt "DATABASE_URL" "Enter the full database connection string (e.g., postgres://user:pass@host:port/db) Default: postgres://postgres:pw@db:5432/tefca_db." "postgres://postgres:pw@db:5432/tefca_db"
+prompt "EXISTING_DATABASE" "Do you have a pre-existing database available to connect to Query Connector(e.g. yes, no) Default: yes" "yes"
+prompt "DATABASE_URL" "Enter the full database connection string (db connection string format: postgres://username:password@host:port/db_name) Default: postgres://postgres:pw@db:5432/tefca_db." "postgres://postgres:pw@db:5432/tefca_db" 
 prompt "AUTH_DISABLED" "Enter 'true' to disable authentication, or 'false' to enable it. Default: true" "true"
 prompt "NODE_TLS_REJECT_UNAUTHORIZED" "Enter '0' to allow self-signed certs, '1' to reject them. Default: 0" "0"
 prompt "AUTH_SECRET" "Enter the secret key used to sign auth tokens for NEXTJS (keep it secure). " "Replace with auth token "
@@ -59,7 +60,12 @@ prompt "AUTH_URL" "Enter the full URL of your authentication provider or auth en
 prompt "ERSD_API_KEY" "Enter the API key used to access the ERSD (Electronic Resources Service Directory). See README for detailed instructions" "Replace with ERSD API key"
 prompt "UMLS_API_KEY" "Enter your UMLS (Unified Medical Language System) API key. See README for detailed instructions" "Replace with UMLS API key"
 
-
+start_all_docker_containers() {
+  echo "Starting all Docker containers..."
+  cd "$project_dir"
+  docker compose up -d
+  docker compose up -d db
+}
 
 start_docker_containers() {
   echo "Starting Docker containers..."
@@ -67,4 +73,8 @@ start_docker_containers() {
   docker compose up -d
 }
 
-start_docker_containers
+if [[ "$EXISTING_DATABASE" == "no" ]]; then
+  start_all_docker_containers
+else
+  start_docker_containers
+fi

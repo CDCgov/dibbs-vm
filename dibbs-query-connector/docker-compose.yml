@@ -13,6 +13,7 @@ services:
       interval: 2s
       timeout: 30s
       retries: 20
+    profiles: [deploy-db]  
 
 # Flyway migrations and DB version control
   flyway:
@@ -24,6 +25,7 @@ services:
     depends_on:
       db:
         condition: service_started
+    profiles: [deploy-db]    
 
   # Next.js app
   query-connector:
