@@ -30,8 +30,8 @@ else
 fi
 
 # Clone the dibbs-vm repository
-git clone https://github.com/CDCgov/dibbs-vm.git
-cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit
+git clone --branch shanice/qc-revised https://github.com/CDCgov/dibbs-vm.git
+cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
 
 # ensures the DIBBS variables are set and accessible to the wizard
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >> "$DIBBS_SERVICE.env"
@@ -41,8 +41,9 @@ echo "" >> "$DIBBS_SERVICE.env"
 # enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
 echo 'export $(cat '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' | xargs)' >> "$HOME"/.bashrc
 
-# Gives ubuntu user ownership of the dibbs-vm directory
+# Gives ubuntu user ownership of the dibbs-vm directory and permission to execute wizard script
 chown -R ubuntu:ubuntu "$HOME/dibbs-vm"
+chmod +x "$DIBBS_SERVICE-wizard.sh"
 
 # Trigger initial docker compose commands to construct container stack
 docker compose build
