@@ -29,6 +29,7 @@ else
   echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
 fi
 
+
 # Clone the dibbs-vm repository
 git clone https://github.com/CDCgov/dibbs-vm.git
 cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit

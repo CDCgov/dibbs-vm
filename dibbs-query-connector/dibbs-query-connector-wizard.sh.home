@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# This script is a setup wizard for the Query Connector application. It guides the user through the process of configuring
+# environment variables and setting up the necessary configurations for running the application using Docker Compose.
+
+
+project_dir=$HOME/dibbs-vm/dibbs-query-connector
+dibbs_query_connector_env=$project_dir/dibbs-query-connector.env
+dibbs_query_connector_bak=$project_dir/dibbs-query-connector.bak
+dibbs_query_connector_wizard=$project_dir/dibbs-query-connector.wizard
+
+echo ""
+echo -e "m******************************************************"
+echo -e "WARNING: This virtual machine image includes a database intended for development purposes only. It is not configured for 
+production use and should not be used to store sensitive or live data.  Performance, security, and reliability settings may differ 
+from production environments."
+echo -e "m******************************************************"
+
+# Prompt function
+prompt() {
+  local key="$1"
+  local description="$2"
+  local default="$3"
+  local input
+
+  echo
+  echo "$description"
+  
+  # If the key looks like a secret, use silent prompt
+  if [[ "$key" == *"PASSWORD"* || "$key" == *"SECRET"* || "$key" == *"KEY"* ]]; then
+    read -s -p "$key [$default]: " input
+    echo
+  else
+    read -p "$key [$default]: " input
+  fi
+
+  # Fallback to default if input is empty
+  input="${input:-$default}"
+
+  # Remove existing entry
+  sed -i "/^$key=/d" "qc.env" 2>/dev/null
+  # Append new value
+  echo "$key=$input" >> "qc.env"
+  echo -e "Updating your configuration."
+  cat qc.env > dibbs-query-connector.env
+  cp dibbs-query-connector.env  "$dibbs_query_connector_env"
+  export $(cat dibbs-query-connector.env | xargs)
+  
+}
+
+prompt "DIBBS_SERVICE" "Name of DIBBS service that is being deployed (e.g. dibbs-query-connector). Default: dibbs-query-connector" "dibbs-query-connector" 
+prompt "DIBBS_VERSION" "Name of DIBBS version that is being deployed (e.g. 0.1.0). Default: 0.9.1" "0.9.1"
+prompt "NODE_ENV" "Specify the environment (e.g., development, production, test). Default: production" "production"
+prompt "DATABASE_URL" "Enter the full database connection string (e.g., postgres://user:pass@host:port/db) Default: postgres://postgres:pw@db:5432/tefca_db." "postgres://postgres:pw@db:5432/tefca_db"
+prompt "AUTH_DISABLED" "Enter 'true' to disable authentication, or 'false' to enable it. Default: true" "true"
+prompt "NODE_TLS_REJECT_UNAUTHORIZED" "Enter '0' to allow self-signed certs, '1' to reject them. Default: 0" "0"
+prompt "AUTH_SECRET" "Enter the secret key used to sign auth tokens for NEXTJS (keep it secure). " "Replace with auth token "
+prompt "AUTH_URL" "Enter the full URL of your authentication provider or auth endpoint. Default: http://query-connector:3000" "http://query-connector:3000"
+prompt "ERSD_API_KEY" "Enter the API key used to access the ERSD (Electronic Resources Service Directory). See README for detailed instructions" "Replace with ERSD API key"
+prompt "UMLS_API_KEY" "Enter your UMLS (Unified Medical Language System) API key. See README for detailed instructions" "Replace with UMLS API key"
+prompt "AIDBOX_LICENSE" "Paste the Aidbox license string provided by the vendor. See README for detailed instructions" "Replace with Aidbox license string"
+prompt "AIDBOX_ADMIN_PASSWORD" "Enter the password for the Aidbox admin user (keep it secure). See README for detailed instructions" "Replace with Aidbox admin user password"
+
+
+start_docker_containers() {
+  echo "Starting Docker containers..."
+  cd "$project_dir"
+  docker compose up -d
+}
+
+start_docker_containers
