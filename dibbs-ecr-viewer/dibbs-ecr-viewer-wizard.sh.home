@@ -52,7 +52,7 @@ set_vars() {
   while IFS= read -r line; do
     case $line in
       CONFIG_NAME=*)
-        config_name=$(echo "$line" | cut -d'=' -f2)
+        config_name=$(echo "$line" | cut -d'=' -f2-)
         ;;
     esac
   done < "$dibbs_ecr_viewer_env"
@@ -223,7 +223,7 @@ confirm_dot_env_var() {
   default=$2
   read -rp $'  \e[3m'"$value (Current Value: $default): "$'\e[0m' choice
   if [ -z "$choice" ]; then
-    choice=$default
+    choice="$default"
   fi
   echo ""
   echo -e "  \e[1;36mSetting: $value=$choice\e[0m"
@@ -232,7 +232,7 @@ confirm_dot_env_var() {
 }
 
 confirm_update() {
-  echo -e "\e[1;33mPlease confirm the following settings:\e[0m"
+  echo -e "\e[1;33mPlease confirm the following settings ( Double check for special characters that should be escaped ):\e[0m"
   vars=$(cat "$dibbs_ecr_viewer_wizard")
   echo -e "\e[1;36m$vars\e[0m"
   echo ""
@@ -244,9 +244,19 @@ confirm_update() {
   echo -e "\e[1;32mSettings confirmed. Updating your configuration.\e[0m"
   cp "$dibbs_ecr_viewer_env" "$dibbs_ecr_viewer_bak"
   cat "$dibbs_ecr_viewer_wizard" > "$dibbs_ecr_viewer_env"
-  # export the environment variables for the current session
-  # needed for the docker compose file DIBBS_SERVICE and DIBBS_VERSION
-  export $(cat $dibbs_ecr_viewer_env | xargs)
+  while IFS= read -r line; do
+    # if line has an = sign, check the variable
+    if [[ $line == *"="* ]]; then
+      var=$(echo "$line" | cut -d'=' -f1-)
+      value=$(echo "$line" | cut -d'=' -f2-)
+      # if the variable is empty or just quotes, delete the line
+      if [[ $value == "" || $value == "\"\"" ]]; then
+        echo -e "\e[1;33mRemoving empty variable from configuration: $var\e[0m"
+        sed -i "/$var=/d" "$dibbs_ecr_viewer_env"
+      fi
+    fi
+  done < "$dibbs_ecr_viewer_env"
+  echo ""
 }
 
 restart_docker_compose() {
@@ -257,13 +267,19 @@ restart_docker_compose() {
 }
 
 add_env() {
-  echo "$1=$2" >> "$dibbs_ecr_viewer_wizard"
+  if [[ $2 == \"*\" ]]; then
+    # variable is already quoted
+    echo "$1=$2" >> "$dibbs_ecr_viewer_wizard"
+  else
+    # variable is not quoted
+    echo "$1=\"$2\"" >> "$dibbs_ecr_viewer_wizard"
+  fi
 }
 
 pg() {
-  check_var DATABASE_URL
-  check_var METADATA_DATABASE_SCHEMA
-  check_var METADATA_DATABASE_MIGRATION_SECRET
+  check_var DATABASE_URL "PostgreSQL connection string format: postgres://USER:PASSWORD@HOST:PORT/DATABASE_NAME"
+  check_var METADATA_DATABASE_SCHEMA "Schema options are: core or extended"
+  check_var METADATA_DATABASE_MIGRATION_SECRET "Migration secret used to trigger migrations"
 }
 
 sqlserver() {
@@ -271,26 +287,21 @@ sqlserver() {
   check_var SQL_SERVER_PASSWORD
   check_var SQL_SERVER_HOST
   check_var DB_CIPHER
-  check_var METADATA_DATABASE_SCHEMA
-  check_var METADATA_DATABASE_MIGRATION_SECRET
+  check_var METADATA_DATABASE_SCHEMA "Schema options are: core or extended"
+  check_var METADATA_DATABASE_MIGRATION_SECRET "Migration secret used to trigger migrations, one will be generated and output to ecr-viewer logs if you do not provide one"
 }
 
 nbs() {
-  check_var NBS_PUB_KEY
+  check_var NBS_PUB_KEY "The NBS public key needs to be condensed to a single line using \n. Here is the currently known public key for NBS: -----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAnlA1YmmbydxQdBh7DAq0\nwUfsjR25eWZOB995mHclT3C46oLat3YLu70akLfoMXd9YcJe0d4q3sP7tS1J4QDO\nIkfapvK3ClDJR2VUERTzR9yQ+1B1Sd+MSful/V3aP9L6wPRAJmsmziizUBz+X0oN\nWTkGP/xi0F/IlyBfh2sk89JKKmgXSFbgDTD7+8L5WeRY5koR0KfDJLBcyerrcIPW\n1FyD8RbkUH78yJXc+/ThXKBNpsDTvV0k/4zqLSADIEmhQFkW8oYOfF4ufBGSnGdZ\ngPoWbKHtlK+m1sFWMq0hAtJsNKsJQocPAEO2NIxRCX4k6X9HfvCYVniDI4OdVz0V\njTF+galQDAybgtYc9ZN8ROpePDVkCANHzniBJFOwzv2yekreqdX7M399uLB+ztDX\nIz2RpZbGkgspl4TWvvB+eN64DJykmExImIw1nFc/6AVd3jhKSnCrckpGV3XaF8lW\nWMA6au0RXjmRa4YxO/uQbFZeFkM7aQtQK/CxqdBfG0SACcIMwU2S7Kb5+c9Hs687\nLI8j7j0oVyCiAyJ44Mi70i4A2GedyM6kzdixTmszin+c4tT8mYjmEMpJle6GLBIa\naqEy3CVEqecFIo4ypfoo4GjTqvv/JjtxwBl1FPC+HzFkOjSoLbrDmn64NnQhXlC9\nkd+ONf43CmqDSTa3atSFq4sCAwEAAQ==\n-----END PUBLIC KEY-----"
 }
 
 auth() {
-  check_var AUTH_PROVIDER
+  check_var AUTH_PROVIDER "Valid options are 'ad' or 'keycloak'"
   check_var AUTH_CLIENT_ID
   check_var AUTH_CLIENT_SECRET
   check_var AUTH_ISSUER
-}
-
-keycloak() {
-  check_var KEYCLOAK_URL
-  check_var KEYCLOAK_REALM
-  check_var KEYCLOAK_CLIENT_ID
-  check_var KEYCLOAK_CLIENT_SECRET
+  check_var NEXTAUTH_URL "URL for the eCR Viewer application authentication: http(s)://(DOMAIN||IP:PORT)/ecr-viewer/api/auth/"
+  check_var NEXTAUTH_SECRET "Generate a random secret using: openssl rand -base64 32"
 }
 
 aws() {
@@ -304,20 +315,30 @@ azure() {
 }
 
 gcp() {
-  check_var GCP_CREDENTIALS
   check_var GCP_PROJECT_ID
+  check_var ECR_BUCKET_NAME
 }
 
 check_var() {
+  if [ -n "$2" ]; then
+    printf "\e[1;31m%s\e[0m" "INFO: $2"
+    echo ""
+  fi
   if [ "$1" == "DIBBS_SERVICE" ]; then
     echo -e "  \e[1;36mSetting: DIBBS_SERVICE=dibbs-ecr-viewer\e[0m"
     echo ""
     add_env "$1" "dibbs-ecr-viewer"
+  elif [ "$1" == "ORCHESTRATION_URL" ]; then
+    echo -e "  \e[1;36mSetting: ORCHESTRATION_URL=http://dibbs-orchestration:8080\e[0m"
+    echo ""
+    add_env "$1" "http://dibbs-orchestration:8080"
   else
     while IFS= read -r line; do
       case $line in
         $1=*)
-          var=$(echo "$line" | cut -d'=' -f2)
+          # get the value after the first =, do not cut any other = signs
+          # this is to avoid cutting the value in case it has an = sign
+          var=$(echo "$line" | cut -d'=' -f2-)
           ;;
       esac
     done < "$dibbs_ecr_viewer_env"
@@ -326,6 +347,8 @@ check_var() {
       echo ""
     fi
     confirm_dot_env_var "$1" "$var"
+    # clear var to avoid reusing previous value
+    var=""
   fi
 }
 
@@ -334,6 +357,7 @@ docker_compose_vars() {
   echo -e "\e[1;33mParsing eCR Viewer for default environment variables...\e[0m"
   echo ""
   check_var DIBBS_SERVICE
+  check_var ORCHESTRATION_URL
   check_var DIBBS_VERSION
 }
 
