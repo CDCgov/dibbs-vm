@@ -127,9 +127,9 @@ source "azure-arm" "azure-image" {
 build {
   name = "multi-cloud-build"
   sources = [
-    "source.qemu.iso",
-    "source.amazon-ebs.aws-ami",
-    "source.azure-arm.azure-image"
+    "source.qemu.iso"
+    //"source.amazon-ebs.aws-ami",
+    //"source.azure-arm.azure-image"
   ]
 
   provisioner "shell" {

@@ -12,7 +12,7 @@
 
 # Adjust Docker group permissions.
 groupadd docker
-usermod -aG docker ubuntu
+usermod -aG docker dibbs-user
 newgrp docker
 
 # Set Docker as system service and enable container autostart
@@ -42,7 +42,7 @@ echo "" >> "$DIBBS_SERVICE.env"
 echo 'export $(cat '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' | xargs)' >> "$HOME"/.bashrc
 
 # Gives ubuntu user ownership of the dibbs-vm directory
-chown -R ubuntu:ubuntu "$HOME/dibbs-vm"
+chown -R dibbs-user:dibbs-user "$HOME/dibbs-vm"
 
 # Trigger initial docker compose commands to construct container stack
 docker compose build

@@ -23,6 +23,27 @@ if [ -z "$service" ] || [ -z "$version" ]; then
     exit 1
 fi
 
+# build machines need to have OpenSSL installed for random password generation.
+if ! command -v openssl &> /dev/null; then
+    echo "openssl could not be found, exiting..."
+    exit 1
+fi
+
+# generate a random password for the user
+DIBBS_USER_PASSWORD=$(openssl rand -base64 24)
+echo "Generated password: $DIBBS_USER_PASSWORD"
+
+# generate the password hash for the user
+password_hash=$(openssl passwd -6 $DIBBS_USER_PASSWORD)
+
+# replace the password hash in the packer user-data file
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "s|'{{password_hash}}'|'"$password_hash"'|" ./packer/ubuntu-server/http/user-data
+else
+    sed -i "s|'{{password_hash}}'|'"$password_hash"'|" ./packer/ubuntu-server/http/user-data
+fi
+echo "Password replaced in user-data file."
+
 # init
 packer init .
 
@@ -31,5 +52,7 @@ packer validate --var dibbs_service="$service" --var dibbs_version="$version" .
 
 # Build the base image
 packer build --var dibbs_service="$service" --var dibbs_version="$version" .
+
+echo "Remember, to login, you need to use the password: $DIBBS_USER_PASSWORD"
 
 cd - || exit

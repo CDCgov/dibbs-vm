@@ -27,12 +27,11 @@ autoinstall:
 
   identity:
     realname: ''
-    username: ubuntu
+    username: dibbs-user
     # A password hash is needed. `mkpasswd --method=SHA-512` can help.
     # mkpasswd can be found in the package 'whois'
-    # password -> ubuntu
-    password: '$6$BY7tlmmh0KhsyCdF$mqL6Ud5FS645ylyOUT.qoim/ZcHrfLdE6vgDqAabDGyoj7LCV4Kpskj8POMmf7MmIcpVho0xc12rdstjjjW100'
-    hostname: ubuntu-server
+    password: '{{password_hash}}'
+    hostname: dibbs-vm
 
   # Uncomment the block below to force interactive configuration on first run.  
   # interactive-sections:

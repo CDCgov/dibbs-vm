@@ -83,8 +83,8 @@ jobs:
         with:
           version: 1.11.2
 
-      - name: Install QEMU
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+      - name: Install Supporting Packages
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 openssl
 
       - name: Run `packer init`
         working-directory: ./packer/ubuntu-server
