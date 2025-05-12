@@ -38,9 +38,9 @@ password_hash=$(openssl passwd -6 $DIBBS_USER_PASSWORD)
 
 # replace the password hash in the packer user-data file
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s|'{{password_hash}}'|'"$password_hash"'|" ./packer/ubuntu-server/http/user-data
+    sed -i '' "s|'{{password_hash}}'|'"$password_hash"'|" ./http/user-data
 else
-    sed -i "s|'{{password_hash}}'|'"$password_hash"'|" ./packer/ubuntu-server/http/user-data
+    sed -i "s|'{{password_hash}}'|'"$password_hash"'|" ./http/user-data
 fi
 echo "Password replaced in user-data file."
 
