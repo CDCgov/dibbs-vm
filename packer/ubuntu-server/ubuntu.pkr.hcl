@@ -58,7 +58,7 @@ source "qemu" "iso" {
   http_directory   = "http"
   shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
   ssh_username     = "dibbs-user"
-  ssh_password     = var.ssh_password
+  ssh_password     = "${var.ssh_password}"
   ssh_timeout      = "60m"
   machine_type     = "q35"
   cpus             = 2
@@ -141,7 +141,7 @@ build {
       "USE_SUDO=sudo",
       "BUILD_TYPE=azure"
     ]
-    execute_command = "echo ${var.ssh_password} | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
@@ -153,7 +153,7 @@ build {
       "USE_SUDO=",
       "BUILD_TYPE=aws"
     ]
-    execute_command = "echo ${var.ssh_password} | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
