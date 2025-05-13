@@ -56,9 +56,9 @@ source "qemu" "iso" {
     "boot<enter><wait>"
   ]
   http_directory   = "http"
-  shutdown_command = "echo 'ubuntu' | sudo -S shutdown -P now"
-  ssh_username     = "ubuntu"
-  ssh_password     = "ubuntu"
+  shutdown_command = "echo '${var.ssh_password}' | sudo -S shutdown -P now"
+  ssh_username     = "dibbs-user"
+  ssh_password     = var.ssh_password
   ssh_timeout      = "60m"
   machine_type     = "q35"
   cpus             = 2
@@ -86,7 +86,7 @@ source "amazon-ebs" "aws-ami" {
     most_recent = true
   }
 
-  ssh_username = "ubuntu"
+  ssh_username = "dibbs-user"
 
   launch_block_device_mappings {
     device_name           = "/dev/sda1"
@@ -119,7 +119,7 @@ source "azure-arm" "azure-image" {
   managed_image_name                = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
   managed_image_resource_group_name = "skylight-dibbs-vm1"
   os_type                           = "Linux"
-  ssh_username                      = "ubuntu"
+  ssh_username                      = "dibbs-user"
 
 }
 
@@ -141,7 +141,7 @@ build {
       "USE_SUDO=sudo",
       "BUILD_TYPE=azure"
     ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo ${var.ssh_password} | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
@@ -150,22 +150,10 @@ build {
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}",
-      "USE_SUDO=sudo",
+      "USE_SUDO=",
       "BUILD_TYPE=aws"
     ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
-  }
-
-  provisioner "shell" {
-    only   = ["qemu.iso"]
-    script = "scripts/post-install.sh"
-    environment_vars = [
-      "DIBBS_SERVICE=${var.dibbs_service}",
-      "DIBBS_VERSION=${var.dibbs_version}",
-      "USE_SUDO=",
-      "BUILD_TYPE=qemu"
-    ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} bash '{{.Path}}'"
+    execute_command = "echo ${var.ssh_password} | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
@@ -176,7 +164,7 @@ build {
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}"
     ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "file" {

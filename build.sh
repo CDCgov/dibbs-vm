@@ -48,10 +48,10 @@ echo "Password replaced in user-data file."
 packer init .
 
 # validate
-packer validate --var dibbs_service="$service" --var dibbs_version="$version" .
+packer validate --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" .
 
 # Build the base image
-packer build --var dibbs_service="$service" --var dibbs_version="$version" .
+packer build --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" .
 
 echo "Remember, to login, you need to use the password: $DIBBS_USER_PASSWORD"
 
