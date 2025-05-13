@@ -36,7 +36,7 @@ packer {
 }
 
 
-source "qemu" "iso" {
+source "qemu" "raw" {
   vm_name = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
@@ -85,8 +85,9 @@ source "amazon-ebs" "aws-ami" {
     owners      = ["099720109477"] # Canonical's official AWS account ID
     most_recent = true
   }
-
-  ssh_username = "dibbs-user"
+  
+  //TODO: CHANGE ME! Change the password to use the random one, too!
+  ssh_username = "ubuntu"
 
   launch_block_device_mappings {
     device_name           = "/dev/sda1"
@@ -119,7 +120,9 @@ source "azure-arm" "azure-image" {
   managed_image_name                = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
   managed_image_resource_group_name = "skylight-dibbs-vm1"
   os_type                           = "Linux"
-  ssh_username                      = "dibbs-user"
+
+  //TODO: CHANGE ME! Change the password to use the random one, too!
+  ssh_username                      = "ubuntu"
 
 }
 
@@ -127,37 +130,56 @@ source "azure-arm" "azure-image" {
 build {
   name = "multi-cloud-build"
   sources = [
-    "source.qemu.iso"
-    "source.amazon-ebs.aws-ami",
-    "source.azure-arm.azure-image"
+    "source.qemu.raw"
+    //"source.amazon-ebs.aws-ami",
+    //"source.azure-arm.azure-image"
   ]
+
+  provisioner "file" {
+    source      = "./jails/jail.local"
+    destination = "~/jail.local"
+  }
 
   provisioner "shell" {
     only   = ["azure-arm.azure-image"]
-    script = "scripts/post-install.sh"
+    scripts = [
+      "scripts/fail2ban.sh",
+      "scripts/post-install.sh",
+      "scripts/provision.sh"
+    ]
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}",
       "USE_SUDO=sudo",
       "BUILD_TYPE=azure"
     ]
-    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+
+    //TODO: Add new password here!
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
     only   = ["amazon-ebs.aws-ami"]
-    script = "scripts/post-install.sh"
+    scripts = [
+      "scripts/fail2ban.sh",
+      "scripts/post-install.sh",
+      "scripts/provision.sh"
+    ]
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}",
       "USE_SUDO=",
       "BUILD_TYPE=aws"
     ]
-    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+
+    //TODO: Add new password here!
+    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
+    only   = ["qemu.raw"]
     scripts = [
+      "scripts/fail2ban.sh",
       "scripts/provision.sh"
     ]
     environment_vars = [
