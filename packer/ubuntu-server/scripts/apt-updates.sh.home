@@ -67,22 +67,22 @@ check_options() {
 run_commands() {
   if [ "$apt_update" = true ]; then
     msg "Updating package list..."
-    sudo apt update -y
+    sudo apt-get update -y
     msg "Package list updated"
   fi
   if [ "$apt_upgrade" = true ]; then
     msg "Upgrading installed packages..."
-    sudo apt upgrade -y
+    sudo apt-get upgrade -y
     msg "Installed packages upgraded"
   fi
   if [ "$apt_autoremove" = true ]; then
     msg "Removing unnecessary packages..."
-    sudo apt autoremove -y
+    sudo apt-get autoremove -y
     msg "Unnecessary packages removed"
   fi
   if [ "$apt_clean" = true ]; then
     msg "Cleaning up the cache..."
-    sudo apt clean
+    sudo apt-get clean
     msg "Cache cleaned up"
   fi
 }

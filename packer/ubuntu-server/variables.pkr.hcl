@@ -57,3 +57,8 @@ variable "tenant_id" {
   type        = string
   default     = env("ARM_TENANT_ID")
 }
+
+variable "ssh_password" {
+  description = "SSH password for system configuration"
+  type        = string
+}

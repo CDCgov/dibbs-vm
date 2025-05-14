@@ -17,7 +17,7 @@ USE_SUDO="${USE_SUDO:-}"
 # Install Docker
 echo "Starting post-install configuration..."
 # Ensure package lists are updated
-$USE_SUDO apt-get update -y
+$USE_SUDO apt-get update
 
 # Determine the build type based on environment variable
 if [ "$BUILD_TYPE" == "aws" ]; then
@@ -40,11 +40,7 @@ else
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 fi
 # Update package lists again
-$USE_SUDO apt-get update -y
+$USE_SUDO apt-get update
 # Install Docker and dependencies
-$USE_SUDO apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+$USE_SUDO apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 echo "Docker installation complete!"
-
-
-
-
