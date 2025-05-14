@@ -1,22 +1,27 @@
-# Proxmox VM Launch with Hookscripts
+# Table of Contents
+- [Table of Contents](#table-of-contents)
+- [Proxmox VM](#proxmox-vm)
+  - [Prerequisites](#prerequisites)
+  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
 
-This guide will help you launch a virtual machine (VM) in Proxmox with hookscripts.
+# Proxmox VM
 
-## Steps to Launch a VM with Hookscripts
+- General guide to launch dibbs-ecr-viewer and dibbs-query-connector VMs.
+
+## Prerequisites
+
+- Ensure you have the necessary permissions to create VMs in your proxmox environment.
+
+## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
 
 1. **Create a VM**:
-   - Go to the Proxmox web interface.
-   - Click on "Create VM" and follow the wizard to configure your VM.
 
-2. **Add Hookscripts**:
-   - After creating the VM, go to the VM's options.
-   - Add your hookscripts under the "Hookscripts" section.
-
-3. **Start the VM**:
-   - Once the hookscripts are added, start the VM.
-   - The hookscripts will execute during the VM's lifecycle events.
-
-## Example Hookscripts
-
-## user scripts for proxmox
-https://pve.proxmox.com/pve-docs/pve-admin-guide.html#_hookscripts
+2. **Connect to the VM**:
+  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer:
+    ```bash
+      ./dibbs-ecr-viewer-wizard.sh
+    ```
+  - **Query Connector** - Run the following command and follow the prompts to configure the Query Connector:
+    ```bash
+      ./dibbs-query-connector-wizard.sh
+    ```

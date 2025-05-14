@@ -48,7 +48,7 @@ display_intro() {
   echo ""
 }
 
-config_name() {
+set_vars() {
   while IFS= read -r line; do
     case $line in
       CONFIG_NAME=*)
@@ -63,7 +63,24 @@ config_name() {
   echo ""
   PS3='
   Please select your CONFIG_NAME: '
-  options=("AWS_PG_NON_INTEGRATED" "AWS_SQLSERVER_NON_INTEGRATED" "AWS_INTEGRATED" "AZURE_INTEGRATED" "AZURE_PG_NON_INTEGRATED" "AZURE_SQLSERVER_NON_INTEGRATED" "Quit")
+  options=(
+    "AWS_PG_NON_INTEGRATED"
+    "AWS_PG_DUAL"
+    "AWS_SQLSERVER_NON_INTEGRATED"
+    "AWS_SQLSERVER_DUAL"
+    "AWS_INTEGRATED"
+    "AZURE_PG_NON_INTEGRATED"
+    "AZURE_PG_DUAL"
+    "AZURE_SQLSERVER_NON_INTEGRATED"
+    "AZURE_SQLSERVER_DUAL"
+    "AZURE_INTEGRATED"
+    "GCP_PG_NON_INTEGRATED"
+    "GCP_PG_DUAL"
+    "GCP_SQLSERVER_NON_INTEGRATED"
+    "GCP_SQLSERVER_DUAL"
+    "GCP_INTEGRATED"
+    "Quit"
+  )
   select opt in "${options[@]}"
   do
     echo ""
@@ -72,26 +89,125 @@ config_name() {
     case $opt in
       "AWS_PG_NON_INTEGRATED")
         CONFIG_NAME="AWS_PG_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        aws
+        pg
+        auth
+        break
+        ;;
+      "AWS_PG_DUAL")
+        CONFIG_NAME="AWS_PG_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        aws
+        pg
+        nbs
+        auth
         break
         ;;
       "AWS_SQLSERVER_NON_INTEGRATED")
         CONFIG_NAME="AWS_SQLSERVER_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        aws
+        sqlserver
+        auth
+        break
+        ;;
+      "AWS_SQLSERVER_DUAL")
+        CONFIG_NAME="AWS_SQLSERVER_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        aws
+        sqlserver
+        nbs
+        auth
         break
         ;;
       "AWS_INTEGRATED")
         CONFIG_NAME="AWS_INTEGRATED"
-        break
-        ;;
-      "AZURE_INTEGRATED")
-        CONFIG_NAME="AZURE_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        aws
+        nbs
         break
         ;;
       "AZURE_PG_NON_INTEGRATED")
         CONFIG_NAME="AZURE_PG_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        azure
+        pg
+        auth
+        break
+        ;;
+      "AZURE_PG_DUAL")
+        CONFIG_NAME="AWS_PG_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        azure
+        pg
+        nbs
+        auth
         break
         ;;
       "AZURE_SQLSERVER_NON_INTEGRATED")
         CONFIG_NAME="AZURE_SQLSERVER_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        azure
+        sqlserver
+        auth
+        break
+        ;;
+      "AZURE_SQLSERVER_DUAL")
+        CONFIG_NAME="AZURE_SQLSERVER_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        azure
+        sqlserver
+        nbs
+        auth
+        break
+        ;;
+      "AZURE_INTEGRATED")
+        CONFIG_NAME="AZURE_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        azure
+        nbs
+        break
+        ;;
+      "GCP_PG_NON_INTEGRATED")
+        CONFIG_NAME="GCP_PG_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        gcp
+        pg
+        auth
+        break
+        ;;
+      "GCP_PG_DUAL")
+        CONFIG_NAME="GCP_PG_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        gcp
+        pg
+        nbs
+        auth
+        break
+        ;;
+      "GCP_SQLSERVER_NON_INTEGRATED")
+        CONFIG_NAME="GCP_SQLSERVER_NON_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        gcp
+        sqlserver
+        auth
+        break
+        ;;
+      "GCP_SQLSERVER_DUAL")
+        CONFIG_NAME="GCP_SQLSERVER_DUAL"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        gcp
+        sqlserver
+        nbs
+        auth
+        break
+        ;;
+      "GCP_INTEGRATED")
+        CONFIG_NAME="GCP_INTEGRATED"
+        add_env "CONFIG_NAME" "$CONFIG_NAME"
+        gcp
+        nbs
         break
         ;;
       "Quit")
@@ -113,40 +229,6 @@ confirm_dot_env_var() {
   echo -e "  \e[1;36mSetting: $value=$choice\e[0m"
   echo ""
   add_env "$value" "$choice"
-}
-
-set_dot_vars() {
-  add_env "CONFIG_NAME" "$CONFIG_NAME"
-  case "$CONFIG_NAME" in
-    "AWS_PG_NON_INTEGRATED")
-      aws
-      pg
-      ;;
-    "AWS_SQLSERVER_NON_INTEGRATED")
-      aws
-      sqlserver
-      ;;
-    "AWS_INTEGRATED")
-      aws
-      nbs
-      ;;
-    "AZURE_INTEGRATED")
-      azure
-      nbs
-      ;;
-    "AZURE_PG_NON_INTEGRATED")
-      azure
-      pg
-      ;;
-    "AZURE_SQLSERVER_NON_INTEGRATED")
-      azure
-      sqlserver
-      ;;
-    *)
-      echo "Invalid configuration name. Please choose a valid configuration name."
-      exit 1
-      ;;
-  esac
 }
 
 confirm_update() {
@@ -180,6 +262,8 @@ add_env() {
 
 pg() {
   check_var DATABASE_URL
+  check_var METADATA_DATABASE_SCHEMA
+  check_var METADATA_DATABASE_MIGRATION_SECRET
 }
 
 sqlserver() {
@@ -187,10 +271,26 @@ sqlserver() {
   check_var SQL_SERVER_PASSWORD
   check_var SQL_SERVER_HOST
   check_var DB_CIPHER
+  check_var METADATA_DATABASE_SCHEMA
+  check_var METADATA_DATABASE_MIGRATION_SECRET
 }
 
 nbs() {
   check_var NBS_PUB_KEY
+}
+
+auth() {
+  check_var AUTH_PROVIDER
+  check_var AUTH_CLIENT_ID
+  check_var AUTH_CLIENT_SECRET
+  check_var AUTH_ISSUER
+}
+
+keycloak() {
+  check_var KEYCLOAK_URL
+  check_var KEYCLOAK_REALM
+  check_var KEYCLOAK_CLIENT_ID
+  check_var KEYCLOAK_CLIENT_SECRET
 }
 
 aws() {
@@ -201,6 +301,11 @@ aws() {
 azure() {
   check_var AZURE_STORAGE_CONNECTION_STRING
   check_var AZURE_CONTAINER_NAME
+}
+
+gcp() {
+  check_var GCP_CREDENTIALS
+  check_var GCP_PROJECT_ID
 }
 
 check_var() {
@@ -235,7 +340,6 @@ docker_compose_vars() {
 clear_dot_env
 display_intro
 docker_compose_vars
-config_name
-set_dot_vars
+set_vars
 confirm_update
 restart_docker_compose
