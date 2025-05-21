@@ -276,6 +276,7 @@ sqlserver() {
 }
 
 nbs() {
+  check_var NBS_API_PUB_KEY
   check_var NBS_PUB_KEY
 }
 

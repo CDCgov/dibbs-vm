@@ -84,6 +84,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=AWS_PG_DUAL
 AWS_REGION=region
 ECR_BUCKET_NAME=bucket_name
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=pub_key
 DATABASE_URL=connection_string
 AUTH_PROVIDER=ad
@@ -113,6 +114,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=AWS_PG_DUAL
 AWS_REGION=region
 ECR_BUCKET_NAME=bucket_name
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=pub_key
 SQL_SERVER_USER=sa
 SQL_SERVER_PASSWORD=password
@@ -129,6 +131,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=AWS_INTEGRATED
 AWS_REGION=region
 ECR_BUCKET_NAME=bucket_name
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=nbs_pub_key
 EOF
 ```
