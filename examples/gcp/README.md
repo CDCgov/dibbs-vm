@@ -87,6 +87,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=GCP_PG_DUAL
 GCP_CREDENTIALS=creds
 GCP_PROJECT_ID=project_id
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=pub_key
 DATABASE_URL=connection_string
 AUTH_PROVIDER=ad
@@ -116,6 +117,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=GCP_SQLSERVER_DUAL
 GCP_CREDENTIALS=creds
 GCP_PROJECT_ID=project_id
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=pub_key
 SQL_SERVER_USER=sa
 SQL_SERVER_PASSWORD=password
@@ -132,6 +134,7 @@ cat > ~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env<< EOF
 CONFIG_NAME=GCP_INTEGRATED
 GCP_CREDENTIALS=creds
 GCP_PROJECT_ID=project_id
+NBS_API_PUB_KEY=pub_key
 NBS_PUB_KEY=pub_key
 EOF
 ```
