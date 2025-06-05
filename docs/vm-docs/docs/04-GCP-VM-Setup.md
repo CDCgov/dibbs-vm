@@ -201,7 +201,7 @@ When prompted, enter the randomized password provided by the DIBBs team.
 
 **Using Command Line:**
 ```bash
-sudo passwd dibbs
+sudo passwd <username> # Replace <username> with the  user's name provided to you by the DIBBs team 
 ```
 
 - Enter a strong, unique password when prompted and confirm the change.
