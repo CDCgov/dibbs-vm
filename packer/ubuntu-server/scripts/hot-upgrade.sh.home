@@ -29,6 +29,7 @@ fi
 
 # Clone the dibbs-vm repository
 git clone https://github.com/CDCgov/dibbs-vm.git
+cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
 
 find "$dibbs_vm_bak_dir/$DIBBS_SERVICE" -name "*.env" | while read file; do
   cat "$file" > "$dibbs_vm_dir/$DIBBS_SERVICE/$(basename "$file")"
