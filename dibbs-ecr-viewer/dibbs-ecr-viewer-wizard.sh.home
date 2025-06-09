@@ -231,7 +231,7 @@ confirm_dot_env_var() {
 }
 
 confirm_update() {
-  echo -e "\e[1;33mPlease confirm the following settings ( Double check for special characters that should be escaped ):\e[0m"
+  echo -e "\e[1;33mPlease confirm the following settings (Double check for special characters that should be escaped):\e[0m"
   vars=$(cat "$dibbs_ecr_viewer_wizard")
   echo -e "\e[1;36m$vars\e[0m"
   echo ""
@@ -277,7 +277,7 @@ add_env() {
 
 pg() {
   check_var DATABASE_URL "PostgreSQL connection string format: postgres://USER:PASSWORD@HOST:PORT/DATABASE_NAME"
-  check_var METADATA_DATABASE_SCHEMA "Schema options are: core or extended"
+  check_var METADATA_DATABASE_SCHEMA "Schema options are: 'core' or 'extended'"
   check_var METADATA_DATABASE_MIGRATION_SECRET "Migration secret used to trigger migrations"
 }
 
@@ -286,7 +286,7 @@ sqlserver() {
   check_var SQL_SERVER_PASSWORD
   check_var SQL_SERVER_HOST
   check_var DB_CIPHER
-  check_var METADATA_DATABASE_SCHEMA "Schema options are: core or extended"
+  check_var METADATA_DATABASE_SCHEMA "Schema options are: 'core' or 'extended'"
   check_var METADATA_DATABASE_MIGRATION_SECRET "Migration secret used to trigger migrations, one will be generated and output to ecr-viewer logs if you do not provide one"
 }
 
