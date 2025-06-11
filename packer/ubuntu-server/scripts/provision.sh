@@ -38,6 +38,10 @@ echo "DIBBS_SERVICE=$DIBBS_SERVICE" >>"$DIBBS_SERVICE.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >>"$DIBBS_SERVICE.env"
 echo "" >>"$DIBBS_SERVICE.env"
 
+# export only the DIBBS_SERVICE and DIBBS_VERSION from the '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' file
+echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_SERVICE= | xargs)' >>"$HOME"/.bashrc
+echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_VERSION= | xargs)' >>"$HOME"/.bashrc
+
 # Gives ubuntu user ownership of the dibbs-vm directory
 chown -R dibbs-user:dibbs-user "$HOME/dibbs-vm"
 
