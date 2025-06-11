@@ -38,9 +38,6 @@ echo "DIBBS_SERVICE=$DIBBS_SERVICE" >>"$DIBBS_SERVICE.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >>"$DIBBS_SERVICE.env"
 echo "" >>"$DIBBS_SERVICE.env"
 
-# enables docker compose variables to stay set on reboot, DIBBS_SERVICE and DIBBS_VERSION
-echo 'export $(cat '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' | xargs)' >>"$HOME"/.bashrc
-
 # Gives ubuntu user ownership of the dibbs-vm directory
 chown -R dibbs-user:dibbs-user "$HOME/dibbs-vm"
 
