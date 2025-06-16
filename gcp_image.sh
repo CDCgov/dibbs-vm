@@ -30,7 +30,11 @@ rm ubuntu-2404-$service-$version.tar.gz || true
 cp ubuntu-2404-$service-$version.raw disk.raw
 
 # compress raw
-tar -czvf ubuntu-2404-$service-$version.tar.gz disk.raw
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  gtar -czvf ubuntu-2404-$service-$version.tar.gz disk.raw
+else
+  tar -czvf ubuntu-2404-$service-$version.tar.gz disk.raw
+fi
 
 # upload to gcs
 gsutil cp ubuntu-2404-$service-$version.tar.gz gs://$bucket
