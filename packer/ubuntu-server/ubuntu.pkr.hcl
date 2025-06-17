@@ -86,7 +86,7 @@ source "amazon-ebs" "aws-ami" {
     most_recent = true
   }
   
-  //TODO: CHANGE ME! Change the password to use the random one, too!
+  # Packer connects as ubuntu user during build, then we create dibbs-user via provisioning
   ssh_username = "ubuntu"
 
   launch_block_device_mappings {
@@ -121,25 +121,45 @@ source "azure-arm" "azure-image" {
   managed_image_resource_group_name = "skylight-dibbs-vm1"
   os_type                           = "Linux"
 
-  //TODO: CHANGE ME! Change the password to use the random one, too!
-  ssh_username                      = "ubuntu"
-
+  # Packer connects as ubuntu user during build, then we create dibbs-user via provisioning
+  ssh_username = "ubuntu"
 }
 
 
 build {
   name = "multi-cloud-build"
   sources = [
-    "source.qemu.raw"
-    //"source.amazon-ebs.aws-ami",
-    //"source.azure-arm.azure-image"
+    "source.qemu.raw",
+    "source.amazon-ebs.aws-ami",
+    "source.azure-arm.azure-image"
   ]
+
+  # Create dibbs-user account on cloud instances during build
+  provisioner "shell" {
+    only = ["amazon-ebs.aws-ami", "azure-arm.azure-image"]
+    inline = [
+      "sudo useradd -m -s /bin/bash -G sudo dibbs-user",
+      "echo 'dibbs-user:${var.ssh_password}' | sudo chpasswd",
+      "echo 'dibbs-user ALL=(ALL) ALL' | sudo tee /etc/sudoers.d/dibbs-user",
+      "sudo chmod 0440 /etc/sudoers.d/dibbs-user"
+    ]
+  }
 
   provisioner "file" {
     source      = "./jails/jail.local"
     destination = "~/jail.local"
   }
 
+  # Wait for dibbs-user to be created on cloud instances
+  provisioner "shell" {
+    only = ["amazon-ebs.aws-ami", "azure-arm.azure-image"]
+    inline = [
+      "while ! id dibbs-user >/dev/null 2>&1; do echo 'Waiting for dibbs-user...'; sleep 5; done",
+      "echo 'dibbs-user is ready'"
+    ]
+  }
+
+  # Switch to dibbs-user for subsequent provisioning on cloud instances
   provisioner "shell" {
     only   = ["azure-arm.azure-image"]
     scripts = [
@@ -153,8 +173,6 @@ build {
       "USE_SUDO=sudo",
       "BUILD_TYPE=azure"
     ]
-
-    //TODO: Add new password here!
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
@@ -168,11 +186,9 @@ build {
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
       "DIBBS_VERSION=${var.dibbs_version}",
-      "USE_SUDO=",
+      "USE_SUDO=sudo",
       "BUILD_TYPE=aws"
     ]
-
-    //TODO: Add new password here!
     execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
