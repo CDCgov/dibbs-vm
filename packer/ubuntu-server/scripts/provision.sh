@@ -45,6 +45,7 @@ echo "" >>"$DIBBS_SERVICE.env"
 echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_SERVICE= | xargs)' >>"$HOME"/.bashrc
 echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_VERSION= | xargs)' >>"$HOME"/.bashrc
 
+
 # Gives ubuntu user ownership of the dibbs-vm directory and permission to execute wizard script
 chown -R ubuntu:ubuntu "$HOME/dibbs-vm"
 chmod +x "$DIBBS_SERVICE-wizard.sh"
