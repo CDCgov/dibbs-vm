@@ -2,6 +2,7 @@ services:
   ecr-viewer:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/ecr-viewer:$DIBBS_VERSION
     container_name: dibbs-ecr-viewer
+    container_name: dibbs-ecr-viewer
     restart: always
     env_file: "dibbs-ecr-viewer.env"
     ports:
@@ -12,6 +13,7 @@ services:
   ingestion:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/ingestion:$DIBBS_VERSION
     container_name: dibbs-ingestion
+    container_name: dibbs-ingestion
     restart: always
     ports:
       - "8080:8080"
@@ -20,7 +22,6 @@ services:
 
   validation:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/validation:$DIBBS_VERSION
-    container_name: dibbs-validation
     container_name: dibbs-validation
     restart: always
     ports:
@@ -31,6 +32,7 @@ services:
   fhir-converter:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/fhir-converter:$DIBBS_VERSION
     container_name: dibbs-fhir-converter
+    container_name: dibbs-fhir-converter
     restart: always
     ports:
       - "8082:8080"
@@ -39,6 +41,7 @@ services:
 
   message-parser:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/message-parser:$DIBBS_VERSION
+    container_name: dibbs-message-parser
     container_name: dibbs-message-parser
     restart: always
     ports:
@@ -49,6 +52,7 @@ services:
   trigger-code-reference:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/trigger-code-reference:$DIBBS_VERSION
     container_name: dibbs-trigger-code-reference
+    container_name: dibbs-trigger-code-reference
     restart: always
     ports:
       - "8084:8080"
@@ -57,6 +61,7 @@ services:
 
   orchestration:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/orchestration:$DIBBS_VERSION
+    container_name: dibbs-orchestration
     container_name: dibbs-orchestration
     env_file: "dibbs-orchestration.env"
     restart: always
@@ -67,6 +72,7 @@ services:
 
   portainer:
     image: portainer/portainer-ce
+    container_name: dibbs-portainer
     container_name: dibbs-portainer
     restart: always
     ports:
@@ -79,6 +85,7 @@ services:
 
   docs:
     container_name: dibbs-docs
+    container_name: dibbs-docs
     build:
       context: ./../docs
       dockerfile: Dockerfile
@@ -90,3 +97,4 @@ volumes:
 
 networks:
   dibbs:
+
