@@ -10,5 +10,3 @@ Welcome to the DIBBs VM documentation site. Below you will find links to all ava
 - [04 - GCP VM Setup](04-GCP-VM-Setup.md)
 
 ---
-
-For more information, see the [README](../../README.md) or explore the [examples](../../examples/) directory for deployment
