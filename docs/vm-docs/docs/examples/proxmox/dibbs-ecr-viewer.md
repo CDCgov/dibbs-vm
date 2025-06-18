@@ -8,8 +8,8 @@
 
 ## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
 
-### Create a VM:
+### Create a VM
 
-### Connect to the VM:
+### Connect to the VM
 
   - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`

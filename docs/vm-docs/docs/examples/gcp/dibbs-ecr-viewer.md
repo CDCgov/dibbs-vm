@@ -6,11 +6,11 @@
 
   - Ensure you have followed the [GCP VM Setup Guide](../../04-GCP-VM-Setup.md) to create a VM instance.
 
-### Connect to the VM:
+### Connect to the VM
   
   - After the VM is created, you can SSH into the VM using the key pair you specified during the creation process.
 
-### Configure the VM:
+### Configure the VM
 
   - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`
 

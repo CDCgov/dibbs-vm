@@ -8,8 +8,8 @@
 
 ## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
 
-### Create a VM:
+### Create a VM
 
-### Connect to the VM:
+### Connect to the VM
 
   - **Query Connector** - Run the following command and follow the prompts to configure the Query Connector: `./dibbs-query-connector-wizard.sh`
