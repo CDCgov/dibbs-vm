@@ -1,4 +1,4 @@
-## GCP VM DIBBS eCR Viewer
+# GCP VM DIBBS eCR Viewer
 
 - General guide to configuring the dibbs-ecr-viewer VMs.
 
