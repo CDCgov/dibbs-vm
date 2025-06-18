@@ -1,13 +1,4 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [GCP VM](#gcp-vm)
-  - [Prerequisites](#prerequisites)
-  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
-    - [Create a VM:](#create-a-vm)
-    - [Connect to the VM:](#connect-to-the-vm)
-    - [Configure the VM:](#configure-the-vm)
-
-# GCP VM
+# GCP VM DIBBS Query Connector
 
 - General guide to configuring the dibbs-query-connector VMs.
 

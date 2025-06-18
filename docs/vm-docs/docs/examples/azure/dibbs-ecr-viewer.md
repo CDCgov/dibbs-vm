@@ -1,20 +1,4 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [Azure VM](#azure-vm)
-  - [Prerequisites](#prerequisites)
-  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
-    - [Create a VM:](#create-a-vm)
-    - [Connect to the VM:](#connect-to-the-vm)
-    - [Configure the VM:](#configure-the-vm)
-  - [User Data](#user-data)
-  - [eCR Viewer User Data](#ecr-viewer-user-data)
-    - [AZURE\_PG\_NON\_INTEGRATED](#azure_pg_non_integrated)
-    - [AZURE\_PG\_DUAL](#azure_pg_dual)
-    - [AZURE\_SQLSERVER\_NON\_INTEGRATED](#azure_sqlserver_non_integrated)
-    - [AZURE\_SQLSERVER\_DUAL](#azure_sqlserver_dual)
-    - [AZURE\_INTEGRATED](#azure_integrated)
-
-# Azure VM
+# Azure VM DIBBS eCR Viewer
 
 - General guide to launch dibbs-ecr-viewer VMs.
 

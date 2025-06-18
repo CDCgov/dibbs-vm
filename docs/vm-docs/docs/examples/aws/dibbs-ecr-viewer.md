@@ -1,20 +1,4 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [AWS AMI](#aws-ami)
-  - [Prerequisites](#prerequisites)
-  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
-    - [Create a VM:](#create-a-vm)
-    - [Connect to the VM:](#connect-to-the-vm)
-    - [Configure the VM:](#configure-the-vm)
-  - [User Data](#user-data)
-  - [eCR Viewer User Data](#ecr-viewer-user-data)
-    - [AWS\_PG\_NON\_INTEGRATED](#aws_pg_non_integrated)
-    - [AWS\_PG\_DUAL](#aws_pg_dual)
-    - [AWS\_SQLSERVER\_NON\_INTEGRATED](#aws_sqlserver_non_integrated)
-    - [AWS\_SQLSERVER\_DUAL](#aws_sqlserver_dual)
-    - [AWS\_INTEGRATED](#aws_integrated)
-
-# AWS AMI
+# AWS AMI DIBBS eCR Viewer
 
 - General guide to launch dibbs-ecr-viewer VMs.
 

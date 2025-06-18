@@ -1,13 +1,4 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [AWS AMI](#aws-ami)
-  - [Prerequisites](#prerequisites)
-  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
-    - [Create a VM:](#create-a-vm)
-    - [Connect to the VM:](#connect-to-the-vm)
-    - [Configure the VM:](#configure-the-vm)
-
-# AWS AMI
+# AWS AMI DIBBS Query Connector
 
   - General guide to launch dibbs-query-connector VMs.
 

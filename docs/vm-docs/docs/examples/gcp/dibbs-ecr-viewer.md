@@ -1,18 +1,4 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-  - [GCP VM](#gcp-vm)
-  - [Prerequisites](#prerequisites)
-    - [Connect to the VM:](#connect-to-the-vm)
-    - [Configure the VM:](#configure-the-vm)
-  - [User Data](#user-data)
-  - [eCR Viewer User Data](#ecr-viewer-user-data)
-    - [GCP\_PG\_NON\_INTEGRATED](#gcp_pg_non_integrated)
-    - [GCP\_PG\_DUAL](#gcp_pg_dual)
-    - [GCP\_SQLSERVER\_NON\_INTEGRATED](#gcp_sqlserver_non_integrated)
-    - [GCP\_SQLSERVER\_DUAL](#gcp_sqlserver_dual)
-    - [GCP\_INTEGRATED](#gcp_integrated)
-
-## GCP VM
+## GCP VM DIBBS eCR Viewer
 
 - General guide to configuring the dibbs-ecr-viewer VMs.
 
