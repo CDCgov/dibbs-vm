@@ -1,4 +1,4 @@
-# DIBBs VM Documentation
+# DIBBs-in-a-Box
 
 Welcome to the DIBBs VM documentation site. Below you will find links to all available guides and references.
 
