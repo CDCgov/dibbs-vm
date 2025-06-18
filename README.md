@@ -13,8 +13,7 @@
 dibbs-vm (Data Ingestion Building Blocks - Virtual Machine) is a project that aims to provide a VM that can be used to run the DIBBS software stacks.
 
 ## Documentation
-- See our [docs/](docs) for detailed documentation, including:
-  - [docs/vm-docs/docs/](docs) for VM-specific guides and references
+- See our [docs](docs/vm-docs/docs/) for detailed documentation
 
 ## Code of Conduct
 Please refer to our [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for more information on how we conduct ourselves in this project.
