@@ -3,10 +3,12 @@
 - [Proxmox VM](#proxmox-vm)
   - [Prerequisites](#prerequisites)
   - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
+    - [Create a VM:](#create-a-vm)
+    - [Connect to the VM:](#connect-to-the-vm)
 
 # Proxmox VM
 
-- General guide to launch dibbs-ecr-viewer and dibbs-query-connector VMs.
+- General guide to launch dibbs-ecr-viewer VMs.
 
 ## Prerequisites
 
@@ -14,14 +16,8 @@
 
 ## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
 
-1. **Create a VM**:
+### Create a VM:
 
-2. **Connect to the VM**:
-  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer:
-    ```bash
-      ./dibbs-ecr-viewer-wizard.sh
-    ```
-  - **Query Connector** - Run the following command and follow the prompts to configure the Query Connector:
-    ```bash
-      ./dibbs-query-connector-wizard.sh
-    ```
+### Connect to the VM:
+
+  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`
