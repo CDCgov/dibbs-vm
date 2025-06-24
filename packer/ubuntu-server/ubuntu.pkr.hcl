@@ -141,7 +141,10 @@ build {
       "sudo useradd -m -s /bin/bash -G sudo dibbs-user",
       "echo 'dibbs-user:${var.ssh_password}' | sudo chpasswd",
       "echo 'dibbs-user ALL=(ALL) ALL' | sudo tee /etc/sudoers.d/dibbs-user",
-      "sudo chmod 0440 /etc/sudoers.d/dibbs-user"
+      "sudo chmod 0440 /etc/sudoers.d/dibbs-user" ,
+      "sudo gpasswd -d ubuntu docker || true" ,
+      "echo 'ubuntu ALL=(ALL) NOPASSWD: ALL, !/usr/bin/docker' | sudo tee /etc/sudoers.d/ubuntu-docker-block",
+      "sudo chmod 0440 /etc/sudoers.d/ubuntu-docker-block"
     ]
   }
 
@@ -173,7 +176,7 @@ build {
       "USE_SUDO=sudo",
       "BUILD_TYPE=azure"
     ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
@@ -189,7 +192,7 @@ build {
       "USE_SUDO=sudo",
       "BUILD_TYPE=aws"
     ]
-    execute_command = "echo 'ubuntu' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+    execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
 
   provisioner "shell" {
