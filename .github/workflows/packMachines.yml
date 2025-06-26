@@ -206,7 +206,7 @@ jobs:
 
            hashed_pass=$(mkpasswd --method=SHA-512 "$plain_pass")
 
-           sed "s|{{password_hash}}|$hashed_pass|"  ./packer/ubuntu-server/http/user-data
+           sed -i "s|{{password_hash}}|$hashed_pass|"  ./packer/ubuntu-server/http/user-data
 
           echo "user-data file is ready with hashed password."
 
