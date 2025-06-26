@@ -195,18 +195,21 @@ jobs:
       - name: Install QEMU
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 openssl whois
 
-      - name: Generate random password and hash
-        id: generate_password
+      - name: Generate user-data with hashed password
+        working-directory: ./packer/ubuntu-server
         run: |
-          plain_pass=$(openssl rand -base64 12)
-          hashed_pass=$(mkpasswd --method=SHA-512 "$plain_pass")
-          echo "ssh_password=$plain_pass" >> $GITHUB_OUTPUT
-          echo "password_hash=$hashed_pass" >> $GITHUB_OUTPUT
+          sudo apt-get update && sudo apt-get install -y whois
 
-      - name: Render cloud-init user-data
-        working-directory: ./packer/ubuntu-server/http
-        run: |
-          sed "s|{{password_hash}}|${{ steps.generate_password.outputs.password_hash }}|" user-data-template.yaml > user-data
+            plain_pass=$(openssl rand -base64 12)
+            echo "Random password: $plain_pass"
+          echo "PLAIN_PASSWORD=$plain_pass" >> $GITHUB_ENV
+
+           hashed_pass=$(mkpasswd --method=SHA-512 "$plain_pass")
+
+           sed "s|{{password_hash}}|$hashed_pass|" user-data > user-data-final
+          mv user-data-final user-data
+
+          echo "user-data file is ready with hashed password."
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
