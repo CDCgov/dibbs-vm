@@ -192,13 +192,28 @@ jobs:
             echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
         shell: bash
         
+      - name: Install QEMU
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 openssl whois
+
+      - name: Generate random password and hash
+        id: generate_password
+        run: |
+          plain_pass=$(openssl rand -base64 12)
+          hashed_pass=$(mkpasswd --method=SHA-512 "$plain_pass")
+          echo "ssh_password=$plain_pass" >> $GITHUB_OUTPUT
+          echo "password_hash=$hashed_pass" >> $GITHUB_OUTPUT
+
+      - name: Render cloud-init user-data
+        working-directory: ./packer/ubuntu-server/http
+        run: |
+          sed "s|{{password_hash}}|${{ steps.generate_password.outputs.password_hash }}|" user-data-template.yaml > user-data
+
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
           version: 1.11.2
 
-      - name: Install QEMU
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
+      
 
       - name: Run `packer init ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
@@ -206,10 +221,12 @@ jobs:
     
       - name: Run `packer validate ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
+        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ steps.generate_password.outputs.ssh_password }}' .
+
 
       - name: Run `packer build ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
+        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ steps.generate_password.outputs.ssh_password }}' .
+
 
   ## TODO: Decide how to export artifact.
