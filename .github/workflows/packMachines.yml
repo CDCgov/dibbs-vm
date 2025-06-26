@@ -222,12 +222,12 @@ jobs:
     
       - name: Run `packer validate ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ steps.generate_password.outputs.ssh_password }}' .
+        run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ env.PLAIN_PASSWORD }}' .
 
 
       - name: Run `packer build ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ steps.generate_password.outputs.ssh_password }}' .
+        run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }}  --var ssh_password='${{ env.PLAIN_PASSWORD }}' .
 
 
   ## TODO: Decide how to export artifact.
