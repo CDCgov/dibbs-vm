@@ -22,7 +22,7 @@ mta = sendmail
 # configured above.
 action_mw = %(action_)s
             %(mta)s-whois[sender="%(sender)s", dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
-action = $(action_)s
+action = iptables
 
 
 [ssh]
