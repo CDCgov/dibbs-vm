@@ -3,16 +3,8 @@
 - General guide to configuring the dibbs-query-connector VMs.
 
 ## Prerequisites
-- Ensure you have the necessary permissions to create VMs in your GCP project.
 
-## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
-
-### Create a VM
-  
-  - Go to the GCP Console.
-  - Navigate to `Compute Engine` > `VM instances`.
-  - Follow the GCP wizard to configure your VM with settings that comply with your organizations requirements and launch your instance.
-    - Be sure to include an ssh key and security settings that allow ssh so that you can connect to your instance and run the wizard scripts available.
+  - Ensure you have followed the [GCP VM Setup Guide](../../04-GCP-VM-Setup.md) to create a VM instance.
 
 ### Connect to the VM
   

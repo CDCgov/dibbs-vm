@@ -215,6 +215,7 @@ sudo passwd <username> # Replace <username> with the  user's name provided to yo
 ## Step 10: Configure the DIBBs Applications
 
 - eCR-Viewer: [Configure DIBBs Applications](examples/gcp/dibbs-ecr-viewer.md)
+- Query-Connector: [Configure DIBBs Applications](examples/gcp/dibbs-query-connector.md)
 
 ## Conclusion
 
