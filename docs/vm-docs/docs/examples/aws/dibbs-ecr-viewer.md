@@ -1,65 +1,32 @@
-# Table of Contents
-- [Table of Contents](#table-of-contents)
-- [AWS AMI](#aws-ami)
-  - [Prerequisites](#prerequisites)
-  - [Steps to launch a VM and configure the Dibbs applications using provided wizard scripts](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-provided-wizard-scripts)
-  - [Steps to launch a VM and configure the Dibbs applications using User data fields](#steps-to-launch-a-vm-and-configure-the-dibbs-applications-using-user-data-fields)
-  - [User Data](#user-data)
-  - [eCR Viewer User Data](#ecr-viewer-user-data)
-    - [AWS\_PG\_NON\_INTEGRATED](#aws_pg_non_integrated)
-    - [AWS\_PG\_DUAL](#aws_pg_dual)
-    - [AWS\_SQLSERVER\_NON\_INTEGRATED](#aws_sqlserver_non_integrated)
-    - [AWS\_SQLSERVER\_DUAL](#aws_sqlserver_dual)
-    - [AWS\_INTEGRATED](#aws_integrated)
+# AWS AMI DIBBS eCR Viewer
 
-# AWS AMI
-
-- General guide to launch dibbs-ecr-viewer and dibbs-query-connector VMs.
+- General guide to launch dibbs-ecr-viewer VMs.
 
 ## Prerequisites
 - Ensure you have the necessary permissions to create VMs in your AWS account.
 
 ## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
 
-1. **Create a VM**:
+### Create a VM
+
   - Go to the EC2 web interface.
   - Click on `Launch Instance`.
   - Follow the AWS wizard to configure your VM with settings that comply with your organizations requirements and launch your instance.
     - Be sure to include an ssh key and security settings that allow ssh so that you can connect to your instance and run the wizard scripts available.
 
-2. **Connect to the VM**:
+### Connect to the VM
+
   - After the VM is created, you can SSH into the VM using the key pair you specified during the creation process.
-  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer:
-    ```bash
-      ./dibbs-ecr-viewer-wizard.sh
-    ```
-  - **Query Connector** - Run the following command and follow the prompts to configure the Query Connector:
-    ```bash
-      ./dibbs-query-connector-wizard.sh
-    ```
 
-## Steps to launch a VM and configure the Dibbs applications using User data fields
+### Configure the VM
 
-1. **Create a VM**:
-  - Go to the EC2 web interface.
-  - Click on `Launch Instance` and follow the wizard to configure your VM.
-  - Follow the AWS wizard to configure your VM with settings that comply with your organizations requirements and launch your instance.
-    - Be sure to include an ssh key and security settings that allow ssh so that you can connect to your instance and run the wizard scripts available.
-  - In the `Advanced details` step, enter the `User data` that matches your desired configuration.
-  - The `User data` scripts will execute during the VM's initialization.
-
-2. **Verify the VM**:
-  - After the VM is created, you can SSH into the VM and check the logs to verify that the user-data script executed successfully.
-  - You can check the logs by running:
-
-  - Ensure that the eCR Viewer is running and accessible.
+  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`
 
 ## User Data
 
 - These User data scripts set the environment variables for the dibbs applications. They work by setting values in the `.env` files. The following files are loading on VM boot and can be edited or updated by your in perform modifications to your environments. If you need to update the settings of your dibbs application, simply edit the `.env` files referenced below or run the setup wizard script as shown above.
 
 - Dibbs eCR Viewer: `~/dibbs-vm/dibbs-ecr-viewer/dibbs-ecr-viewer.env`
-- Dibbs Query Connector: `~/dibbs-vm/dibbs-ecr-viewer/dibbs-query-connector.env`
 
 ## eCR Viewer User Data
 

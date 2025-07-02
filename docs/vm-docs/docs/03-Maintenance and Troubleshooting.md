@@ -1,6 +1,4 @@
 # Maintenance and Troubleshooting
 
-## Subsection 1
-
-
-## Subsection 2
+## Coming Soon
+This section will provide detailed instructions on how to maintain and troubleshoot your DIBBs VM environment. Stay tuned for updates!
