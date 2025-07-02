@@ -2,14 +2,15 @@
 
 service=$1
 version=$2
+gitsha=$(git rev-parse --short HEAD)
 cd packer/ubuntu-server/ || exit
 
 # check if the build directory exists
-if [ -d "build/$service-$version" ]; then
+if [ -d "build/$service-$version-$gitsha" ]; then
     echo "Build directory for that version already exists."
     read -rp $'  \e[3m'"Do you want to remove the build directory? (y/n): "$'\e[0m' choice
     if [ "$choice" == "y" ]; then
-        rm -rf "build/$service-$version"
+        rm -rf "build/$service-$version-$gitsha"
     else
         echo "Cannot continue with the build process."
         exit 1
@@ -24,7 +25,7 @@ if [ -z "$service" ] || [ -z "$version" ]; then
 fi
 
 # build machines need to have OpenSSL installed for random password generation.
-if ! command -v openssl &> /dev/null; then
+if ! command -v openssl &>/dev/null; then
     echo "openssl could not be found, exiting..."
     exit 1
 fi
@@ -48,10 +49,10 @@ echo "Password replaced in user-data file."
 packer init .
 
 # validate
-packer validate --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" .
+packer validate --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" .
 
 # Build the base image
-packer build --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" .
+packer build --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" .
 
 echo "Remember, to login, you need to use the password: $DIBBS_USER_PASSWORD"
 

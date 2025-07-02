@@ -37,14 +37,14 @@ packer {
 
 
 source "qemu" "raw" {
-  vm_name = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}.raw"
+  vm_name = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}-${var.gitsha}.raw"
   # Uncomment this block to use a basic Ubuntu 24.04 cloud image
   # iso_url              = "https://cloud-images.ubuntu.com/releases/24.04/release/ubuntu-24.04-server-cloudimg-amd64.img"
   iso_url          = "http://releases.ubuntu.com/24.04.2/ubuntu-24.04.2-live-server-amd64.iso"
   iso_checksum     = "sha256:d6dab0c3a657988501b4bd76f1297c053df710e06e0c3aece60dead24f270b4d"
   disk_image       = false
   memory           = 4096
-  output_directory = "build/${var.dibbs_service}-${var.dibbs_version}"
+  output_directory = "build/${var.dibbs_service}-${var.dibbs_version}-${var.gitsha}"
   disk_size        = "24000M"
   disk_interface   = "virtio"
   format           = "raw"
@@ -72,7 +72,7 @@ source "qemu" "raw" {
 
 
 source "amazon-ebs" "aws-ami" {
-  ami_name      = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+  ami_name      = "ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}-${var.gitsha}"
   instance_type = var.aws_instance_type
   region        = var.aws_region
 
@@ -85,7 +85,7 @@ source "amazon-ebs" "aws-ami" {
     owners      = ["099720109477"] # Canonical's official AWS account ID
     most_recent = true
   }
-  
+
   //TODO: CHANGE ME! Change the password to use the random one, too!
   ssh_username = "ubuntu"
 
@@ -97,7 +97,7 @@ source "amazon-ebs" "aws-ami" {
   }
 
   tags = {
-    Name        = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+    Name        = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}-${var.gitsha}"
     Environment = "Dev"
   }
 }
@@ -117,12 +117,12 @@ source "azure-arm" "azure-image" {
   image_publisher                   = "Canonical"
   image_offer                       = "ubuntu-24_04-lts"
   image_sku                         = "server"
-  managed_image_name                = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}"
+  managed_image_name                = "Ubuntu-2404-${var.dibbs_service}-${var.dibbs_version}-${var.gitsha}"
   managed_image_resource_group_name = "skylight-dibbs-vm1"
   os_type                           = "Linux"
 
   //TODO: CHANGE ME! Change the password to use the random one, too!
-  ssh_username                      = "ubuntu"
+  ssh_username = "ubuntu"
 
 }
 
@@ -141,7 +141,7 @@ build {
   }
 
   provisioner "shell" {
-    only   = ["azure-arm.azure-image"]
+    only = ["azure-arm.azure-image"]
     scripts = [
       "scripts/fail2ban.sh",
       "scripts/post-install.sh",
@@ -159,7 +159,7 @@ build {
   }
 
   provisioner "shell" {
-    only   = ["amazon-ebs.aws-ami"]
+    only = ["amazon-ebs.aws-ami"]
     scripts = [
       "scripts/fail2ban.sh",
       "scripts/post-install.sh",
@@ -177,7 +177,7 @@ build {
   }
 
   provisioner "shell" {
-    only   = ["qemu.raw"]
+    only = ["qemu.raw"]
     scripts = [
       "scripts/fail2ban.sh",
       "scripts/provision.sh"
