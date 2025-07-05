@@ -1,4 +1,4 @@
-# GCP Guide to Setting Up a DIBBs Virtual Machine Instance
+# Guide to Setting Up a Virtual Machine Instance Using DIBBs
 
 *Version 1.1*
 
@@ -23,7 +23,7 @@ This guide provides clear steps to set up a Virtual Machine (VM) instance using 
 
 ## Step-by-Step Instructions
 
-## Step 1: Authenticate with GCP and Enable Required APIs
+### Step 1: Authenticate with GCP and Enable Required APIs
 
 Open your terminal and run the following commands:
 
@@ -38,7 +38,7 @@ gcloud config set project YOUR_PROJECT_ID
 gcloud services enable compute.googleapis.com storage-component.googleapis.com
 ```
 
-## Step 2: Create a Cloud Storage Bucket
+### Step 2: Create a Cloud Storage Bucket
 
 Google requires a Cloud Storage bucket to store the VM image before importing it.
 
@@ -53,7 +53,7 @@ gsutil mb -c STANDARD -l <Zone> gs://my-gcp-bucket/
 
 > ⚠️ **Note**: The bucket you're creating here should differ from the storage bucket required to store FHIR data for the eCR Viewer. This bucket is mainly a repository to store the DIBBs `.raw` VM file.
 
-## Step 3: Rename the File to disk.raw
+### Step 3: Rename the File to disk.raw
 
 GCP requires the file inside the archive to be named `disk.raw`. Rename it using the following commands:
 
@@ -64,7 +64,7 @@ mv <my-vm-file>.raw disk.raw
 After this, you should have only:
 - `disk.raw`
 
-## Step 4: Create the Compressed Archive
+### Step 4: Create the Compressed Archive
 
 GCP does not support `.raw` files directly, so we need to compress the file into a `.tar.gz` archive.
 
@@ -85,7 +85,7 @@ After this, you should have two output files:
 - `disk.raw`
 - `preferred name.tar.gz`
 
-## Step 5: Upload the Archive to Cloud Storage
+### Step 5: Upload the Archive to Cloud Storage
 
 You can upload the compressed file using the CLI or the GCP Portal.
 
@@ -101,7 +101,7 @@ gsutil cp <my-vm-file>.tar.gz gs://my-gcp-bucket/
 
 > ⚠️ **Note**: The upload process may take up to an hour.
 
-## Step 6: Create an Image from the Uploaded File
+### Step 6: Create an Image from the Uploaded File
 
 Once the upload is complete, create an image using the `.tar.gz` file.
 
@@ -119,7 +119,7 @@ gcloud compute images create <my-image> \
 4. Browse and select `my-vm-file.tar.gz`
 5. Complete the required metadata fields
 
-## Step 7: Create a VM Instance from the Image
+### Step 7: Create a VM Instance from the Image
 
 Now that the image is ready, create a VM instance.
 
@@ -142,11 +142,11 @@ gcloud compute instances create my-vm-instance \
 5. Choose your uploaded image and configure other settings
 6. Click Create
 
-## Step 8: Secure Your VM Instance
+### Step 8: Secure Your VM Instance
 
 Once the VM instance is up and running, it's essential to secure it by setting up a firewall and updating credentials.
 
-#### Verify and Configure GCP Firewall Rules
+#### 1. Verify and Configure GCP Firewall Rules
 
 By default, the VM instance runs behind a GCP firewall. However, you should verify and configure rules to allow only necessary access.
 
@@ -185,7 +185,7 @@ Replace `<YOUR_ALLOWED_IP>` with trusted IP addresses (e.g., your organization's
 
 Your VM instance comes pre-configured with temporary login credentials that the DIBBs team has provided to you. **We strongly recommend changing these credentials immediately after your first login** to enhance security.
 
-#### Initial SSH Access
+### Initial SSH Access
 
 To connect to your VM instance, use the following GCP command:
 
@@ -197,7 +197,7 @@ When prompted, enter the randomized password provided by the DIBBs team.
 
 ### Mandatory Security Steps (Complete Immediately After First Login)
 
-#### Change the Default Password
+#### 1. Change the Default Password
 
 **Using Command Line:**
 ```bash
@@ -206,16 +206,12 @@ sudo passwd <username> # Replace <username> with the  user's name provided to yo
 
 - Enter a strong, unique password when prompted and confirm the change.
 
-#### Alternative: Using GCP Console
+#### 2. Alternative: Using GCP Console
 
 1. Navigate to Compute Engine > VM Instances
 2. Click on your instance
 3. Under the SSH Keys section, add a new SSH key or update credentials
 
-## Step 10: Configure the DIBBs Applications
-
-- eCR-Viewer: [Configure DIBBs Applications](examples/gcp/dibbs-ecr-viewer.md)
-- Query-Connector: [Configure DIBBs Applications](examples/gcp/dibbs-query-connector.md)
 
 ## Conclusion
 

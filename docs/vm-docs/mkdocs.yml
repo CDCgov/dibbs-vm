@@ -12,3 +12,4 @@ theme:
   sticky_navigation: true
 
 extra_css:
+  - hide.css
