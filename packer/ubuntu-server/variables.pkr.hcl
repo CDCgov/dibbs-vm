@@ -20,6 +20,11 @@ variable "dibbs_version" {
   type        = string
 }
 
+variable "gitsha" {
+  description = "Git SHA of the current commit"
+  type        = string
+}
+
 variable "aws_region" {
   description = "AWS region to build the AMI"
   type        = string
@@ -31,7 +36,6 @@ variable "aws_instance_type" {
   description = "AWS instance type for the build"
   type        = string
   default     = "t3.medium"
-
 }
 
 variable "subscription_id" {
