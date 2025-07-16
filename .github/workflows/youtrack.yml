@@ -12,7 +12,7 @@ on:
 env:
   YOUTRACK_BASE_URL: ${{ secrets.YOUTRACK_BASE_URL }}
   YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  YOUTRACK_GITHUB_TOKEN: ${{ secrets.YOUTRACK_GITHUB_TOKEN }}
   PROJECT_ID: ${{ secrets.YOUTRACK_PROJECT_ID }}
 
 jobs:
@@ -36,6 +36,6 @@ jobs:
         env:
           YOUTRACK_BASE_URL: ${{ env.YOUTRACK_BASE_URL }}
           YOUTRACK_TOKEN: ${{ env.YOUTRACK_TOKEN }}
-          GITHUB_TOKEN: ${{ env.YOUTRACK_GITHUB_TOKEN }}
+          YOUTRACK_GITHUB_TOKEN: ${{ env.YOUTRACK_GITHUB_TOKEN }}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           GITHUB_REPOSITORY: ${{ github.repository }}
