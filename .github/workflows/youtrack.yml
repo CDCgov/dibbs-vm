@@ -5,6 +5,9 @@ on:
     # Run every 15 minutes
     - cron: '*/15 * * * *'
   workflow_dispatch: # Allow manual trigger
+  push:
+   branches:
+   - 'shanice/you_track'
 
 env:
   YOUTRACK_BASE_URL: ${{ secrets.YOUTRACK_BASE_URL }}
