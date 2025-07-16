@@ -1,0 +1,38 @@
+name: YouTrack to GitHub Issues Sync
+
+on:
+  schedule:
+    # Run every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  YOUTRACK_BASE_URL: ${{ secrets.YOUTRACK_BASE_URL }}
+  YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PROJECT_ID: ${{ secrets.YOUTRACK_PROJECT_ID }}
+
+jobs:
+  sync-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Sync YouTrack to GitHub
+        run: python sync-youtrack.py
+        env:
+          YOUTRACK_BASE_URL: ${{ env.YOUTRACK_BASE_URL }}
+          YOUTRACK_TOKEN: ${{ env.YOUTRACK_TOKEN }}
+          GITHUB_TOKEN: ${{ env.YOUTRACK_GITHUB_TOKEN }}
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
