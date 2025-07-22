@@ -18,15 +18,6 @@ services:
     networks:
       - dibbs
 
-  validation:
-    image: ghcr.io/cdcgov/$DIBBS_SERVICE/validation:$DIBBS_VERSION
-    container_name: dibbs-validation
-    restart: always
-    ports:
-      - "8081:8080"
-    networks:
-      - dibbs
-
   fhir-converter:
     image: ghcr.io/cdcgov/$DIBBS_SERVICE/fhir-converter:$DIBBS_VERSION
     container_name: dibbs-fhir-converter
