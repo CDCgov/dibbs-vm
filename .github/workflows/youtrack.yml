@@ -32,7 +32,7 @@ jobs:
           pip install requests
 
       - name: Sync YouTrack to GitHub
-        run: python sync-youtrack.py
+        run: python send_YT_to_Github.py
         env:
           YOUTRACK_BASE_URL: ${{ env.YOUTRACK_BASE_URL }}
           YOUTRACK_TOKEN: ${{ env.YOUTRACK_TOKEN }}
