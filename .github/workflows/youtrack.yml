@@ -14,6 +14,7 @@ env:
   YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
   YOUTRACK_GITHUB_TOKEN: ${{ secrets.YOUTRACK_GITHUB_TOKEN }}
   PROJECT_ID: ${{ secrets.YOUTRACK_PROJECT_ID }}
+  GITHUB_REPO: 'shanice-skylight/dibbs-vm'
 
 jobs:
   sync-issues:
@@ -40,3 +41,4 @@ jobs:
           YOUTRACK_GITHUB_TOKEN: ${{ env.YOUTRACK_GITHUB_TOKEN }}
           PROJECT_ID: ${{ env.PROJECT_ID }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+          
