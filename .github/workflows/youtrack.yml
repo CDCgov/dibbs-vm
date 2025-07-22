@@ -40,5 +40,5 @@ jobs:
           YOUTRACK_TOKEN: ${{ env.YOUTRACK_TOKEN }}
           YOUTRACK_GITHUB_TOKEN: ${{ env.YOUTRACK_GITHUB_TOKEN }}
           PROJECT_ID: ${{ env.PROJECT_ID }}
-          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_REPO: 'dibbs-vm'
           
