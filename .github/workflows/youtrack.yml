@@ -29,7 +29,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install requests python-dotenv
+
 
       - name: Sync YouTrack to GitHub
         run: python send_YT_to_Github.py
