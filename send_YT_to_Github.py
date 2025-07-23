@@ -11,6 +11,7 @@ YOUTRACK_TOKEN = os.getenv("YOUTRACK_TOKEN")
 # GitHub config
 GITHUB_REPO = os.getenv("GITHUB_REPO")
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+print(f"GITHUB_REPO from env: {GITHUB_REPO}")
 
 headers_yt = {
     "Authorization": f"Bearer {YOUTRACK_TOKEN}",

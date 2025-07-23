@@ -14,7 +14,7 @@ env:
   YOUTRACK_TOKEN: ${{ secrets.YOUTRACK_TOKEN }}
   YOUTRACK_GITHUB_TOKEN: ${{ secrets.YOUTRACK_GITHUB_TOKEN }}
   PROJECT_ID: ${{ secrets.YOUTRACK_PROJECT_ID }}
-  GITHUB_REPO: ${{ secrets.YT_GITHUB_REPO }}
+  GITHUB_REPO: cdcgov/dibbs-vm
 
 jobs:
   sync-issues:
