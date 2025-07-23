@@ -26,12 +26,12 @@ headers_gh = {
 def get_youtrack_issues():
     fields = "id,idReadable,summary,comments(text,author(name),created)," \
              "tags(name),customFields(name,value(name))"
-    url = f"https://skylight-dibbs.youtrack.cloud/api/issues?fields={fields}"
-    #url = f"https://{YOUTRACK_URL}/api/issues?fields={fields}"
+    url = f"https://skylight-dibbs.youtrack.cloud/api/issues?fields={fields}"   
     res = requests.get(url, headers=headers_yt)
     res.raise_for_status()
     return res.json()
 
+#url = f"https://{YOUTRACK_URL}/api/issues?fields={fields}"
 
 def find_github_issue_by_title(title):
     url = f"https://api.github.com/search/issues"
