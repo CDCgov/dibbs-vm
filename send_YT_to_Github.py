@@ -34,6 +34,11 @@ def get_youtrack_issues():
 #url = f"https://{YOUTRACK_URL}/api/issues?fields={fields}"
 
 def find_github_issue_by_title(title):
+    if not GITHUB_REPO:
+        raise ValueError("GITHUB_REPO is not set. Check your environment variables.")
+    #debugging statement
+    print(f"Searching GitHub for: repo:{GITHUB_REPO} \"{title}\" in:title")
+
     url = f"https://api.github.com/search/issues"
     params = {
         "q": f'repo:{GITHUB_REPO} "{title}" in:title',
