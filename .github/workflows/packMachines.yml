@@ -86,7 +86,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 openssl
 
       - name: Run `packer build ${{ matrix.service }}`
-        run: ./build.sh ${{ matrix.service }} ${{ github.event.inputs.version }}
+        run: ./build.sh ${{ matrix.service }} ${{ github.event.inputs.version }} gcp
 
   packer_build_repository_dispatch:
     if: github.event_name == 'repository_dispatch'
