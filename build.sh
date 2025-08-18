@@ -3,14 +3,18 @@
 service=$1
 version=$2
 gitsha=$(git rev-parse --short HEAD)
+build_type=${3:-"raw"} # raw, gcp
+
 cd packer/ubuntu-server/ || exit
 
+echo "Build to be created: $build_type"
+
 # check if the build directory exists
-if [ -d "build/$service-$version-$gitsha" ]; then
+if [ -d "build/$service-$build_type-$version-$gitsha" ]; then
     echo "Build directory for that version already exists."
     read -rp $'  \e[3m'"Do you want to remove the build directory? (y/n): "$'\e[0m' choice
     if [ "$choice" == "y" ]; then
-        rm -rf "build/$service-$version-$gitsha"
+        rm -rf "build/$service-$build_type-$version-$gitsha"
     else
         echo "Cannot continue with the build process."
         exit 1
@@ -18,8 +22,8 @@ if [ -d "build/$service-$version-$gitsha" ]; then
 fi
 
 if [ -z "$service" ] || [ -z "$version" ]; then
-    echo "Usage: ./build.sh [DIBBS_SERVICE] [DIBBS_VERSION]"
-    echo "Example: ./build.sh dibbs-ecr-viewer 1.0.0"
+    echo "Usage: ./build.sh [DIBBS_SERVICE] [DIBBS_VERSION] [BUILD_TYPE (default: raw)]"
+    echo "Example: ./build.sh dibbs-ecr-viewer 1.0.0 gcp"
     echo "Example: ./build.sh dibbs-query-connector 1.0.0"
     exit 1
 fi
@@ -49,10 +53,10 @@ echo "Password replaced in user-data file."
 packer init .
 
 # validate
-packer validate --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" .
+packer validate --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" --var build_type="$build_type" .
 
 # Build the base image
-packer build --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" .
+packer build --var dibbs_service="$service" --var dibbs_version="$version" --var ssh_password="$DIBBS_USER_PASSWORD" --var gitsha="$gitsha" --var build_type="$build_type" .
 
 echo "Remember, to login, you need to use the password: $DIBBS_USER_PASSWORD"
 

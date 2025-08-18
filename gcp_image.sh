@@ -16,8 +16,8 @@ if [ -z "$service" ] || [ -z "$version" ]; then
   exit 1
 fi
 
-if [ -d "packer/ubuntu-server/build/$service-$version-$gitsha/" ]; then
-  cd packer/ubuntu-server/build/$service-$version-$gitsha/ || exit
+if [ -d "packer/ubuntu-server/build/$service-gcp-$version-$gitsha" ]; then
+  cd packer/ubuntu-server/build/$service-gcp-$version-$gitsha || exit
   echo "Build directory for that version exists, continuing with conversion."
 else
   echo "Build directory for that version does not exist."
@@ -25,19 +25,19 @@ else
 fi
 
 rm disk.raw || true
-rm ubuntu-2404-$service-$version-$gitsha.tar.gz || true
+rm ubuntu-2404-$service-gcp-$version-$gitsha.tar.gz || true
 
 # create raw
-cp ubuntu-2404-$service-$version-$gitsha.raw disk.raw
+cp ubuntu-2404-$service-gcp-$version-$gitsha.raw disk.raw
 
 # compress raw
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  gtar -czvf ubuntu-2404-$service-$version-$gitsha.tar.gz disk.raw
+  gtar -czvf ubuntu-2404-$service-gcp-$version-$gitsha.tar.gz disk.raw
 else
-  tar -czvf ubuntu-2404-$service-$version-$gitsha.tar.gz disk.raw
+  tar -czvf ubuntu-2404-$service-gcp-$version-$gitsha.tar.gz disk.raw
 fi
 
 # upload to gcs
-gsutil cp ubuntu-2404-$service-$version-$gitsha.tar.gz gs://$bucket
+gsutil cp ubuntu-2404-$service-gcp-$version-$gitsha.tar.gz gs://$bucket
 
 cd - || exit

@@ -10,7 +10,7 @@ on:
     inputs:
       service:
         required: true
-        description: 'The service to build'
+        description: "The service to build"
         type: choice
         options:
           - dibbs-ecr-viewer
@@ -18,8 +18,8 @@ on:
       version:
         required: true
         type: string
-        description: 'The version of the service to build'
-        default: 'main'
+        description: "The version of the service to build"
+        default: "main"
 
 concurrency:
   group: packerMachines
@@ -33,7 +33,7 @@ jobs:
     with:
       what_to_check: ./.github
     uses: ./.github/workflows/checkForChanges.yml
-    
+
   packer_changes:
     with:
       what_to_check: ./packer
@@ -42,17 +42,17 @@ jobs:
   docs_build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4 
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/build-docs
-  
+
   packer_build_changes:
     # has changes, or push on main and not a workflow_dispatch or repository_dispatch
     if: (needs.workflow_changes.outputs.has_changes == 'true' || needs.packer_changes.outputs.has_changes == 'true' || github.ref == 'refs/heads/main') && (github.event_name != 'workflow_dispatch' || github.event_name != 'repository_dispatch')
     runs-on: ubuntu-latest
-    needs: [ docs_build ]
+    needs: [docs_build]
     strategy:
       matrix:
-        service: ['dibbs-ecr-viewer', 'dibbs-query-connector']
+        service: ["dibbs-ecr-viewer"]
     steps:
       - uses: actions/checkout@v4
 
@@ -67,16 +67,15 @@ jobs:
       - name: Authenticate to Azure
         uses: azure/login@v2
         with:
-            creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-          
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
       - name: Set up Azure authentication for Packer
         run: |
-              echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
-              echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
-              echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-              echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
-        shell: bash 
-
+          echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
@@ -86,23 +85,13 @@ jobs:
       - name: Install Supporting Packages
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 openssl
 
-      - name: Run `packer init`
-        working-directory: ./packer/ubuntu-server
-        run: packer init .
-    
-      - name: Run `packer validate`
-        working-directory: ./packer/ubuntu-server
-        run: packer validate --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
-
-      - name: Run `packer build`
-        working-directory: ./packer/ubuntu-server
-        run: packer build --var dibbs_service=${{ matrix.service }} --var dibbs_version=main .
-
+      - name: Run `packer build ${{ matrix.service }}`
+        run: ./build.sh ${{ matrix.service }} ${{ github.event.inputs.version }}
 
   packer_build_repository_dispatch:
     if: github.event_name == 'repository_dispatch'
     runs-on: ubuntu-latest
-    needs: [ docs_build ]
+    needs: [docs_build]
     steps:
       - uses: actions/checkout@v4
 
@@ -114,19 +103,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-
       - name: login into Azure
         uses: azure/login@v2
         with:
-           creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
-           
+          creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'
+
       - name: Set up Azure authentication for Packer
         run: |
-              echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
-              echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
-              echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-              echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
-        shell: bash 
+          echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+        shell: bash
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
@@ -139,7 +127,7 @@ jobs:
       - name: Run `packer init ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer init .
-    
+
       - name: Run `packer validate ${{ github.event.client_payload.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer validate --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
@@ -150,7 +138,7 @@ jobs:
 
   packer_build_workflow_dispatch:
     if: github.event_name == 'workflow_dispatch'
-    needs: [ docs_build ]
+    needs: [docs_build]
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -174,12 +162,12 @@ jobs:
 
       - name: Set up Azure authentication for Packer
         run: |
-            echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
-            echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
-            echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
-            echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
+          echo "ARM_CLIENT_SECRET=${{ secrets.AZURE_CLIENT_SECRET }}" >> $GITHUB_ENV
+          echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
+          echo "ARM_TENANT_ID=${{ secrets.AZURE_TENANT_ID }}" >> $GITHUB_ENV
         shell: bash
-        
+
       - name: Set up Packer
         uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
         with:
@@ -191,7 +179,7 @@ jobs:
       - name: Run `packer init ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer init .
-    
+
       - name: Run `packer validate ${{ inputs.service }}`
         working-directory: ./packer/ubuntu-server
         run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
