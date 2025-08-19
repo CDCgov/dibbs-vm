@@ -43,4 +43,7 @@ fi
 $USE_SUDO apt-get update
 # Install Docker and dependencies
 $USE_SUDO apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+if [ "$BUILD_TYPE" == "gcp" ]; then
+  $USE_SUDO apt-get install google-guest-agent -y
+fi
 echo "Docker installation complete!"
