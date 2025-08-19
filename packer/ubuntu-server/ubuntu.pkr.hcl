@@ -158,13 +158,10 @@ source "azure-arm" "azure-image" {
 build {
   name = "multi-cloud-build"
   sources = [
-    "source.qemu.${var.build_type}"
-    // "source.qemu.raw"
-    // "source.qemu.gcp"
-    //"source.amazon-ebs.aws-ami",
-    //"source.azure-arm.azure-image"
+    "source.qemu.${var.build_type}",
+    //"source.qemu.gcp"
+    //"source.qemu.raw"
   ]
-
   provisioner "file" {
     source      = "./jails/jail.local"
     destination = "~/jail.local"
