@@ -66,3 +66,9 @@ variable "ssh_password" {
   description = "SSH password for system configuration"
   type        = string
 }
+
+variable "build_type" {
+  description = "Build type for the image"
+  type        = string
+  default     = "raw"
+}
