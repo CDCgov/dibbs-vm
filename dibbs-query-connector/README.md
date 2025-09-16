@@ -18,9 +18,9 @@ To group value sets by condition and to group the conditions by type, the Query 
 3. The Query Connector then organizes these value sets according to the conditions with which they're associated, making the result available to users interested in building queries. The conditions are additionally organized by category, e.g., sexually transmitted diseases or respiratory conditions, using a mapping curated by HLN Consulting.
 
 
-#### Obtaining an eRSD API Key, UMLS API Key, and aidbox license
+#### Obtaining an eRSD API Key and UMLS API Key
 
-To obtain the free API keys and aidbox license, please visit the following URLs and follow the sign up instructions.
+To obtain the free API keys, please visit the following URLs and follow the sign up instructions.
 
 - [https://ersd.aimsplatform.org/#/api-keys](https://ersd.aimsplatform.org/#/api-keys)
 - [https://uts.nlm.nih.gov/uts/login](https://uts.nlm.nih.gov/uts/login)
