@@ -10,9 +10,9 @@ gitsha=$(git rev-parse --short HEAD)
 
 if [ -z "$service" ] || [ -z "$version" ]; then
   echo "Remember to log into gcloud before running this script."
-  echo "Usage: ./gcp_upload.sh [DIBBS_SERVICE] [DIBBS_VERSION]"
-  echo "Example: ./gcp_upload.sh dibbs-ecr-viewer 1.0.0 dibbs-vm-bucket"
-  echo "Example: ./gcp_upload.sh dibbs-query-connector 1.0.0 dibbs-vm-images"
+  echo "Usage: ./aws_upload.sh [DIBBS_SERVICE] [DIBBS_VERSION]"
+  echo "Example: ./aws_upload.sh dibbs-ecr-viewer 1.0.0 dibbs-vm-images"
+  echo "Example: ./aws_upload.sh dibbs-query-connector 1.0.0 dibbs-vm-images"
   exit 1
 fi
 
@@ -38,6 +38,6 @@ else
 fi
 
 # upload to gcs
-gsutil cp ubuntu-2404-$service-$version-$gitsha.tar.gz gs://$bucket
+aws s3 cp ubuntu-2404-$service-$version-$gitsha.tar.gz s3://$bucket
 
 cd - || exit
