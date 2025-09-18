@@ -25,7 +25,7 @@ if [ -z "$service" ] || [ -z "$version" ]; then
     echo "Usage: ./build.sh [DIBBS_SERVICE] [DIBBS_VERSION] [BUILD_TYPE (default: raw)]"
     echo "Example: ./build.sh dibbs-ecr-viewer 1.0.0"
     echo "Example: ./build.sh dibbs-query-connector 1.0.0 gcp"
-    echo "Example: ./build.sh dibbs-ecr-viewer 1.0.0 aws
+    echo "Example: ./build.sh dibbs-ecr-viewer 1.0.0 aws"
     exit 1
 fi
 
