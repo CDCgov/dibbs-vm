@@ -302,6 +302,7 @@ auth() {
   check_var AUTH_ISSUER
   check_var NEXTAUTH_URL "URL for the eCR Viewer application authentication: http(s)://(DOMAIN||IP:PORT)/ecr-viewer/api/auth/"
   check_var NEXTAUTH_SECRET "Generate a random secret using: openssl rand -base64 32"
+  check_var AUTH_SESSION_DURATION_MIN "The duration, in minutes, before auto-sign out occurs. If no value is set defaults to 30 min"
 }
 
 aws() {
