@@ -1,0 +1,56 @@
+services:
+  # PostgreSQL DB for custom query and value set storage
+  db:
+    image: "postgres:17.4"
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file: "database.env"
+    volumes:
+      - ./vs_dump.sql:/docker-entrypoint-initdb.d/vs_dump.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 30s
+      retries: 20
+    profiles: [deploy-db]  
+
+# Flyway migrations and DB version control
+  flyway:
+    image: flyway/flyway:11-alpine
+    command: -configFiles=/flyway/conf/flyway.conf -schemas=public -connectRetries=60 migrate
+    volumes:
+      - ./flyway/sql:/flyway/sql
+      - ./flyway/conf/flyway.conf:/flyway/conf/flyway.conf
+    depends_on:
+      db:
+        condition: service_started
+    profiles: [deploy-db]    
+
+  # Next.js app
+  query-connector:
+    image: ghcr.io/cdcgov/$DIBBS_SERVICE/query-connector:$DIBBS_VERSION
+    restart: always
+    tty: true
+    ports:
+      - "3000:3000"
+    env_file: "dibbs-query-connector.env"
+
+
+  #Portainer
+  portainer:
+    image: portainer/portainer-ce
+    restart: always
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  docs:
+    build:
+      context: ./../docs
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+
+
