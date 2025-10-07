@@ -8,7 +8,9 @@
 # 5. Checks the status of the fail2ban service to ensure it is running. Outputs the 
 #    status to the console for debugging purposes.
 # Install fail2ban
+sudo add-apt-repository universe
 sudo apt-get update && sudo apt-get install fail2ban -y
+sudo mkdir -p /etc/fail2ban
 sudo cp ~/jail.local /etc/fail2ban/jail.local
 sudo systemctl enable fail2ban
 sudo systemctl start fail2ban

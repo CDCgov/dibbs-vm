@@ -10,41 +10,88 @@
 # 8. Changes ownership of the 'dibbs-vm' directory to the 'ubuntu' user.
 # 9. Triggers an initial Docker Compose to pull image data and start the containers.
 
+export DEBIAN_FRONTEND=noninteractive
+
 # Adjust Docker group permissions.
+echo "[$(date)] Adjusting Docker group permissions."
 groupadd docker
 usermod -aG docker dibbs-user
 newgrp docker
 
 # Set Docker as system service and enable container autostart
+echo "[$(date)] Enabling Docker and containerd services."
 systemctl enable docker.service
 systemctl enable containerd.service
-systemctl start docker.service
+
+if ! systemctl is-active --quiet docker.service; then
+  echo "[$(date)] ERROR: Docker service failed to start."
+  systemctl status docker.service
+  journalctl -xeu docker.service | tail -40
+  # Print Docker daemon log for more details
+  if [ -f /var/log/docker.log ]; then
+    echo "[$(date)] Showing last 40 lines of /var/log/docker.log:"
+    tail -40 /var/log/docker.log
+  else
+    echo "[$(date)] Showing last 40 lines of Docker journal log:"
+    journalctl -u docker.service | tail -40
+  fi
+  exit 4
+fi
+
+systemctl status docker.service
 
 # Check if DIBBS_SERVICE is valid
 # dibbs-ecr-viewer
 # dibbs-query-connector
+echo "[$(date)] Validating DIBBS_SERVICE variable."
 if [ "$DIBBS_SERVICE" == "dibbs-ecr-viewer" ] || [ "$DIBBS_SERVICE" == "dibbs-query-connector" ]; then
-  echo "DIBBS Service is valid. DIBBS_SERVICE=$DIBBS_SERVICE"
+  echo "[$(date)] DIBBS Service is valid. DIBBS_SERVICE=$DIBBS_SERVICE"
 else
-  echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
+  echo "[$(date)] DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
 fi
 
 # Clone the dibbs-vm repository
+echo "[$(date)] Cloning dibbs-vm repository to /home/dibbs-user."
+cd /home/dibbs-user || exit
 git clone https://github.com/CDCgov/dibbs-vm.git
-cd "$HOME/dibbs-vm/$DIBBS_SERVICE" || exit
+cd "/home/dibbs-user/dibbs-vm/$DIBBS_SERVICE" || exit
 
 # ensures the DIBBS variables are set and accessible to the wizard
+echo "[$(date)] Setting DIBBS variables in env file."
 echo "DIBBS_SERVICE=$DIBBS_SERVICE" >>"$DIBBS_SERVICE.env"
 echo "DIBBS_VERSION=$DIBBS_VERSION" >>"$DIBBS_SERVICE.env"
 echo "" >>"$DIBBS_SERVICE.env"
 
 # export only the DIBBS_SERVICE and DIBBS_VERSION from the '$HOME/dibbs-vm/"$DIBBS_SERVICE"/*.env' file
-echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_SERVICE= | xargs)' >>"$HOME"/.bashrc
-echo 'export $(cat '"$HOME"/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_VERSION= | xargs)' >>"$HOME"/.bashrc
+echo "[$(date)] Exporting DIBBS_SERVICE and DIBBS_VERSION to .bashrc."
+echo 'export $(cat '/home/dibbs-user/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_SERVICE= | xargs)' >>"/home/dibbs-user/.bashrc"
+echo 'export $(cat '/home/dibbs-user/dibbs-vm/"$DIBBS_SERVICE"/"$DIBBS_SERVICE".env' | grep DIBBS_VERSION= | xargs)' >>"/home/dibbs-user/.bashrc"
+
+mv ~/"$DIBBS_SERVICE"-wizard.sh /home/dibbs-user/"$DIBBS_SERVICE"-wizard.sh
+mv ~/hot-upgrade.sh /home/dibbs-user/hot-upgrade.sh
+mv ~/apt-updates.sh /home/dibbs-user/apt-updates.sh
+chmod +x /home/dibbs-user/"$DIBBS_SERVICE"-wizard.sh
+chmod +x /home/dibbs-user/hot-upgrade.sh
+chmod +x /home/dibbs-user/apt-updates.sh
 
 # Gives ubuntu user ownership of the dibbs-vm directory
-chown -R dibbs-user:dibbs-user "$HOME/dibbs-vm"
+echo "[$(date)] Changing ownership of dibbs-vm directory."
+chown -R dibbs-user:dibbs-user "/home/dibbs-user/dibbs-vm"
 
 # Trigger initial docker compose commands to construct container stack
+echo "[$(date)] Running initial docker compose build and up."
+if ! command -v docker &>/dev/null; then
+  echo "[$(date)] ERROR: Docker is not installed or not in PATH. Exiting."
+  exit 2
+fi
+
+if ! docker info &>/dev/null; then
+  echo "[$(date)] ERROR: Docker daemon is not running. Exiting."
+  exit 3
+fi
+
+docker info
 docker compose build
 docker compose up -d
+
+echo "[$(date)] DIBBS provision script completed."

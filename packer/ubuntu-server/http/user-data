@@ -30,7 +30,7 @@ autoinstall:
     username: dibbs-user
     # A password hash is needed. `mkpasswd --method=SHA-512` can help.
     # mkpasswd can be found in the package 'whois'
-    password: '{{password_hash}}'
+    password: '{dibbs-user-password-hash}'
     hostname: dibbs-vm
 
   # Uncomment the block below to force interactive configuration on first run.  

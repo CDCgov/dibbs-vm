@@ -19,6 +19,8 @@ echo "Starting post-install configuration..."
 # Ensure package lists are updated
 $USE_SUDO apt-get update
 
+export DEBIAN_FRONTEND=noninteractive
+
 # Determine the build type based on environment variable
 if [ "$BUILD_TYPE" == "aws" ]; then
     echo "Running AWS-specific Docker installation..."
@@ -46,4 +48,8 @@ $USE_SUDO apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-pl
 if [ "$BUILD_TYPE" == "gcp" ]; then
   $USE_SUDO apt-get install google-guest-agent -y
 fi
+
+# clear out the authorized keys from the ubuntu user
+echo "" > /home/ubuntu/.ssh/authorized_keys
+
 echo "Docker installation complete!"

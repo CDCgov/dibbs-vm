@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Update and configure apt sources
+apt-get update
+apt-get install -y git ca-certificates curl
+
+# Create user
+useradd -m -s /bin/bash dibbs-user
+usermod -aG sudo dibbs-user
+DIBBS_USER_PASSWORD='{dibbs-user-password}'
+echo "dibbs-user:$DIBBS_USER_PASSWORD" | chpasswd
+
+# Set hostname
+hostnamectl set-hostname dibbs-vm
+
+# Enable SSH password authentication
+sed -i 's/^#*PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+systemctl restart ssh
+
+# Adjust ssh for the new user
+ln -s /home/ubuntu/.ssh /home/dibbs-user/.ssh
+chown -R dibbs-user:dibbs-user /home/dibbs-user/.ssh
+chmod 700 /home/dibbs-user/.ssh
+chmod 600 /home/dibbs-user/.ssh/authorized_keys
+
+# Run postinstall script
+wget -O /tmp/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/main/packer/ubuntu-server/scripts/post-install.sh
+bash /tmp/postinstall.sh
+rm /tmp/postinstall.sh
+
+# sudo -iu dibbs-user /bin/bash
