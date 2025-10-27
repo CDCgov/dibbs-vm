@@ -68,7 +68,7 @@ autoinstall:
   late-commands:  
     # A postinstall script may optionally be used for further install
     # customization. Deploy this postinstall.sh script on the webserver.
-    - wget -O /target/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/main/dibbs-ecr-viewer/packer/scripts/post-install.sh
+    - wget -O /target/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/alis/vm_work1/dibbs-ecr-viewer/packer/scripts/post-install.sh
     - curtin in-target -- bash /postinstall.sh
     - rm /target/postinstall.sh
 
