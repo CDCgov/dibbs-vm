@@ -20,8 +20,8 @@ fi
 
 # Create a loop for gcp and raw
 for build_type in "${build_types[@]}"; do
-  if [ -d "packer/ubuntu-server/build/$service-$build_type-$version-$gitsha" ]; then
-    cd packer/ubuntu-server/build/$service-$build_type-$version-$gitsha || exit
+  if [ -d "$service/packer/build/$service-$build_type-$version-$gitsha" ]; then
+    cd $service/packer/build/$service-$build_type-$version-$gitsha || exit
     echo "Build directory for that version exists, continuing with conversion."
   else
     echo "Build directory for that version does not exist."

@@ -27,7 +27,7 @@ chmod 700 /home/dibbs-user/.ssh
 chmod 600 /home/dibbs-user/.ssh/authorized_keys
 
 # Run postinstall script
-wget -O /tmp/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/main/packer/ubuntu-server/scripts/post-install.sh
+wget -O /tmp/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/main/packer/scripts/post-install.sh
 bash /tmp/postinstall.sh
 rm /tmp/postinstall.sh
 

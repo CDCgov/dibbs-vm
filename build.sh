@@ -5,7 +5,7 @@ version=$2
 gitsha=$(git rev-parse --short HEAD)
 build_type=${3:-"raw"} # raw, gcp, aws
 
-cd packer/ubuntu-server/ || exit
+cd dibbs-ecr-viewer/packer/ || exit
 
 echo "Build to be created: $build_type"
 

@@ -17,8 +17,8 @@ if [ -z "$service" ] || [ -z "$version" ]; then
   exit 1
 fi
 
-if [ -d "packer/ubuntu-server/build/$service-$build_type-$version-$gitsha/" ]; then
-  cd packer/ubuntu-server/build/$service-$build_type-$version-$gitsha/ || exit
+if [ -d "$service/packer/build/$service-$build_type-$version-$gitsha/" ]; then
+  cd packer/build/$service-$build_type-$version-$gitsha/ || exit
   echo "Build directory for that version exists, continuing with conversion."
 else
   echo "Build directory for that version does not exist."

@@ -39,7 +39,7 @@ find "$dibbs_vm_dir" -name "*.sh.home" | while read file; do
   cat "$file" > "$HOME/$(basename "$file" .home)"
 done
 
-# cp "$HOME/dibbs-vm/packer/ubuntu-server/scripts/hot-upgrade.sh" "$HOME/hot-upgrade.sh"
+# cp "$HOME/dibbs-vm/packer/scripts/hot-upgrade.sh" "$HOME/hot-upgrade.sh"
 # cp "$HOME/dibbs-vm/$DIBBS_SERVICE/$DIBBS_SERVICE-wizard.sh" ~/"$DIBBS_SERVICE"-wizard.sh
 
 ./"$DIBBS_SERVICE"-wizard.sh
