@@ -50,6 +50,6 @@ if [ "$BUILD_TYPE" == "gcp" ]; then
 fi
 
 # clear out the authorized keys from the ubuntu user
-echo "" > /home/ubuntu/.ssh/authorized_keys
+# echo "" > /home/ubuntu/.ssh/authorized_keys
 
 echo "Docker installation complete!"

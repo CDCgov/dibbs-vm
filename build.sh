@@ -6,7 +6,7 @@ gitsha=$(git rev-parse --short HEAD)
 build_type=${3:-"raw"} # raw, gcp, aws
 
 cd dibbs-ecr-viewer/packer/ || exit
-
+ls -lhsa
 echo "Build to be created: $build_type"
 
 # check if the build directory exists
@@ -44,11 +44,16 @@ dibbs_user_password_hash=$(openssl passwd -6 $dibbs_user_password)
 
 # replace the password hash in the packer user-data file
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    sed -i '' "s|'{{dibbs-user-password-hash}}'|'"$dibbs_user_password_hash"'|" ./http/user-data
-    sed -i '' "s|'{{dibbs-user-password}}'|"$dibbs_user_password"|" ./http/aws-user-data
+    echo "if"
+    echo $PWD
+    sed -i '' "s|'{dibbs-user-password-hash}'|'"$dibbs_user_password_hash"'|" ./http/user-data
+    sed -i '' "s|'{dibbs-user-password}'|"$dibbs_user_password"|" ./http/aws-user-data
 else
-    sed -i "s|'{{dibbs-user-password-hash}}'|'"$dibbs_user_password_hash"'|" ./http/user-data
-    sed -i "s|'{{dibbs-user-password}}'|"$dibbs_user_password"|" ./http/aws-user-data
+    echo "else"
+    echo $PWD
+    cat ./http/aws-user-data
+    sed -i "s|'{dibbs-user-password-hash}'|'"$dibbs_user_password_hash"'|" ./http/user-data
+    sed -i "s|'{dibbs-user-password}'|"$dibbs_user_password"|" ./http/aws-user-data
 fi
 echo "Password replaced in user-data file."
 

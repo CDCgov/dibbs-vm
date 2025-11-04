@@ -93,5 +93,12 @@ fi
 docker info
 docker compose build
 docker compose up -d
-
 echo "[$(date)] DIBBS provision script completed."
+
+userdel -rf ubuntu
+if id ubuntu >/dev/null 2>&1; then
+  echo "ubuntu user has NOT been deleted"
+  exit 1
+else
+  echo "ubuntu user has been deleted"
+fi

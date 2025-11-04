@@ -11,24 +11,30 @@ apt-get install -y git ca-certificates curl
 useradd -m -s /bin/bash dibbs-user
 usermod -aG sudo dibbs-user
 DIBBS_USER_PASSWORD='{dibbs-user-password}'
-echo "dibbs-user:$DIBBS_USER_PASSWORD" | chpasswd
+echo dibbs-user:$DIBBS_USER_PASSWORD | chpasswd
 
 # Set hostname
 hostnamectl set-hostname dibbs-vm
 
 # Enable SSH password authentication
 sed -i 's/^#*PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sed -i 's/^#*PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config.d/60-cloudimg-settings.conf
 systemctl restart ssh
 
-# Adjust ssh for the new user
-ln -s /home/ubuntu/.ssh /home/dibbs-user/.ssh
-chown -R dibbs-user:dibbs-user /home/dibbs-user/.ssh
-chmod 700 /home/dibbs-user/.ssh
-chmod 600 /home/dibbs-user/.ssh/authorized_keys
 
 # Run postinstall script
 wget -O /tmp/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/alis/vm_work1/dibbs-ecr-viewer/packer/scripts/post-install.sh
 bash /tmp/postinstall.sh
 rm /tmp/postinstall.sh
+
+# Run fail2ban installation script
+wget -O /tmp/fail2ban-install.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/alis/vm_work1/dibbs-ecr-viewer/packer/scripts/fail2ban.sh
+bash /tmp/fail2ban-install.sh
+rm /tmp/fail2ban-install.sh
+
+# Run provision script
+wget -O /tmp/provision.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/alis/vm_work1/dibbs-ecr-viewer/packer/scripts/provision.sh
+bash /tmp/provision.sh
+rm /tmp/provision.sh
 
 # sudo -iu dibbs-user /bin/bash
