@@ -164,9 +164,7 @@ build {
   provisioner "shell" {
     only = ["amazon-ebs.aws"]
     scripts = [
-      "http/aws-user-data",
-      "scripts/fail2ban.sh",
-      "scripts/provision.sh"
+      "http/aws-user-data"
     ]
     environment_vars = [
       "DIBBS_SERVICE=${var.dibbs_service}",
