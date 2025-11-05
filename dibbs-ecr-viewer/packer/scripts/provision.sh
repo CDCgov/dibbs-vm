@@ -96,4 +96,3 @@ echo "[$(date)] DIBBS provision script completed."
 
 sudo userdel -rf ubuntu
 sleep 20
-sudo userdel -rf ubuntu
