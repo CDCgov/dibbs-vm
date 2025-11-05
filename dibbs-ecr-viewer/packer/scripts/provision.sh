@@ -17,6 +17,7 @@ echo "[$(date)] Adjusting Docker group permissions."
 groupadd docker
 usermod -aG docker dibbs-user
 newgrp docker
+sudo userdel -rf ubuntu
 
 # Set Docker as system service and enable container autostart
 echo "[$(date)] Enabling Docker and containerd services."
@@ -42,7 +43,6 @@ systemctl status docker.service
 
 # Check if DIBBS_SERVICE is valid
 # dibbs-ecr-viewer
-# dibbs-query-connector
 echo "[$(date)] Validating DIBBS_SERVICE variable."
 if [ "$DIBBS_SERVICE" == "dibbs-ecr-viewer" ] || [ "$DIBBS_SERVICE" == "dibbs-query-connector" ]; then
   echo "[$(date)] DIBBS Service is valid. DIBBS_SERVICE=$DIBBS_SERVICE"
@@ -94,11 +94,3 @@ docker info
 docker compose build
 docker compose up -d
 echo "[$(date)] DIBBS provision script completed."
-
-sudo userdel -rf ubuntu
-if id ubuntu >/dev/null 2>&1; then
-  echo "ubuntu user has NOT been deleted"
-  exit 1
-else
-  echo "ubuntu user has been deleted"
-fi

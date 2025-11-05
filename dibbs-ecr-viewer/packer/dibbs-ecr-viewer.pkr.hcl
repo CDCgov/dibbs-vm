@@ -86,9 +86,9 @@ source "amazon-ebs" "aws" {
   #   most_recent = true
   # }
 
-  ssh_username = "ubuntu"
+  ssh_username = "root"
 
-  # user_data_file = "http/aws-user-data"
+  user_data_file = "http/user-data"
 
   launch_block_device_mappings {
     device_name           = "/dev/sda1"
