@@ -17,7 +17,6 @@ echo "[$(date)] Adjusting Docker group permissions."
 groupadd docker
 usermod -aG docker dibbs-user
 newgrp docker
-sudo userdel -rf ubuntu
 
 # Set Docker as system service and enable container autostart
 echo "[$(date)] Enabling Docker and containerd services."
@@ -94,3 +93,6 @@ docker info
 docker compose build
 docker compose up -d
 echo "[$(date)] DIBBS provision script completed."
+
+sudo userdel -rf ubuntu
+sleep 60

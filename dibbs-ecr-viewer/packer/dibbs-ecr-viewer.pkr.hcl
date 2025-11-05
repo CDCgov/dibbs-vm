@@ -86,7 +86,7 @@ source "amazon-ebs" "aws" {
   #   most_recent = true
   # }
 
-  ssh_username = "root"
+  ssh_username = "ubuntu"
 
   user_data_file = "http/user-data"
 
