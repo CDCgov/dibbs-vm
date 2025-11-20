@@ -10,7 +10,7 @@ apt-get install -y git ca-certificates curl
 # Create user
 useradd -m -s /bin/bash dibbs-user
 usermod -aG sudo dibbs-user
-DIBBS_USER_PASSWORD='{dibbs-user-password}'
+DIBBS_USER_PASSWORD=hJkjgw4ETzDZuQJT3Fuyr4mwwNdCE2r
 echo dibbs-user:$DIBBS_USER_PASSWORD | chpasswd
 
 # Set hostname

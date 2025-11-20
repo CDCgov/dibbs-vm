@@ -96,3 +96,5 @@ echo "[$(date)] DIBBS provision script completed."
 
 sudo userdel -rf ubuntu
 sleep 20
+
+# check if user exists

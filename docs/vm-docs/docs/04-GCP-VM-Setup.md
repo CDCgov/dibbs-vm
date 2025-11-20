@@ -2,7 +2,7 @@
 
 *Version 1.1*
 
-This guide provides clear steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP).
+This guide provides steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP).
 
 ## Prerequisites
 
