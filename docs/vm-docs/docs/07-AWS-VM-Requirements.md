@@ -20,7 +20,8 @@ Please reach out if you have any questions about these options or need help deci
 
 - You’ll need to have an account, per­mis­sions, and nec­es­sary func­tion­al­i­ty set up in AWS. 
 - You’ll need to have access to the registered DIBBS VM AMI in your AWS account. 
-- You’ll need to have an S3 bucket set up in AWS to store your eCR data, with the prop­er net­work­ing and ac­cess pro­vi­sions for EC2.
+- You’ll need to be able to create an S3 bucket set up in AWS to store your eCR data, with the prop­er net­work­ing and ac­cess pro­vi­sions for EC2.
+- You'll need to be able to create an EC2 instance.
 - You’ll need to have a data­base set up (on-premise or cloud-based, Mi­crosoft SQL or  Post­gre­SQL) and ac­ces­si­ble via the AWS net­work. 
 - You’ll need to have an Entra, or Key­cloak client created or NBS authentication for the eCR View­er ap­pli­ca­tion.
 - You’ll need to have IAM permissions to make adjustments within your AWS en­vi­ron­ment.
@@ -77,3 +78,9 @@ If you choose to im­ple­ment a fire­wall, please note that the fol­low­ing 
 - Por­tai­ner ma­na­ge­ment console:
   - Port: 9000
   - This is an admin console that should not be generally available, ensure it's secure and only made available if or when it's needed.
+
+--
+
+- **Version 1.0.0** 
+
+- **We're humans writing docs, if you see an issue or wish something was clearer, [let us know!](https://github.com/CDCgov/dibbs-vm/issues/new/choose)**

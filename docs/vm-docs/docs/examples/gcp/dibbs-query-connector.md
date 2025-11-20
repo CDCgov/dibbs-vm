@@ -4,7 +4,7 @@
 
 ## Prerequisites
 
-  - Ensure you have followed the [GCP VM Setup Guide](../../04-GCP-VM-Setup.md) to create a VM instance.
+  - Ensure you have followed the [GCP VM Setup Guide](../../05-GCP-VM-CLI-Ops-Instructions.md) to create a VM instance.
 
 ### Connect to the VM
   

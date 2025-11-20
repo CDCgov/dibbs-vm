@@ -1,7 +1,5 @@
 # AWS Guide to Setting Up a DIBBs Virtual Machine Instance
 
-*Version 1.0.0*
-
 Thank you for choosing to be­come a part­ner for the eCR View­er! This doc­u­ment is de­signed to help you pre­pare for your first AWS de­ploy­ment of the eCR View­er stack.
 
 If you have any ques­tions as you move through the process, please feel free to reach out to the DIBBs team at any time. We’re hap­py to help! 
@@ -227,65 +225,51 @@ Note: Configure the instance type, key pair, subnet ID, and security group ID to
 
 This will create an EC2 instance using your specified image and configurations. Ensure your AWS account has the necessary permissions to perform these actions.
 
-<TODO>
+## Connect to your instance
 
-## SSH Access and Password Setup To con­nect to your VM in­stance, use the fol­low­ing GCP com­mand: 
+### With SSH key pair
+
+If you set an SSH key pair on your instance, that key pair will be added to the ubuntu user by default, so use that to log in.
 
 ```shell
-gcloud com­pute ssh user­name@your-in­stance-name --zone=your-zone -- project=your-project-id
+ssh -i __SSH_KEY_FILE__ ubuntu@__IPADDRESS__
+# Switch to the dibbs-user, this is the preferred way to make changes to your instance, or run dibbs scripts
+sudo -iu dibbs-user /bin/bash
 ```
 
-Upon log­ging in, we strong­ly rec­om­mend chang­ing the pass­word for your pro­vid­ed user us­ing Com­mand Line.
+### Without ssh key pair
 
-sudo pass­wd <user­name> # Re­place <user­name> with the user's name pro­vid ed to you by the DIBBs team  
+If you did not set up an SSH key pair on your instance, you can SSH into it using the username and password for `dibbs-user`. If you need the password for your VM version, please reach out to the DIBBS team.
+
+```shell
+
+ssh dibbs-user@__IPADDRESS__
+```
+
+Upon log­ging in, we strong­ly rec­om­mend chang­ing the dibbs-user password.
+
+### Change the dibbs-user password
+
+```shell
+sudo passwd dibbs-user
+```
 
 En­ter a strong, unique pass­word when prompt­ed and con­firm the change.
 
-<TODO>
 ## eCR Viewer Setup  
 
 While con­nect­ed to the VM, run the fol­low­ing com­mand and fol­low the prompts to con­fig­ure the eCR View­er based on your chosed configuration:
 
-```bash  
- ./dibbs-ecr-view­er-wiz­ard.sh  
+```shell  
+ ./dibbs-ecr-view­er-wiz­ard.sh
 ```  
 
-The wiz­ard script will ask you to pro­vide the vari­ables for the eCR Viewer application to run:
+The wiz­ard script will ask you to pro­vide the vari­ables for the eCR Viewer application to run.
 
-●  CON­FIG_­NAME should be set to GCP_PG_­D­UAL. 
-●  GCP_­CRE­DEN­TIALS and GCP_PRO­DUC­T_ID should match your GCP con­fig­u­ra­tion. 
-●  NB­S_API_PUB­_KEY and NB­S_PUB­_KEY should match the full pub­lic key val­ues need ed to con­nect to your Epi­Trax in­stance. You can gen­er­ate a pub­lic/pri­vate key­pair us ing any ser­vice or util­i­ty of your choos­ing.
-7 
-●  DATA­BASE_URL should be set to a post­gres-com­pat­i­ble con­nec­tion string URI, of the  for­mat post­gres[ql]://[user­name[:pass­word]@][host[:port],]/data base[?pa­ra­me­ter_­list]. Make sure to prop­er­ly per­cent-en­code your pa­ra­me ter val­ues! 
-●  AU­TH_PROVIDER should be set to key­cloak 
-●  AU­TH_­CLIEN­T_ID and AU­TH_­CLIEN­T_SE­CRET should match what you con­fig­ured for  the new eCR View­er ap­pli­ca­tion reg­is­tra­tion ear­li­er in this guide. 
-●  AU­TH_IS­SUER should cor­re­spond to the set­tings you’ve con­fig­ured in your Key­cloak  in­stance. 
-Af­ter you’ve run the wiz­ard, its con­fig­u­ra­tion will be stored at ~/dibbs-vm/dibbs-ecr view­er/dibbs-ecr-view­er.env. If you ever need to make changes, you can ei­ther re-run  the wiz­ard script, or sim­ply mod­i­fy this file di­rect­ly. 
+**Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](examples/aws/dibbs-ecr-viewer.md) if you'd like to do so.
 
-## Portainer Setup  
+--
 
-We’ve in­clud­ed a copy of Por­tain­er in the eCR View­er stack. This ap­pli­ca­tion will al­low you to  man­age Dock­er us­ing a web-based GUI, where you can con­fig­ure re­sources, view logs, and  per­form oth­er ad­min­is­tra­tive ac­tions.
+- **Version 1.0.0** 
 
-To get start­ed, vis­it http://<VM_AD­DRESS>:9000 in your brows­er of choice. It is recommended that you restrict access to Portainer using security groups, allowing only the administrator IP access when needed. Click here for official docs re­gard­ing Por­tain­er’s func­tions.
-
-## Additional Security Steps  
-
-We strong­ly rec­om­mend lock­ing down your VM in­stance in ac­cor­dance with your ju­ris­dic­tion’s  ap­plic­a­ble poli­cies, reg­u­la­tions, and statutes. 
-
-Steps to con­sid­er in­clude:
-
-- Ac­ti­vate a fire­wall with­in AWS.
-- Con­fig­ure IP ac­cess re­stric­tions. 
-- Re­strict SSH ac­cess. 
-- Route traf­fic to the VM through a load bal­ancer or gate­way. 
-
-## Required Ports  
-
-If you choose to im­ple­ment a fire­wall, please note that the fol­low­ing are in use by the  eCR View­er con­tain­er stack: 
-
-- eCR View­er: 
-  - Port: 3000
-  - This is the ingress for the applications, potentially placed behind a load balancer.
-- Por­tai­ner ma­na­ge­ment console:
-  - Port: 9000
-  - This is an admin console that should not be generally available, ensure it's secure and only made available if or when it's needed.
+- **We're humans writing docs, if you see an issue or wish something was clearer, [let us know!](https://github.com/CDCgov/dibbs-vm/issues/new/choose)**

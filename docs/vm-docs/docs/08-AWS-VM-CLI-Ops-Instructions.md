@@ -1,10 +1,8 @@
 # AWS Guide to Setting Up a DIBBs Virtual Machine Instance
 
-*Version 1.0.0*
-
 ## Prerequisites
 
-Be­fore you get start­ed, please read the [AWS VM Requirements document](05-AWS-VM-Requirements.md).
+Be­fore you get start­ed, please read the [AWS VM Requirements document](07-AWS-VM-Requirements.md).
 
 ## Initial AWS CLI Setup
 
@@ -149,7 +147,7 @@ To cre­ate your buckets, you can lever­age ei­ther the CLI tool or the Cloud 
 aws s3api create-bucket \
     --bucket __BUCKETNAME__
 
-# Add a policy
+# add a policy
 aws s3api put-bucket-policy \
     --bucket __BUCKETNAME__ \
     --policy file://bucket-policy.json
@@ -186,7 +184,7 @@ If you set an SSH key pair on your instance, that key pair will be added to the 
 
 ```shell
 ssh -i __SSH_KEY_FILE__ ubuntu@__IPADDRESS__
-# you can then switch to the dibbs-user, this is the preferred way to manage the instance
+# Switch to the dibbs-user, this is the preferred way to make changes to your instance, or run dibbs scripts
 sudo -iu dibbs-user /bin/bash
 ```
 
@@ -195,23 +193,34 @@ sudo -iu dibbs-user /bin/bash
 If you did not set up an SSH key pair on your instance, you can SSH into it using the username and password for `dibbs-user`. If you need the password for your VM version, please reach out to the DIBBS team.
 
 ```shell
+
 ssh dibbs-user@__IPADDRESS__
 ```
 
-Upon log­ging in, we strong­ly rec­om­mend chang­ing the pass­word for your pro­vid­ed user us­ing Com­mand Line.
+Upon log­ging in, we strong­ly rec­om­mend chang­ing the dibbs-user password.
 
-sudo pass­wd __user­name__ # Re­place __user­name__ with the user's name pro­vid ed to you by the DIBBs team  
+### Change the dibbs-user password
+
+```shell
+sudo passwd dibbs-user
+```
 
 En­ter a strong, unique pass­word when prompt­ed and con­firm the change.
-
-__TODO__
 
 ## eCR Viewer Setup  
 
 While con­nect­ed to the VM, run the fol­low­ing com­mand and fol­low the prompts to con­fig­ure the eCR View­er based on your chosed configuration:
 
 ```shell  
- ./dibbs-ecr-view­er-wiz­ard.sh  
+ ./dibbs-ecr-view­er-wiz­ard.sh
 ```  
 
 The wiz­ard script will ask you to pro­vide the vari­ables for the eCR Viewer application to run.
+
+**Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](examples/aws/dibbs-ecr-viewer.md) if you'd like to do so.
+
+--
+
+- **Version 1.0.0** 
+
+- **We're humans writing docs, if you see an issue or wish something was clearer, [let us know!](https://github.com/CDCgov/dibbs-vm/issues/new/choose)**
