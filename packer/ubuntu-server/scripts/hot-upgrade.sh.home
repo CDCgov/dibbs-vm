@@ -1,0 +1,45 @@
+#!/bin/bash
+# This script performs a hot upgrade for DIBBS services.
+# It moves the existing dibbs-vm directory to a backup location,
+# validates the DIBBS_SERVICE environment variable, clones the latest
+# dibbs-vm repository, restores environment files, and runs the service wizard.
+
+# Steps:
+# 1. Move the existing dibbs-vm directory to a backup location.
+# 2. Validate the DIBBS_SERVICE environment variable to ensure it is either
+#    "dibbs-ecr-viewer" or "dibbs-query-connector". Exit if invalid.
+# 3. Clone the dibbs-vm repository.
+# 4. Restore environment files from the backup to the new repository.
+# 5. Copy an updated version of this hotupdate script and wizard script.
+# 6. Execute the service wizard script for the specified DIBBS service.
+
+timestamp=$(date +%Y%m%d%H%M%S)
+echo "Starting DIBBS Hot Upgrade at $timestamp"
+dibbs_vm_dir=$HOME/dibbs-vm
+dibbs_vm_bak_dir=$HOME/dibbs-vm.bak_"$timestamp"
+
+# Move the existing dibbs-vm directory to a backup location
+mv "$dibbs_vm_dir" "$dibbs_vm_bak_dir"
+
+if [ "$DIBBS_SERVICE" == "dibbs-ecr-viewer" ] || [ "$DIBBS_SERVICE" == "dibbs-query-connector" ]; then
+  echo "DIBBS Service is valid. DIBBS_SERVICE=$DIBBS_SERVICE"
+else
+  echo "DIBBS Service is not valid. DIBBS_SERVICE=$DIBBS_SERVICE" && exit 1
+fi
+
+# Clone the dibbs-vm repository
+git clone https://github.com/CDCgov/dibbs-vm.git
+cd "$HOME/dibbs-vm/$DIBBS_SERVICE"
+
+find "$dibbs_vm_bak_dir/$DIBBS_SERVICE" -name "*.env" | while read file; do
+  cat "$file" > "$dibbs_vm_dir/$DIBBS_SERVICE/$(basename "$file")"
+done
+
+find "$dibbs_vm_dir" -name "*.sh.home" | while read file; do
+  cat "$file" > "$HOME/$(basename "$file" .home)"
+done
+
+# cp "$HOME/dibbs-vm/packer/ubuntu-server/scripts/hot-upgrade.sh" "$HOME/hot-upgrade.sh"
+# cp "$HOME/dibbs-vm/$DIBBS_SERVICE/$DIBBS_SERVICE-wizard.sh" ~/"$DIBBS_SERVICE"-wizard.sh
+
+./"$DIBBS_SERVICE"-wizard.sh
