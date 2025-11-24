@@ -1,18 +1,6 @@
-# GCP VM DIBBS eCR Viewer
+# GCP DIBBS eCR Viewer User Data
 
-- General guide to configuring the dibbs-ecr-viewer VMs.
-
-## Prerequisites
-
-  - Ensure you have followed either the [GCP VM CLI](../../05-GCP-VM-CLI-Ops-Instructions.md) or [GCP VM Click Ops](../../06-GCP-VM-Click-Ops-Instructions.md) setup guide to create a VM instance.
-
-### Connect to the VM
-  
-  - After the VM is created, you can SSH into the VM using the key pair you specified during the creation process.
-
-### Configure the VM
-
-  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`
+# NOTE: This is in very early stages and has not been improved for a while. We have more testing that we'd like to do. Please let us know if you're interested in this approach, we'd love to chat.
 
 ## User Data
 

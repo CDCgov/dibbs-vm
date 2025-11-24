@@ -1,4 +1,4 @@
-# AWS Guide to Setting Up a DIBBs Virtual Machine Instance
+# AWS CLI Ops Guide
 
 ## Prerequisites
 
@@ -6,7 +6,7 @@ Be­fore you get start­ed, please read the [AWS VM Requirements document](07-AW
 
 ## Initial AWS CLI Setup
 
-This guide assumes you're using the AWS CLI and that it's already set up and configured to run against your desired AWS account. If you need assistance setting that up, please see the official AWS docs.
+This guide assumes you're using the AWS CLI and that it's already set up and configured to run against your AWS account. If you need assistance setting that up, please see the official AWS docs.
 
 [Official AWS CLI getting started docs](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-quickstart.html)
 
@@ -20,14 +20,29 @@ Please note that these commands are targeted at and tested by Linux users, while
 
 Please note that when you see sections of the CLI commands that looks like this: `__VARIABLE__`, it is dependent on you to name that yourself.
 
-## AWS EC2 Role Creation
+## Step 1: VPC and Other Networking Components
+
+> ⚠️ **Note:** VPCs, subnets, gateways and other components related to sending traffic to your instance can vary greatly, that is out of scope for this guide. Please refer to your local jurisdictions guidelines to create these resources.
+
+## Step 2: AWS EC2 Role Creation
 
 We'll need to create an EC2 role with a policy that grants it access to the S3 bucket we're going to create.
 
+[Official AWS IAM User Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
+
+[Official AWS CLI IAM Create Role docs](https://docs.aws.amazon.com/cli/latest/reference/iam/create-role.html)
+
+[Official AWS CLI IAM Put Role Policy docs](https://docs.aws.amazon.com/cli/latest/reference/iam/put-role-policy.html)
+
+[Official AWS CLI IAM Create Instance Profile docs](https://docs.aws.amazon.com/cli/latest/reference/iam/create-instance-profile.html)
+
+[Official AWS CLI IAM Add Role To Instance Profile docs](https://docs.aws.amazon.com/cli/latest/reference/iam/add-role-to-instance-profile.html)
+
 ### Create the Role Policy Files
 
+#### Create Role Policy File
+
 ```shell
-# create a file
 # role-policy.json
 ```
 ```json
@@ -45,8 +60,9 @@ We'll need to create an EC2 role with a policy that grants it access to the S3 b
 }
 ```
 
+#### Create EC2 Permissions Policy File
+
 ```shell
-# create a file
 # ec2-permissions-policy.json
 # your bucket: __BUCKETNAME__
 ```
@@ -69,38 +85,53 @@ We'll need to create an EC2 role with a policy that grants it access to the S3 b
 }
 ```
 
-### Setup your role
+### Setup your Role
 
 ```shell
-# create the role
 # your role: __VMROLENAME__
 # your policy: __POLICYNAME__
-# your profile: __VMPROFILENAME__
+```
+
+#### Create the Role
+
+```shell
 aws iam create-role \
     --role-name __VMROLENAME__ \
     --assume-role-policy-document file://role-policy.json \
     --max-session-duration 7200
+```
 
-# add the role policy
+#### Add the Role Policy
+
+```shell
 aws iam put-role-policy \
     --role-name __VMROLENAME__ \
     --policy-name __POLICYNAME__ \
     --policy-document file://ec2-permissions-policy.json
-
-# Create the instance profile
-aws iam create-instance-profile --instance-profile-name __VMROLENAME__
-
-# Add the role to the instance profile
-aws iam add-role-to-instance-profile --role-name __VMROLENAME__ --instance-profile-name __VMROLENAME__
 ```
 
-## S3 eCR Viewer Data Bucket Creation
+#### Create the Instance Profile
+
+```shell
+aws iam create-instance-profile \
+    --instance-profile-name __VMROLENAME__
+```
+
+#### Add the Role to the Instance Profile
+
+```shell
+aws iam add-role-to-instance-profile \
+    --role-name __VMROLENAME__ \
+    --instance-profile-name __VMROLENAME__
+```
+
+## Step 3: S3 eCR Viewer Data Bucket Creation
 
 To store data for the eCR Viewer, you will need to al­lo­cate an S3 bucket accessible to the EC2 service.
 
-To cre­ate your buckets, you can lever­age ei­ther the CLI tool or the Cloud Con­sole. 
+To cre­ate your buckets, you can lever­age either the CLI tool or the Cloud Con­sole. 
 
-[Official AWS Create Bucket Overview docs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/create-bucket-overview.html)
+[Official AWS S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)
 
 [Official AWS CLI S3 Create Bucket docs](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html)
 
@@ -109,9 +140,8 @@ To cre­ate your buckets, you can lever­age ei­ther the CLI tool or the Cloud 
 ### Create the Bucket Policy file
 
 ```shell
-# create a file
 # bucket-policy.json
-# your account id __ACCOUNT_ID__
+# your account id __ACCOUNTID__
 # your bucket __BUCKETNAME__
 ```
 ```json
@@ -121,7 +151,7 @@ To cre­ate your buckets, you can lever­age ei­ther the CLI tool or the Cloud 
         {
             "Effect": "Allow",
             "Principal": {
-                "AWS": "arn:aws:iam::__ACCOUNT_ID__:role/__VMROLENAME__"
+                "AWS": "arn:aws:iam::__ACCOUNTID__:role/__VMROLENAME__"
             },
             "Action": [
                 "s3:PutObjectAcl",
@@ -138,45 +168,51 @@ To cre­ate your buckets, you can lever­age ei­ther the CLI tool or the Cloud 
 }
 ```
 
-### Create the Bucket and Policy
+#### Create S3 Bucket
+
+> ⚠️ **Note:** If you're not using us-east-1, you'll need to include region and location restraints
 
 ```shell
-# replace __NAME__ and __REGION__ with your own information
-# create your bucket
-# if you're using not using us-east-1, you'll need to specify your region and location contraints
 aws s3api create-bucket \
     --bucket __BUCKETNAME__
+```
 
-# add a policy
+#### Add S3 Bucket Policy
+
+```shell
 aws s3api put-bucket-policy \
     --bucket __BUCKETNAME__ \
     --policy file://bucket-policy.json
 ```
 
-## Virtual Machine Creation 
+## Step 4: Virtual Machine Creation 
 
-Once you have access to the registered AWS AMI(or you created your own based on this repository), you’re ready to cre­ate a VM in­stance. 
+Once you have access to the registered AWS AMI or you created your own, you’re ready to cre­ate a VM in­stance.
+
+[Official AWS EC2 User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/concepts.html)
+
+[Official AWS CLI EC2 Run Instances docs](https://docs.aws.amazon.com/cli/latest/reference/ec2/run-instances.html)
 
 ### Create your EC2 Instance
 
 ```shell
 aws ec2 run-instances \
 --image-id __AMIID__ \
---profile __VMROLENAME__ \
+--iam-instance-profile 'Name=__VMROLENAME__' \
 --region __REGION__ \
 --instance-type m5.large \
---subnet-id __SUBNET_ID__ \
---security-group-ids __SECURITY_GROUP_ID__ \
+--subnet-id __SUBNETID__ \
+--security-group-ids __SECURITYGROUPID__ \
 --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":50}}]' \
---tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=__INSTANCENAME__}]'
+--tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=__INSTANCENAME__}]' \
 # --associate-public-ip-address
 ```
 
-**Note:** Configure the instance type, profile, key pair, subnet ID, and security group ID to suit your internal policies and cost requirements. We recommend a minimum boot disk size of 50 GB to start.
+> ⚠️ **Note:** Configure the instance type, profile, key pair, subnet ID, and security group ID to suit your internal policies and cost requirements. We recommend a minimum boot disk size of 50 GB.
 
-**Note:** If you're instance doesn't need a public IP address, do not include the `--associate-public-ip-address` option.
+> ⚠️ **Note:** If you're instance doesn't need a public IP address, do not include the `--associate-public-ip-address` option.
 
-## Connect to your instance
+## Step 4: Connect to your instance
 
 ### With SSH key pair
 
@@ -197,7 +233,7 @@ If you did not set up an SSH key pair on your instance, you can SSH into it usin
 ssh dibbs-user@__IPADDRESS__
 ```
 
-Upon log­ging in, we strong­ly rec­om­mend chang­ing the dibbs-user password.
+Upon logging in, we strong­ly rec­om­mend chang­ing the dibbs-user password.
 
 ### Change the dibbs-user password
 
@@ -207,17 +243,17 @@ sudo passwd dibbs-user
 
 En­ter a strong, unique pass­word when prompt­ed and con­firm the change.
 
-## eCR Viewer Setup  
+## Step 5: eCR Viewer Configuration Wizard
 
-While con­nect­ed to the VM, run the fol­low­ing com­mand and fol­low the prompts to con­fig­ure the eCR View­er based on your chosed configuration:
+While connect­ed to the VM, run the fol­low­ing command and fol­low the prompts to con­fig­ure the eCR View­er based on your chosen configuration:
 
-```shell  
+```shell
  ./dibbs-ecr-view­er-wiz­ard.sh
-```  
+```
 
-The wiz­ard script will ask you to pro­vide the vari­ables for the eCR Viewer application to run.
+The wiz­ard script will ask you to pro­vide the variables for the eCR Viewer application to run.
 
-**Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](examples/aws/dibbs-ecr-viewer.md) if you'd like to do so.
+> ⚠️ **Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](dibbs-ecr-viewer-user-data.md) if you'd like to go that route.
 
 --
 

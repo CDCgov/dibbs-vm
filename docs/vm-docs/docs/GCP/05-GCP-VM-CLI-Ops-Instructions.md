@@ -1,10 +1,10 @@
-# GCP Guide to Setting Up a DIBBs Virtual Machine Instance
-
-*Version 1.1*
+# GCP CLI Ops Guide
 
 ## Prerequisites
 
 Be­fore you get start­ed, please read the [GCP VM Requirements document](04-GCP-VM-Requirements.md).
+
+This guide provides steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP). Please reach out to the DIBBS DevOps team if you need access to the RAW image file.
 
 ## Initial GCP CLI Setup
 
@@ -180,17 +180,10 @@ sudo passwd dibbs-user
 
 - Enter a strong, unique password when prompted and confirm the change.
 
-#### Alternative: Using GCP Console
-
-1. Navigate to Compute Engine > VM Instances
-2. Click on your instance
-3. Under the SSH Keys section, add a new SSH key or update credentials
-
 ## Step 10: Configure the DIBBs Applications
 
-- eCR-Viewer: [Configure DIBBs Applications](examples/gcp/dibbs-ecr-viewer.md)
-- Query-Connector: [Configure DIBBs Applications](examples/gcp/dibbs-query-connector.md)
--  
+- eCR-Viewer: [Configure DIBBs Applications](dibbs-ecr-viewer-user-data.md)
+
 #### Start the Required Services
 
 Log in to your VM instance via SSH as described in Step 9. Once logged in, you can start the required services for DIBBs by executing:
@@ -217,6 +210,6 @@ For further assistance, refer to the Google Cloud Documentation, and please feel
 
 --
 
-- **Version 1.0.0** 
+- **Version 1.1.1** 
 
 - **We're humans writing docs, if you see an issue or wish something was clearer, [let us know!](https://github.com/CDCgov/dibbs-vm/issues/new/choose)**

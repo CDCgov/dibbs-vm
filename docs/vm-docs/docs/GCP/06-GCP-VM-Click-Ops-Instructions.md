@@ -1,10 +1,12 @@
-# GCP Guide to Setting Up a DIBBs Virtual Machine Instance
+# GCP Click Ops Guide
 
-*Version 1.1*
+## Prerequisites
 
-This guide provides steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP).
+Be­fore you get start­ed, please read the [GCP VM Requirements document](04-GCP-VM-Requirements.md).
 
-## Step 1: Uploading 
+This guide provides steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP). Please reach out to the DIBBS DevOps team if you need access to the RAW image file.
+
+## Step 1: VM File Setup 
 
 Please follow steps 1 through 5 as described in the [CLI Ops guide](05-GCP-VM-CLI-Ops-Instructions.md) to create and upload your VM image file. After doing so, you may return to this guide to continue.
 
