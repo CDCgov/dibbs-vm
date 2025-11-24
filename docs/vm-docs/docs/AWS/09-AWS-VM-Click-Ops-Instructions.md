@@ -18,23 +18,34 @@ Please note that when you see sections of the CLI commands that looks like this:
 
 We'll need to create an EC2 role with a policy that grants it access to the S3 bucket we're going to create.
 
+> ⚠️ **Note:** It is recommended by us and AWS that you generate your own KMS key for data encryption. You'll need to add arn of your key in the resources list so the eCR Viewer can encrypt and decrypt stored data. Please refer to your local jurisdictions guidelines to create these resources. That process is not yet part of this guide.
+
+
 ### EC2 Permissions Policy
 
 ```shell
 # your bucket: __BUCKETNAME__
+# "arn:aws:kms:::*",
+# "arn:aws:kms:::__KMSKEYID__"
 ```
 ```json
 {
     "Statement": [
         {
             "Action": [
-                "s3:Put*",
-                "s3:Get*"
+                "s3:PutObject",
+                "s3:PutObjectAcl",
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:ListBucket",
+                "kms:GenerateDataKey",
+                "kms:Decrypt"
             ],
             "Effect": "Allow",
             "Resource": [
                 "arn:aws:s3:::__BUCKETNAME__/*",
-                "arn:aws:s3:::__BUCKETNAME__"
+                "arn:aws:s3:::__BUCKETNAME__",
             ]
         }
     ],
