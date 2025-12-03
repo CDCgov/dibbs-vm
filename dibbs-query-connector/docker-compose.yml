@@ -1,13 +1,11 @@
 services:
   # PostgreSQL DB for custom query and value set storage
   db:
-    image: "postgres:17.4"
+    image: "postgres:17.6"
     restart: always
     ports:
       - "5432:5432"
     env_file: "database.env"
-    volumes:
-      - ./vs_dump.sql:/docker-entrypoint-initdb.d/vs_dump.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 2s
