@@ -13,15 +13,15 @@ gitsha=$(git rev-parse --short HEAD)
 if [ -z "$service" ] || [ -z "$version" ]; then
   echo "Remember to log into gcloud before running this script."
   echo "Usage: ./gcp_upload.sh [DIBBS_SERVICE] [DIBBS_VERSION] [BUCKET_NAME]"
-  echo "Example: ./gcp_upload.sh dibbs-ecr-viewer 1.0.0 dibbs-vm-bucket"
+  echo "Example: ./gcp_upload.sh dibbs-ecr-viewer 1.0.0 dibbs-vm-images"
   echo "Example: ./gcp_upload.sh dibbs-query-connector 1.0.0 dibbs-vm-images"
 exit 1
 fi
 
 # Create a loop for gcp and raw
 for build_type in "${build_types[@]}"; do
-  if [ -d "packer/ubuntu-server/build/$service-$build_type-$version-$gitsha" ]; then
-    cd packer/ubuntu-server/build/$service-$build_type-$version-$gitsha || exit
+  if [ -d "$service/packer/build/$service-$build_type-$version-$gitsha" ]; then
+    cd $service/packer/build/$service-$build_type-$version-$gitsha || exit
     echo "Build directory for that version exists, continuing with conversion."
   else
     echo "Build directory for that version does not exist."

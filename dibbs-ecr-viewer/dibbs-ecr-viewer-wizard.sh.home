@@ -92,6 +92,7 @@ set_vars() {
       aws
       pg
       auth
+      nextauth
       break
       ;;
     "AWS_PG_DUAL")
@@ -101,6 +102,7 @@ set_vars() {
       pg
       nbs
       auth
+      nextauth
       break
       ;;
     "AWS_SQLSERVER_NON_INTEGRATED")
@@ -109,6 +111,7 @@ set_vars() {
       aws
       sqlserver
       auth
+      nextauth
       break
       ;;
     "AWS_SQLSERVER_DUAL")
@@ -118,6 +121,7 @@ set_vars() {
       sqlserver
       nbs
       auth
+      nextauth
       break
       ;;
     "AWS_INTEGRATED")
@@ -125,6 +129,7 @@ set_vars() {
       add_env "CONFIG_NAME" "$CONFIG_NAME"
       aws
       nbs
+      nextauth
       break
       ;;
     "AZURE_PG_NON_INTEGRATED")
@@ -133,6 +138,7 @@ set_vars() {
       azure
       pg
       auth
+      nextauth
       break
       ;;
     "AZURE_PG_DUAL")
@@ -142,6 +148,7 @@ set_vars() {
       pg
       nbs
       auth
+      nextauth
       break
       ;;
     "AZURE_SQLSERVER_NON_INTEGRATED")
@@ -150,6 +157,7 @@ set_vars() {
       azure
       sqlserver
       auth
+      nextauth
       break
       ;;
     "AZURE_SQLSERVER_DUAL")
@@ -159,6 +167,7 @@ set_vars() {
       sqlserver
       nbs
       auth
+      nextauth
       break
       ;;
     "AZURE_INTEGRATED")
@@ -166,6 +175,7 @@ set_vars() {
       add_env "CONFIG_NAME" "$CONFIG_NAME"
       azure
       nbs
+      nextauth
       break
       ;;
     "GCP_PG_NON_INTEGRATED")
@@ -174,6 +184,7 @@ set_vars() {
       gcp
       pg
       auth
+      nextauth
       break
       ;;
     "GCP_PG_DUAL")
@@ -183,6 +194,7 @@ set_vars() {
       pg
       nbs
       auth
+      nextauth
       break
       ;;
     "GCP_SQLSERVER_NON_INTEGRATED")
@@ -191,6 +203,7 @@ set_vars() {
       gcp
       sqlserver
       auth
+      nextauth
       break
       ;;
     "GCP_SQLSERVER_DUAL")
@@ -200,6 +213,7 @@ set_vars() {
       sqlserver
       nbs
       auth
+      nextauth
       break
       ;;
     "GCP_INTEGRATED")
@@ -207,6 +221,7 @@ set_vars() {
       add_env "CONFIG_NAME" "$CONFIG_NAME"
       gcp
       nbs
+      nextauth
       break
       ;;
     "Quit")
@@ -301,6 +316,9 @@ auth() {
   check_var AUTH_CLIENT_SECRET
   check_var AUTH_ISSUER
   check_var NEXTAUTH_URL "URL for the eCR Viewer application authentication: http(s)://(DOMAIN||IP:PORT)/ecr-viewer/api/auth/"
+}
+
+nextauth() {
   check_var NEXTAUTH_SECRET "Generate a random secret using: openssl rand -base64 32"
 }
 

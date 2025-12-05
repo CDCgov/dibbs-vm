@@ -1,6 +1,6 @@
 .DS_Store
 
-packer/ubuntu-server/build/*
+dibbs-ecr-viewr/packer/build/*
 
 docker/dibbs-ecr-viewer/.env
 docker/dibbs-ecr-viewer/ecr-viewer.wizard
