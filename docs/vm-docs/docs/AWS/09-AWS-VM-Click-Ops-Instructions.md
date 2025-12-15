@@ -210,17 +210,26 @@ sudo passwd dibbs-user
 
 En­ter a strong, unique pass­word when prompt­ed and con­firm the change.
 
-## Step 6: eCR Viewer Configuration Wizard
+## Step 6: eCR Viewer Configuration
+
+### Setup script
 
 While connect­ed to the VM, run the fol­low­ing command and fol­low the prompts to con­fig­ure the eCR View­er based on your chosen configuration:
+
+> ⚠️ **Note:** Please reference the [eCR Viewer Setup guide](https://cdcgov.github.io/dibbs-ecr-viewer/interfaces/environment.NodeJS.ProcessEnv.html) and the [Environment Variable](https://cdcgov.github.io/dibbs-ecr-viewer/interfaces/environment.NodeJS.ProcessEnv.html) section for more details the following script requests inputs for.
+
+> ⚠️ **Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](dibbs-ecr-viewer-user-data.md) if you'd like to go that route.
+
+The wiz­ard script will ask you to pro­vide the variables for the eCR Viewer application to run.
 
 ```shell
  ./dibbs-ecr-view­er-wiz­ard.sh
 ```
 
-The wiz­ard script will ask you to pro­vide the variables for the eCR Viewer application to run.
+### Application access
 
-> ⚠️ **Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](dibbs-ecr-viewer-user-data.md) if you'd like to go that route.
+> - eCR Viewer access: __VM.ADDRESS__:3000/ecr-viewer
+> - Portainer access: __VM.ADDRESS__:9000
 
 --
 

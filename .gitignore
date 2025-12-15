@@ -6,6 +6,8 @@ docker/dibbs-ecr-viewer/.env
 docker/dibbs-ecr-viewer/ecr-viewer.wizard
 docker/dibbs-ecr-viewer/ecr-viewer.bak
 
+packer/ubuntu-server/build/*
+
 dibbs-query-connector/.env
 dibbs-query-connector/query-connector.wizard.env
 dibbs-query-connector/query-connector.env.bak

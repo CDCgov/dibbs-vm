@@ -24,7 +24,68 @@ Please note that when you see sections of the CLI commands that looks like this:
 
 > ⚠️ **Note:** VPCs, subnets, gateways and other components related to sending traffic to your instance can vary greatly, that is out of scope for this guide. Please refer to your local jurisdictions guidelines to create these resources.
 
-## Step 2: AWS EC2 Role Creation
+## Step 2: S3 eCR Viewer Data Bucket Creation
+
+To store data for the eCR Viewer, you will need to al­lo­cate an S3 bucket accessible to the EC2 service.
+
+To cre­ate your buckets, you can lever­age either the CLI tool or the Cloud Con­sole. 
+
+[Official AWS S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)
+
+[Official AWS CLI S3 Create Bucket docs](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html)
+
+[Official AWS CLI S3 Put Bucket Policy docs](https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-policy.html)
+
+### Create the Bucket Policy file
+
+```shell
+# bucket-policy.json
+# your account id __ACCOUNTID__
+# your bucket __BUCKETNAME__
+# your ssh key __SSHKEYNAME__
+```
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::__ACCOUNTID__:role/__VMROLENAME__"
+            },
+            "Action": [
+                "s3:PutObjectAcl",
+                "s3:PutObject",
+                "s3:GetObjectAcl",
+                "s3:GetObject"
+            ],
+            "Resource": [
+                "arn:aws:s3:::__BUCKETNAME__",
+                "arn:aws:s3:::__BUCKETNAME__/*"
+            ]
+        }
+    ]
+}
+```
+
+#### Create S3 Bucket
+
+> ⚠️ **Note:** If you're not using us-east-1, you'll need to include region and location restraints
+
+```shell
+aws s3api create-bucket \
+    --bucket __BUCKETNAME__
+```
+
+#### Add S3 Bucket Policy
+
+```shell
+aws s3api put-bucket-policy \
+    --bucket __BUCKETNAME__ \
+    --policy file://bucket-policy.json
+```
+
+## Step 3: AWS EC2 Role Creation
 
 We'll need to create an EC2 role with a policy that grants it access to the S3 bucket we're going to create.
 
@@ -134,66 +195,6 @@ aws iam add-role-to-instance-profile \
     --instance-profile-name __VMROLENAME__
 ```
 
-## Step 3: S3 eCR Viewer Data Bucket Creation
-
-To store data for the eCR Viewer, you will need to al­lo­cate an S3 bucket accessible to the EC2 service.
-
-To cre­ate your buckets, you can lever­age either the CLI tool or the Cloud Con­sole. 
-
-[Official AWS S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html)
-
-[Official AWS CLI S3 Create Bucket docs](https://docs.aws.amazon.com/cli/latest/reference/s3api/create-bucket.html)
-
-[Official AWS CLI S3 Put Bucket Policy docs](https://docs.aws.amazon.com/cli/latest/reference/s3api/put-bucket-policy.html)
-
-### Create the Bucket Policy file
-
-```shell
-# bucket-policy.json
-# your account id __ACCOUNTID__
-# your bucket __BUCKETNAME__
-```
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "arn:aws:iam::__ACCOUNTID__:role/__VMROLENAME__"
-            },
-            "Action": [
-                "s3:PutObjectAcl",
-                "s3:PutObject",
-                "s3:GetObjectAcl",
-                "s3:GetObject"
-            ],
-            "Resource": [
-                "arn:aws:s3:::__BUCKETNAME__",
-                "arn:aws:s3:::__BUCKETNAME__/*"
-            ]
-        }
-    ]
-}
-```
-
-#### Create S3 Bucket
-
-> ⚠️ **Note:** If you're not using us-east-1, you'll need to include region and location restraints
-
-```shell
-aws s3api create-bucket \
-    --bucket __BUCKETNAME__
-```
-
-#### Add S3 Bucket Policy
-
-```shell
-aws s3api put-bucket-policy \
-    --bucket __BUCKETNAME__ \
-    --policy file://bucket-policy.json
-```
-
 ## Step 4: Virtual Machine Creation 
 
 Once you have access to the registered AWS AMI or you created your own, you’re ready to cre­ate a VM in­stance.
@@ -214,6 +215,7 @@ aws ec2 run-instances \
 --security-group-ids __SECURITYGROUPID__ \
 --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":50}}]' \
 --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=__INSTANCENAME__}]' \
+#-- key-name __SSHKEYNAME__ \
 # --associate-public-ip-address
 ```
 
@@ -254,15 +256,24 @@ En­ter a strong, unique pass­word when prompt­ed and con­firm the change.
 
 ## Step 5: eCR Viewer Configuration Wizard
 
+### Setup script
+
 While connect­ed to the VM, run the fol­low­ing command and fol­low the prompts to con­fig­ure the eCR View­er based on your chosen configuration:
+
+> ⚠️ **Note:** Please reference the [eCR Viewer Setup guide](https://cdcgov.github.io/dibbs-ecr-viewer/interfaces/environment.NodeJS.ProcessEnv.html) and the [Environment Variable](https://cdcgov.github.io/dibbs-ecr-viewer/interfaces/environment.NodeJS.ProcessEnv.html) section for more details the following script requests inputs for.
+
+> ⚠️ **Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](dibbs-ecr-viewer-user-data.md) if you'd like to go that route.
+
+The wiz­ard script will ask you to pro­vide the variables for the eCR Viewer application to run.
 
 ```shell
  ./dibbs-ecr-view­er-wiz­ard.sh
 ```
 
-The wiz­ard script will ask you to pro­vide the variables for the eCR Viewer application to run.
+### Application access
 
-> ⚠️ **Note:** It would be possible to setup your instance on boot using the user-data field, see the [aws example docs](dibbs-ecr-viewer-user-data.md) if you'd like to go that route.
+> - eCR Viewer access: __VM.ADDRESS__:3000/ecr-viewer
+> - Portainer access: __VM.ADDRESS__:9000
 
 --
 
