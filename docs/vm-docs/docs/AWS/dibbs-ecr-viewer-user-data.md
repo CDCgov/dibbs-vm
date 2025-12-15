@@ -1,26 +1,6 @@
-# AWS AMI DIBBS eCR Viewer
+# AWS DIBBS eCR Viewer User Data
 
-- General guide to launch dibbs-ecr-viewer VMs.
-
-## Prerequisites
-- Ensure you have the necessary permissions to create VMs in your AWS account.
-
-## Steps to launch a VM and configure the Dibbs applications using provided wizard scripts
-
-### Create a VM
-
-  - Go to the EC2 web interface.
-  - Click on `Launch Instance`.
-  - Follow the AWS wizard to configure your VM with settings that comply with your organizations requirements and launch your instance.
-    - Be sure to include an ssh key and security settings that allow ssh so that you can connect to your instance and run the wizard scripts available.
-
-### Connect to the VM
-
-  - After the VM is created, you can SSH into the VM using the key pair you specified during the creation process.
-
-### Configure the VM
-
-  - **eCR Viewer** - Run the following command and follow the prompts to configure the eCR Viewer: `./dibbs-ecr-viewer-wizard.sh`
+# NOTE: This is in very early stages and has not been improved for a while. We have more testing that we'd like to do. Please let us know if you're interested in this approach, we'd love to chat.
 
 ## User Data
 

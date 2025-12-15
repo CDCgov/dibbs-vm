@@ -1,27 +1,26 @@
-# GCP Guide to Setting Up a DIBBs Virtual Machine Instance
-
-*Version 1.1*
-
-This guide provides clear steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP).
+# GCP CLI Ops Guide
 
 ## Prerequisites
 
-1. **Install Google Cloud CLI**
-   - Download and install Google Cloud CLI on your local machine/Terminal
+Be­fore you get start­ed, please read the [GCP VM Requirements document](04-GCP-VM-Requirements.md).
 
-2. **Access to Google Cloud Platform**
-   - Ensure you have access to the Google Cloud Console and the appropriate permissions
+This guide provides steps to set up a Virtual Machine (VM) instance using the DIBBs provided `.raw` VM image file in Google Cloud Platform (GCP). Please reach out to the DIBBS DevOps team if you need access to the RAW image file.
 
-3. **Receive the Raw VM Image File**
-   - You should have received the `.raw` file and login credentials of the VM from the Skylight team either via the DIBBs portal or through a secure link
+## Initial GCP CLI Setup
 
-4. **Required GCP Setup**
-   Anyone installing the GCP VM will need the following setup in advance:
-   - An existing project they wish to deploy into
-   - A Cloud Storage bucket that will store FHIR data for the eCR Viewer
-   - A PostgreSQL database that the VM will be able to access over the network
+This guide assumes you're using the GCP CLI and that it's already set up and configured to run against your desired GCP account. If you need assistance setting that up, please see the official GCP docs.
 
-## Step-by-Step Instructions
+[Official GCP CLI getting started docs]()
+
+## Additional notes
+
+### Dev Environment
+
+Please note that these commands are targeted at and tested by Linux users, while the GCP CLI is designed to work with Windows, MacOS, and Linux you may need to adapt some commands to work on your respective OS. Some areas on conflict may be quoting, path separators and environments variables.
+
+### Variable substitution
+
+Please note that when you see sections of the CLI commands that looks like this: `__VARIABLE__`, it is dependent on you to name that yourself.
 
 ## Step 1: Authenticate with GCP and Enable Required APIs
 
@@ -32,7 +31,7 @@ Open your terminal and run the following commands:
 gcloud auth login
 
 # Set your project ID (replace YOUR_PROJECT_ID with your actual project ID)
-gcloud config set project YOUR_PROJECT_ID
+gcloud config set project __PROJECTID__
 
 # Enable necessary APIs
 gcloud services enable compute.googleapis.com storage-component.googleapis.com
@@ -44,7 +43,7 @@ Google requires a Cloud Storage bucket to store the VM image before importing it
 
 **Using Command Line:**
 ```bash
-gsutil mb -c STANDARD -l <Zone> gs://my-gcp-bucket/
+gsutil mb -c STANDARD -l __ZONE__ gs://__GCPBUCKET__/
 ```
 
 **Using GCP Portal:**
@@ -58,7 +57,7 @@ gsutil mb -c STANDARD -l <Zone> gs://my-gcp-bucket/
 GCP requires the file inside the archive to be named `disk.raw`. Rename it using the following commands:
 
 ```bash
-mv <my-vm-file>.raw disk.raw
+mv __VMFILE__.raw disk.raw
 ```
 
 After this, you should have only:
@@ -71,7 +70,7 @@ GCP does not support `.raw` files directly, so we need to compress the file into
 Run the following command in the directory where the `disk.raw` file is located:
 
 ```bash
-tar -czvf <preferred name>.tar.gz disk.raw
+tar -czvf __PREFERREDNAME__.tar.gz disk.raw
 ```
 
 **Example:**
@@ -83,7 +82,7 @@ Where `ubuntu-2404-dibbs-ecr-viewer-v2-0-0-beta` is your preferred file name, th
 
 After this, you should have two output files:
 - `disk.raw`
-- `preferred name.tar.gz`
+- `__PREFERREDNAME__.tar.gz`
 
 ## Step 5: Upload the Archive to Cloud Storage
 
@@ -91,13 +90,8 @@ You can upload the compressed file using the CLI or the GCP Portal.
 
 **Using Command Line:**
 ```bash
-gsutil cp <my-vm-file>.tar.gz gs://my-gcp-bucket/
+gsutil cp __VMFILE__.tar.gz gs://__GCPBUCKET__/
 ```
-
-**Using GCP Portal:**
-1. Navigate to Cloud Storage > Buckets
-2. Select the bucket you created in Step 2
-3. Click Upload File and select `my-vm-file.tar.gz`
 
 > ⚠️ **Note**: The upload process may take up to an hour.
 
@@ -107,17 +101,10 @@ Once the upload is complete, create an image using the `.tar.gz` file.
 
 **Using Command Line:**
 ```bash
-gcloud compute images create <my-image> \
-  --source-uri gs://<my-gcp-bucket>/<my-vm-file>.tar.gz \
+gcloud compute images create __MYIMAGE__ \
+  --source-uri gs://__GCPBUCKET__/__VMFILE__.tar.gz \
   --guest-os-features=UEFI_COMPATIBLE
 ```
-
-**Using GCP Portal:**
-1. Navigate to Compute Engine > Images
-2. Click Create Image
-3. Enter an image name and select Cloud Storage File as the source
-4. Browse and select `my-vm-file.tar.gz`
-5. Complete the required metadata fields
 
 ## Step 7: Create a VM Instance from the Image
 
@@ -126,21 +113,13 @@ Now that the image is ready, create a VM instance.
 **Using Command Line:**
 ```bash
 gcloud compute instances create my-vm-instance \
-  --image=<my-image> \
+  --image=__MYIMAGE__ \
   --zone=us-central1-a \
   --machine-type=e2-standard-4 \
   --boot-disk-size=20GB
 ```
 
 > **Note**: The machine type varies by CPU size and other factors such as workloads and cost.
-
-**Using GCP Portal:**
-1. Navigate to Compute Engine > VM Instances
-2. Click Create Instance
-3. Enter a name and select a Machine Type
-4. Under OS and Storage, select Custom Image
-5. Choose your uploaded image and configure other settings
-6. Click Create
 
 ## Step 8: Secure Your VM Instance
 
@@ -171,15 +150,10 @@ gcloud compute firewall-rules create allow-ssh \
   --network=default \
   --action=ALLOW \
   --rules=tcp:22 \
-  --source-ranges=<YOUR_ALLOWED_IP>
+  --source-ranges=__YOURALLOWEDIP__
 ```
 
-Replace `<YOUR_ALLOWED_IP>` with trusted IP addresses (e.g., your organization's VPN or specific users).
-
-**Using GCP Portal:**
-1. Navigate to VPC Network > Firewall Rules
-2. Review existing rules and remove any that allow broad access
-3. Click Create Firewall Rule, specify allowed ports, and restrict access by IP
+Replace `__YOURALLOWEDIP__` with trusted IP addresses (e.g., your organization's VPN or specific users).
 
 ## Step 9: Initial SSH Access and Mandatory Security Configuration
 
@@ -190,7 +164,7 @@ Your VM instance comes pre-configured with temporary login credentials that the 
 To connect to your VM instance, use the following GCP command:
 
 ```bash
-gcloud compute ssh username@your-instance-name --zone=your-zone --project=your-project-id
+gcloud compute ssh username@___YOURINSTANCENAME___ --zone=__ZONE__ --project=__PROJECTID__
 ```
 
 When prompted, enter the randomized password provided by the DIBBs team.
@@ -201,21 +175,18 @@ When prompted, enter the randomized password provided by the DIBBs team.
 
 **Using Command Line:**
 ```bash
-sudo passwd <username> # Replace <username> with the  user's name provided to you by the DIBBs team 
+sudo passwd dibbs-user
 ```
 
 - Enter a strong, unique password when prompted and confirm the change.
 
-#### Alternative: Using GCP Console
-
-1. Navigate to Compute Engine > VM Instances
-2. Click on your instance
-3. Under the SSH Keys section, add a new SSH key or update credentials
-
 ## Step 10: Configure the DIBBs Applications
 
-- eCR-Viewer: [Configure DIBBs Applications](examples/gcp/dibbs-ecr-viewer.md)
-- Query-Connector: [Configure DIBBs Applications](examples/gcp/dibbs-query-connector.md)
+- eCR-Viewer: [Configure DIBBs Applications](dibbs-ecr-viewer-user-data.md)
+
+#### Start the Required Services
+
+Log in to your VM instance via SSH as described in Step 9. Once logged in, you can start the required services for DIBBs by executing:
 
 ## Conclusion
 
@@ -223,7 +194,7 @@ Following these steps, you should now have a fully functional Virtual Machine in
 
 If you encounter issues, ensure that:
 - You have the correct permissions in your GCP project
-- The APIs are enabled
+- All relevant GCP APIs are enabled
 - The `.tar.gz` archive contains `disk.raw`
 
 
@@ -237,4 +208,8 @@ For further assistance, refer to the Google Cloud Documentation, and please feel
 - **Permission errors**: Ensure your GCP account has Compute Engine Admin role
 - **Image creation fails**: Verify the `.tar.gz` file contains only `disk.raw`
 
+--
 
+- **Version 1.1.1** 
+
+- **We're humans writing docs, if you see an issue or wish something was clearer, [let us know!](https://github.com/CDCgov/dibbs-vm/issues/new/choose)**

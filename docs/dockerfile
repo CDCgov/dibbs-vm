@@ -1,6 +1,6 @@
 FROM python:3.13
+RUN pip install mkdocs
 COPY ./vm-docs/ /vm-docs/
 WORKDIR /vm-docs/
-RUN pip install mkdocs
 EXPOSE 80
 CMD ["mkdocs", "serve"]

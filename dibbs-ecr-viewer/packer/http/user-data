@@ -1,0 +1,79 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+#  apt:
+#    preserve_sources_list: false
+#    primary:
+#    - arches:
+#      - amd64
+#      - i386
+#      uri: http://mirror.local.net/ubuntu
+
+  apt:
+    geoip: true
+    preserve_sources_list: false
+    primary:
+    - arches: [amd64, i386]
+      uri: http://us.archive.ubuntu.com/ubuntu
+    - arches: [default]
+      uri: http://ports.ubuntu.com/ubuntu-ports
+
+  packages:
+    - qemu-guest-agent
+    - git
+    - ca-certificates
+    - curl
+
+  identity:
+    realname: ''
+    username: dibbs-user
+    # A password hash is needed. `mkpasswd --method=SHA-512` can help.
+    # mkpasswd can be found in the package 'whois'
+    password: '{dibbs-user-password-hash}'
+    hostname: dibbs-vm
+
+  # Uncomment the block below to force interactive configuration on first run.  
+  # interactive-sections:
+  #    - network  
+
+  locale: en_US
+  keyboard: 
+    layout: us
+
+  network:
+    version: 2
+    renderer: networkd
+    ethernets:
+      all-en:
+        match:
+          name: "en*"
+        dhcp4: true
+        dhcp-identifier: mac  
+
+  ssh:
+    allow-pw: yes
+    install-server: true
+
+  # Subiquity will, by default, configure a partition layout using LVM.
+  storage:
+    layout:
+      name: lvm
+
+  # The live-server ISO does not contain some of the required packages,
+  # such as ubuntu-desktop or the hwe kernel (or most of their depdendencies).
+  # The system being installed will need some sort of apt access.
+  # proxy: http://192.168.0.1:3142
+
+  late-commands:  
+    # A postinstall script may optionally be used for further install
+    # customization. Deploy this postinstall.sh script on the webserver.
+    - wget -O /target/postinstall.sh https://raw.githubusercontent.com/CDCgov/dibbs-vm/refs/heads/alis/vm_work1/dibbs-ecr-viewer/packer/scripts/post-install.sh
+    - curtin in-target -- bash /postinstall.sh
+    - rm /target/postinstall.sh
+
+  # Additional cloud-init configuration affecting the target
+  # system can be supplied underneath a user-data section inside of
+  # autoinstall.
+  # user-data:
+  #   …

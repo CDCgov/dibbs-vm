@@ -124,15 +124,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init ${{ github.event.client_payload.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/packer
         run: packer init .
 
       - name: Run `packer validate ${{ github.event.client_payload.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/packer
         run: packer validate --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
 
       - name: Run `packer build ${{ github.event.client_payload.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/packer
         run: packer build --var dibbs_service=${{ github.event.client_payload.service }} --var dibbs_version=${{ github.event.client_payload.version }} .
 
   packer_build_workflow_dispatch:
@@ -176,15 +176,15 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y qemu-system-x86
 
       - name: Run `packer init ${{ inputs.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/
         run: packer init .
 
       - name: Run `packer validate ${{ inputs.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/packer
         run: packer validate --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
       - name: Run `packer build ${{ inputs.service }}`
-        working-directory: ./packer/ubuntu-server
+        working-directory: ./${{ github.event.client_payload.service }}/packer
         run: packer build --var dibbs_service=${{ inputs.service }} --var dibbs_version=${{ inputs.version }} .
 
   ## TODO: Decide how to export artifact.
