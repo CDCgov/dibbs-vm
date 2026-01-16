@@ -1,0 +1,34 @@
+[DEFAULT]
+
+# ignore localhost for Packer builds and other tools
+ignoreip = 127.0.0.1
+
+# clients that trigger a ban will be banned for the length
+# of time specified here
+bantime = 10m
+
+# these two fields set the evaluation window and number
+# of authentication attempts that trigger a ban
+findtime = 10m
+maxretry = 5
+
+# parameters for configuring email alerts when a client
+# triggers a ban
+destemail = root@localhost
+sender = root@<fq-hostname>
+mta = sendmail
+
+# ban & send an e-mail with whois report to the destemail
+# configured above.
+action_mw = %(action_)s
+            %(mta)s-whois[sender="%(sender)s", dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
+action = $(action_)s
+
+
+[ssh]
+
+enabled  = true
+port     = ssh
+filter   = sshd
+logpath  = /var/log/auth.log
+maxretry = 5
