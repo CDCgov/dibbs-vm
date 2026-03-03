@@ -175,4 +175,5 @@ build {
 
     execute_command = "echo '${var.ssh_password}' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
   }
+
 }
