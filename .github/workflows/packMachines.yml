@@ -77,7 +77,7 @@ jobs:
         shell: bash
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789
         with:
           version: 1.11.2
 
@@ -116,7 +116,7 @@ jobs:
         shell: bash
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789
         with:
           version: 1.11.2
 
@@ -168,7 +168,7 @@ jobs:
         shell: bash
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@1aa358be5cf73883762b302a3a03abd66e75b232
+        uses: hashicorp/setup-packer@ce93c3c08a6c2ff2275bf4b54ff0d9a75f6c9789
         with:
           version: 1.11.2
 
